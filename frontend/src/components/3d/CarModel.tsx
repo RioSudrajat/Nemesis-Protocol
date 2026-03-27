@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import * as THREE from "three";
+import type { Mesh, Group, MeshStandardMaterial } from "three";
 import { useFrame } from "@react-three/fiber";
 
 /* ——————————————— Health color helper ——————————————— */
@@ -33,7 +33,7 @@ function VehiclePart({
   name, health, position, rotation = [0, 0, 0], scale = [1, 1, 1],
   geometry, args, onSelect, selectedPart, xray, exploded, explodeOffset = [0, 0, 0],
 }: PartProps) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const isSelected = selectedPart === name;
   const color = getHealthColor(health);
@@ -46,8 +46,8 @@ function VehiclePart({
     if (meshRef.current) {
       // Pulse effect for critical parts
       if (health <= 30) {
-        meshRef.current.material = meshRef.current.material as THREE.MeshStandardMaterial;
-        const mat = meshRef.current.material as THREE.MeshStandardMaterial;
+        meshRef.current.material = meshRef.current.material as MeshStandardMaterial;
+        const mat = meshRef.current.material as MeshStandardMaterial;
         mat.emissiveIntensity = 0.3 + Math.sin(Date.now() * 0.005) * 0.2;
       }
     }
@@ -115,7 +115,7 @@ interface CarModelProps {
 }
 
 export default function CarModel({ onSelectPart, selectedPart, xray, exploded }: CarModelProps) {
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<Group>(null);
 
   useFrame((_, delta) => {
     if (groupRef.current && !selectedPart) {

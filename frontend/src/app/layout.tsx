@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { ToastProvider } from "@/components/ui/Toast";
+import { BookingProvider } from "@/context/BookingContext";
+import { EnterpriseProvider } from "@/context/EnterpriseContext";
+import { AdminProvider } from "@/context/AdminContext";
+import { PartCatalogProvider } from "@/context/PartCatalogContext";
 import { Orbitron, Exo_2 } from "next/font/google";
 import "./globals.css";
 
@@ -26,7 +30,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${orbitron.variable} ${exo2.variable}`}>
       <body className="font-exo bg-[#0F172A] text-slate-50 antialiased selection:bg-purple-500/30 selection:text-purple-200">
-        <ToastProvider>{children}</ToastProvider>
+        <ToastProvider>
+          <AdminProvider>
+            <PartCatalogProvider>
+              <BookingProvider>
+                <EnterpriseProvider>
+                  {children}
+                </EnterpriseProvider>
+              </BookingProvider>
+            </PartCatalogProvider>
+          </AdminProvider>
+        </ToastProvider>
       </body>
     </html>
   );

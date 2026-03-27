@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import * as THREE from "three";
+import { Vector3, DoubleSide } from "three";
+import type { Group } from "three";
 import { useFrame } from "@react-three/fiber";
-import { RoundedBox } from "@react-three/drei";
 
 function getHealthColor(health: number): string {
   if (health >= 90) return "#22C55E";
@@ -15,11 +15,11 @@ function getHealthColor(health: number): string {
 
 /* ----- BMW M4 Isle of Man Green metallic paint ----- */
 const BODY_COLOR = "#1D6B3F";      // deep Isle of Man Green
-const BODY_METALNESS = 0.92;
-const BODY_ROUGHNESS = 0.12;
-const CHROME = { color: "#D4D4D8", metalness: 1, roughness: 0.05 };
-const CARBON = { color: "#1A1A1A", metalness: 0.4, roughness: 0.35 };
-const GLASS  = { color: "#88CCEE", metalness: 0.1, roughness: 0.05, opacity: 0.35, transparent: true };
+const BODY_METALNESS = 0.5;
+const BODY_ROUGHNESS = 0.25;
+const CHROME = { color: "#E4E4E8", metalness: 0.5, roughness: 0.3 };
+const CARBON = { color: "#1A1A1A", metalness: 0.2, roughness: 0.4 };
+const GLASS  = { color: "#88CCEE", metalness: 0.1, roughness: 0.1, opacity: 0.35, transparent: true };
 const RUBBER = { color: "#111111", metalness: 0.0, roughness: 0.9 };
 const INTERIOR_LEATHER = { color: "#1A1A1A", metalness: 0.0, roughness: 0.6 };
 const RED_CALIPER = { color: "#CC0000", metalness: 0.7, roughness: 0.3 };
@@ -41,9 +41,10 @@ interface PartProps {
 }
 
 function Part({ name, health, onSelect, selected, xray, exploded, explodeOffset = [0, 0, 0], children, position = [0, 0, 0], rotation, drillParts }: PartProps) {
-  const ref = useRef<THREE.Group>(null);
+  const ref = useRef<Group>(null);
   const isSelected = selected === name;
   const [drill, setDrill] = useState(false);
+  const targetVec = useRef(new Vector3());
 
   const finalPos: [number, number, number] = exploded
     ? [position[0] + explodeOffset[0], position[1] + explodeOffset[1], position[2] + explodeOffset[2]]
@@ -51,8 +52,8 @@ function Part({ name, health, onSelect, selected, xray, exploded, explodeOffset 
 
   useFrame(() => {
     if (ref.current) {
-      const target = new THREE.Vector3(...finalPos);
-      ref.current.position.lerp(target, 0.08);
+      targetVec.current.set(...finalPos);
+      ref.current.position.lerp(targetVec.current, 0.08);
     }
   });
 
@@ -64,7 +65,7 @@ function Part({ name, health, onSelect, selected, xray, exploded, explodeOffset 
         {isSelected && (
           <mesh>
             <ringGeometry args={[0.35, 0.4, 32]} />
-            <meshBasicMaterial color={getHealthColor(health)} transparent opacity={0.6} side={THREE.DoubleSide} />
+            <meshBasicMaterial color={getHealthColor(health)} transparent opacity={0.6} side={DoubleSide} />
           </mesh>
         )}
       </group>
@@ -157,7 +158,7 @@ const partData: Record<string, { health: number; drill?: { name: string; health:
 };
 
 export default function BMWM4Model({ onSelectPart, selectedPart, xray, exploded }: BMWM4Props) {
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<Group>(null);
 
   const P = (name: string, pos: [number, number, number], explOff: [number, number, number], children: React.ReactNode, rot?: [number, number, number]) => {
     const pd = partData[name] || { health: 80 };
@@ -176,18 +177,18 @@ export default function BMWM4Model({ onSelectPart, selectedPart, xray, exploded 
 
       {/* Hood — long sloping shape */}
       {P("Body.Hood", [0, 0.72, 1.0], [0, 1.2, 0.6],
-        <RoundedBox args={[1.72, 0.06, 1.4]} radius={0.02} smoothness={4} castShadow>{bodyMat}</RoundedBox>
+        <mesh castShadow><boxGeometry args={[1.72, 0.06, 1.4]} />{bodyMat}</mesh>
       )}
 
       {/* Roof — carbon fiber */}
       {P("Body.Roof", [0, 1.18, -0.3], [0, 1.5, 0],
-        <RoundedBox args={[1.52, 0.05, 1.4]} radius={0.02} smoothness={4}><meshStandardMaterial {...CARBON} transparent={xray} opacity={xray ? 0.15 : 1} /></RoundedBox>
+        <mesh><boxGeometry args={[1.52, 0.05, 1.4]} /><meshStandardMaterial {...CARBON} transparent={xray} opacity={xray ? 0.15 : 1} /></mesh>
       )}
 
       {/* Front bumper + kidney grille integrated */}
       {P("Body.FrontBumper", [0, 0.35, 1.85], [0, 0, 1.2],
         <group>
-          <RoundedBox args={[1.82, 0.5, 0.15]} radius={0.05} smoothness={4} castShadow>{bodyMat}</RoundedBox>
+          <mesh castShadow><boxGeometry args={[1.82, 0.5, 0.15]} />{bodyMat}</mesh>
           {/* Air intakes */}
           <mesh position={[-0.5, -0.1, 0.08]}><boxGeometry args={[0.35, 0.2, 0.04]} /><meshStandardMaterial color="#080808" metalness={0.3} roughness={0.5} /></mesh>
           <mesh position={[0.5, -0.1, 0.08]}><boxGeometry args={[0.35, 0.2, 0.04]} /><meshStandardMaterial color="#080808" metalness={0.3} roughness={0.5} /></mesh>
@@ -208,14 +209,14 @@ export default function BMWM4Model({ onSelectPart, selectedPart, xray, exploded 
       {/* Rear bumper + diffuser */}
       {P("Body.RearBumper", [0, 0.35, -1.95], [0, 0, -1.2],
         <group>
-          <RoundedBox args={[1.82, 0.5, 0.15]} radius={0.05} smoothness={4} castShadow>{bodyMat}</RoundedBox>
+          <mesh castShadow><boxGeometry args={[1.82, 0.5, 0.15]} />{bodyMat}</mesh>
           <mesh position={[0, -0.15, -0.05]}><boxGeometry args={[1.2, 0.18, 0.08]} /><meshStandardMaterial {...CARBON} /></mesh>
         </group>
       )}
 
       {/* Trunk */}
       {P("Body.Trunk", [0, 0.85, -1.5], [0, 0.8, -0.6],
-        <RoundedBox args={[1.5, 0.06, 0.7]} radius={0.02} smoothness={4} castShadow>{bodyMat}</RoundedBox>
+        <mesh castShadow><boxGeometry args={[1.5, 0.06, 0.7]} />{bodyMat}</mesh>
       )}
 
       {/* Spoiler — ducktail lip */}
@@ -225,18 +226,18 @@ export default function BMWM4Model({ onSelectPart, selectedPart, xray, exploded 
 
       {/* Doors */}
       {P("Body.Door_FL", [-0.88, 0.65, 0.0], [-1.2, 0, 0],
-        <RoundedBox args={[0.05, 0.6, 1.2]} radius={0.02} smoothness={4} castShadow>{bodyMat}</RoundedBox>
+        <mesh castShadow><boxGeometry args={[0.05, 0.6, 1.2]} />{bodyMat}</mesh>
       )}
       {P("Body.Door_FR", [0.88, 0.65, 0.0], [1.2, 0, 0],
-        <RoundedBox args={[0.05, 0.6, 1.2]} radius={0.02} smoothness={4} castShadow>{bodyMat}</RoundedBox>
+        <mesh castShadow><boxGeometry args={[0.05, 0.6, 1.2]} />{bodyMat}</mesh>
       )}
 
       {/* Fenders */}
       {P("Body.Fender_FL", [-0.88, 0.55, 1.2], [-0.8, 0, 0.4],
-        <RoundedBox args={[0.06, 0.45, 0.6]} radius={0.02} smoothness={4} castShadow>{bodyMat}</RoundedBox>
+        <mesh castShadow><boxGeometry args={[0.06, 0.45, 0.6]} />{bodyMat}</mesh>
       )}
       {P("Body.Fender_FR", [0.88, 0.55, 1.2], [0.8, 0, 0.4],
-        <RoundedBox args={[0.06, 0.45, 0.6]} radius={0.02} smoothness={4} castShadow>{bodyMat}</RoundedBox>
+        <mesh castShadow><boxGeometry args={[0.06, 0.45, 0.6]} />{bodyMat}</mesh>
       )}
 
       {/* Side skirts */}
@@ -276,7 +277,7 @@ export default function BMWM4Model({ onSelectPart, selectedPart, xray, exploded 
           {/* Center cap */}
           <mesh position={[0, 0, 0.05]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.06, 0.06, 0.03, 16]} /><meshStandardMaterial color="#1D6B3F" metalness={0.8} roughness={0.2} /></mesh>
           {/* Brake caliper */}
-          <mesh position={[0.15, 0.15, -0.04]} rotation={[0, 0, Math.PI / 4]}><RoundedBox args={[0.1, 0.14, 0.08]} radius={0.02} smoothness={2}><meshStandardMaterial {...RED_CALIPER} /></RoundedBox></mesh>
+          <mesh position={[0.15, 0.15, -0.04]} rotation={[0, 0, Math.PI / 4]}><mesh><boxGeometry args={[0.1, 0.14, 0.08]} /><meshStandardMaterial {...RED_CALIPER} /></mesh></mesh>
           {/* Brake disc */}
           <mesh rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.2, 0.2, 0.02, 32]} /><meshStandardMaterial color="#777777" metalness={0.9} roughness={0.3} /></mesh>
         </group>

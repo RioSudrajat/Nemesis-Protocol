@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { motion } from "framer-motion";
 import { BarChart3, TrendingUp, DollarSign, Clock, Wrench, Users } from "lucide-react";
 
@@ -93,12 +94,12 @@ export default function WorkshopAnalyticsPage() {
             <div />
             {days.map(d => <div key={d} className="text-center text-xs" style={{ color: "var(--solana-text-muted)" }}>{d}</div>)}
             {peakHours.map((row, ri) => (
-              <>
-                <div key={`label-${ri}`} className="text-xs flex items-center" style={{ color: "var(--solana-text-muted)" }}>{timeSlots[ri]}</div>
+              <React.Fragment key={`row-${ri}`}>
+                <div className="text-xs flex items-center" style={{ color: "var(--solana-text-muted)" }}>{timeSlots[ri]}</div>
                 {row.map((val, ci) => (
                   <div key={`${ri}-${ci}`} className="h-10 rounded-lg" style={{ background: `rgba(153,69,255,${val * 0.5 + 0.05})` }} title={`${(val * 100).toFixed(0)}% busy`} />
                 ))}
-              </>
+              </React.Fragment>
             ))}
           </div>
         </div>

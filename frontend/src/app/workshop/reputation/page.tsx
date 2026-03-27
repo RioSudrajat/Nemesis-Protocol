@@ -1,9 +1,23 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Star, Shield, ThumbsUp, TrendingUp, Award, MessageSquare } from "lucide-react";
+import { useBooking } from "@/context/BookingContext";
+import { vehicleData } from "@/context/ActiveVehicleContext";
 
-const reviews = [
+interface ReviewItem {
+  customer: string;
+  rating: number;
+  date: string;
+  text: string;
+  verified: boolean;
+  vehicleType?: string;
+  serviceType?: string;
+  isFromBooking?: boolean;
+}
+
+const staticReviews: ReviewItem[] = [
   { customer: "Budi S.", rating: 5, date: "2026-03-14", text: "Pelayanan sangat baik, oli diganti dengan cepat dan rapi. Harga transparan.", verified: true },
   { customer: "Andi W.", rating: 5, date: "2026-03-10", text: "Inspeksi lengkap dan detail. Mekanik menjelaskan semua temuan dengan jelas.", verified: true },
   { customer: "Sari M.", rating: 4, date: "2026-03-05", text: "Servis CVT bagus, tapi antrian agak lama di jam siang.", verified: true },
@@ -18,6 +32,36 @@ const badges = [
 ];
 
 export default function ReputationPage() {
+  const bookingCtx = useBooking();
+
+  // Build new reviews from completed bookings that have reviews
+  const bookingReviews = useMemo((): ReviewItem[] => {
+    return (bookingCtx?.completedBookings || [])
+      .filter(cb => cb.review && cb.review.rating > 0)
+      .map(cb => {
+        const vData = vehicleData[cb.vehicleKey];
+        return {
+          customer: "Pelanggan NOC",
+          rating: cb.review!.rating,
+          date: cb.date,
+          text: cb.review!.comment || `Servis ${cb.serviceType} — tidak ada komentar.`,
+          verified: cb.review!.onChainVerified,
+          vehicleType: vData?.name,
+          serviceType: cb.serviceType,
+          isFromBooking: true,
+        };
+      });
+  }, [bookingCtx?.completedBookings]);
+
+  // All reviews: booking reviews first (newest), then static
+  const allReviews = [...bookingReviews, ...staticReviews];
+
+  // Compute live rating
+  const totalReviews = staticReviews.length + 247 + bookingReviews.length;
+  const avgRating = bookingReviews.length > 0
+    ? ((bookingReviews.reduce((s, r) => s + r.rating, 0) + 4.8 * (staticReviews.length + 247)) / totalReviews).toFixed(1)
+    : "4.8";
+
   return (
     <div>
       <div className="page-header">
@@ -34,16 +78,16 @@ export default function ReputationPage() {
           <div className="relative w-40 h-40 mb-6">
             <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
               <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(153,69,255,0.1)" strokeWidth="8" />
-              <circle cx="50" cy="50" r="42" fill="none" stroke="url(#repGradient)" strokeWidth="8" strokeDasharray={`${(4.8 / 5) * 264} 264`} strokeLinecap="round" />
+              <circle cx="50" cy="50" r="42" fill="none" stroke="url(#repGradient)" strokeWidth="8" strokeDasharray={`${(Number(avgRating) / 5) * 264} 264`} strokeLinecap="round" />
               <defs><linearGradient id="repGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#FACC15" /><stop offset="100%" stopColor="#22C55E" /></linearGradient></defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-4xl font-bold">4.8</span>
+              <span className="text-4xl font-bold">{avgRating}</span>
               <span className="text-xs" style={{ color: "var(--solana-text-muted)" }}>/ 5.0</span>
             </div>
           </div>
           <p className="font-semibold mb-1">Excellent Reputation</p>
-          <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Based on 398 verified services</p>
+          <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Based on {totalReviews} verified services</p>
           <div className="flex items-center gap-1 mt-3" style={{ color: "var(--solana-green)" }}>
             <TrendingUp className="w-4 h-4" />
             <span className="text-xs font-semibold">+0.2 this month</span>
@@ -54,9 +98,9 @@ export default function ReputationPage() {
         <div className="lg:col-span-2 flex flex-col gap-8">
           <div className="grid grid-cols-3 gap-6 lg:gap-8">
             {[
-              { label: "Total Reviews", value: "247", icon: MessageSquare },
+              { label: "Total Reviews", value: String(totalReviews), icon: MessageSquare },
               { label: "Repeat Customers", value: "68%", icon: ThumbsUp },
-              { label: "5-Star Rate", value: "82%", icon: Star },
+              { label: "5-Star Rate", value: `${Math.round((allReviews.filter(r => r.rating === 5).length / allReviews.length) * 100)}%`, icon: Star },
             ].map((s, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="glass-card p-6 lg:p-8 text-center">
                 <s.icon className="w-6 h-6 mx-auto mb-3" style={{ color: "var(--solana-purple)" }} />
@@ -82,15 +126,31 @@ export default function ReputationPage() {
       </div>
 
       {/* Reviews */}
-      <h2 className="text-xl font-semibold mb-6">Recent Reviews</h2>
+      <h2 className="text-xl font-semibold mb-6">
+        Recent Reviews
+        {bookingReviews.length > 0 && (
+          <span className="ml-3 text-sm px-2.5 py-1 rounded-full font-medium" style={{ background: "rgba(20,241,149,0.1)", color: "var(--solana-green)", border: "1px solid rgba(20,241,149,0.2)" }}>
+            +{bookingReviews.length} baru via booking
+          </span>
+        )}
+      </h2>
       <div className="flex flex-col gap-6">
-        {reviews.map((r, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }} className="glass-card-static p-6 md:p-8">
+        {allReviews.map((r, i) => (
+          <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass-card-static p-6 md:p-8">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: "var(--solana-gradient)" }}>{r.customer[0]}</div>
+                <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: "var(--solana-gradient)" }}>
+                  {r.customer[0]}
+                </div>
                 <div>
-                  <p className="font-semibold text-sm">{r.customer}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-sm">{r.customer}</p>
+                    {"isFromBooking" in r && r.isFromBooking && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: "rgba(153,69,255,0.1)", color: "var(--solana-purple)", border: "1px solid rgba(153,69,255,0.2)" }}>
+                        via Booking
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-1 mt-0.5">
                     {Array.from({ length: 5 }).map((_, j) => (
                       <Star key={j} className="w-3 h-3" style={{ color: j < r.rating ? "#FACC15" : "rgba(148,163,184,0.3)" }} fill={j < r.rating ? "#FACC15" : "none"} />
@@ -103,6 +163,11 @@ export default function ReputationPage() {
                 <span className="text-xs" style={{ color: "var(--solana-text-muted)" }}>{r.date}</span>
               </div>
             </div>
+            {"vehicleType" in r && r.vehicleType && (
+              <p className="text-[10px] mb-2 mono" style={{ color: "var(--solana-text-muted)" }}>
+                🚗 {r.vehicleType} {"serviceType" in r ? `· ${r.serviceType}` : ""}
+              </p>
+            )}
             <p className="text-sm" style={{ color: "var(--solana-text-muted)" }}>{r.text}</p>
           </motion.div>
         ))}

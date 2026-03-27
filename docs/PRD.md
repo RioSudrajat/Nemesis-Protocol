@@ -747,6 +747,41 @@ sequenceDiagram
     Backend-->>OEM: Success { asset_id, metadata_uri, nfc_card_status }
 ```
 
+### 8.4. Service Payment & Settlement Flow (Web2.5 MVP)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant App as DApp (Frontend)
+    participant Backend as NOC ID Backend
+    participant FiatGateway as Fiat Payment Gateway (e.g., Xendit)
+    participant Solana as Solana Blockchain
+    participant Workshop as Workshop Wallet
+    
+    User->>App: Finalizes Service & Views Invoice
+    App->>User: Presents 3 Payment Options (Web3 Wallet, Web2 Fiat, $NOC)
+    Note over User,App: MVP focuses on Web2 Fiat (QRIS/Bank Transfer)
+    User->>App: Selects Web2 Fiat & Pays invoice (e.g., Rp 500,000)
+    App->>FiatGateway: Process Fiat Payment
+    FiatGateway-->>Backend: Webhook: Payment Successful
+    
+    Backend->>Backend: Split Funds (Platform Fee vs Workshop Revenue)
+    Note over Backend: Example: Rp 10,000 (Platform) / Rp 490,000 (Workshop)
+    Backend->>FiatGateway: Trigger conversion to Stablecoin (USDC/BIDR)
+    FiatGateway-->>Backend: Stablecoin secured
+    
+    par Blockchain Settlement
+        Backend->>Solana: Transfer Stablecoin to Workshop Wallet
+        Solana-->>Backend: Transfer Confirmed
+    and Data Anchoring
+        Backend->>Solana: Anchor Pending Service Data to cNFT (Maintenance PDA)
+        Solana-->>Backend: Anchor Confirmed
+    end
+    
+    Backend-->>App: Payment & Settlement Complete
+    App->>User: Show Success Screen & Updated Timeline
+```
+
 ---
 
 ## 9. Data Model & On-Chain Schema

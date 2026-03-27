@@ -3,60 +3,81 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Brain, TrendingUp, AlertTriangle, CheckCircle2, ChevronRight, Info, Eye, EyeOff } from "lucide-react";
+import { useActiveVehicle, vehicleData } from "@/context/ActiveVehicleContext";
 
-const predictions = [
-  {
-    part: "CVT Belt", component_id: "Transmission.CVT_Belt", health: 42,
-    failureProbability: 0.67, daysUntilFailure: 45, status: "Critical",
-    shapFactors: [
-      { feature: "Jarak sejak servis CVT terakhir", impact: 0.38, direction: "up" },
-      { feature: "Total kilometer tempuh", impact: 0.22, direction: "up" },
-      { feature: "Usia kendaraan (hari)", impact: 0.11, direction: "up" },
-      { feature: "Reputasi bengkel rata-rata", impact: -0.05, direction: "down" },
-      { feature: "Frekuensi servis", impact: -0.03, direction: "down" },
-    ],
-    recommendation: "Jadwalkan inspeksi CVT belt dalam 2 minggu. Pertimbangkan penggantian jika lebar belt < 21.0mm.",
-  },
-  {
-    part: "Air Filter", component_id: "Engine.Air_Filter", health: 55,
-    failureProbability: 0.45, daysUntilFailure: 60, status: "Warning",
-    shapFactors: [
-      { feature: "Hari sejak penggantian terakhir", impact: 0.30, direction: "up" },
-      { feature: "Rasio berkendara perkotaan", impact: 0.20, direction: "up" },
-      { feature: "Jarak sejak servis", impact: 0.15, direction: "up" },
-      { feature: "Servis di dealer OEM", impact: -0.08, direction: "down" },
-    ],
-    recommendation: "Ganti elemen air filter (OEM #17801-BZ050) pada kunjungan servis berikutnya.",
-  },
-  {
-    part: "Brake Fluid", component_id: "Fluids.Brake_Fluid", health: 68,
-    failureProbability: 0.30, daysUntilFailure: 90, status: "Warning",
-    shapFactors: [
-      { feature: "Waktu sejak flush terakhir", impact: 0.25, direction: "up" },
-      { feature: "Zona iklim (tropis)", impact: 0.12, direction: "up" },
-      { feature: "Frekuensi pengereman", impact: 0.08, direction: "up" },
-    ],
-    recommendation: "Jadwalkan brake fluid flush (DOT 4) dalam 90 hari untuk performa pengereman optimal.",
-  },
-  {
-    part: "Engine Oil", component_id: "Fluids.Engine_Oil", health: 95,
-    failureProbability: 0.05, daysUntilFailure: 180, status: "Excellent",
-    shapFactors: [
-      { feature: "Baru saja ganti oli", impact: -0.35, direction: "down" },
-      { feature: "Kualitas oli yang digunakan", impact: -0.12, direction: "down" },
-    ],
-    recommendation: "Baru diservis. Ganti oli berikutnya disarankan di ~40,000 km.",
-  },
-  {
-    part: "Front Brake Pads", component_id: "Brakes.Brake_Pad_FL", health: 100,
-    failureProbability: 0.02, daysUntilFailure: 365, status: "Excellent",
-    shapFactors: [
-      { feature: "Baru diganti", impact: -0.40, direction: "down" },
-      { feature: "Part OEM terverifikasi", impact: -0.10, direction: "down" },
-    ],
-    recommendation: "Brake pad OEM baru dipasang. Tidak perlu tindakan.",
-  },
-];
+const predictionsData: Record<string, any[]> = {
+  avanza: [
+    {
+      part: "CVT Belt", component_id: "Transmission.CVT_Belt", health: 42,
+      failureProbability: 0.67, daysUntilFailure: 45, status: "Critical",
+      shapFactors: [
+        { feature: "Jarak sejak servis CVT terakhir", impact: 0.38, direction: "up" },
+        { feature: "Total kilometer tempuh", impact: 0.22, direction: "up" },
+        { feature: "Usia kendaraan (hari)", impact: 0.11, direction: "up" }
+      ],
+      recommendation: "Jadwalkan inspeksi CVT belt dalam 2 minggu. Pertimbangkan penggantian jika lebar belt < 21.0mm.",
+    },
+    {
+      part: "Air Filter", component_id: "Engine.Air_Filter", health: 55,
+      failureProbability: 0.45, daysUntilFailure: 60, status: "Warning",
+      shapFactors: [
+        { feature: "Hari sejak penggantian terakhir", impact: 0.30, direction: "up" },
+        { feature: "Rasio berkendara perkotaan", impact: 0.20, direction: "up" }
+      ],
+      recommendation: "Ganti elemen air filter (OEM #17801-BZ050) pada kunjungan servis berikutnya.",
+    },
+    {
+      part: "Brake Fluid", component_id: "Fluids.Brake_Fluid", health: 68,
+      failureProbability: 0.30, daysUntilFailure: 90, status: "Warning",
+      shapFactors: [
+        { feature: "Waktu sejak flush terakhir", impact: 0.25, direction: "up" },
+        { feature: "Zona iklim (tropis)", impact: 0.12, direction: "up" },
+      ],
+      recommendation: "Jadwalkan brake fluid flush (DOT 4) dalam 90 hari untuk performa pengereman optimal.",
+    }
+  ],
+  bmw_m4: [
+    {
+      part: "Brake Pads (Rear)", component_id: "Brakes.Brake_Pad_RL", health: 60,
+      failureProbability: 0.45, daysUntilFailure: 30, status: "Warning",
+      shapFactors: [
+        { feature: "Track day usage ratio", impact: 0.45, direction: "up" },
+        { feature: "Harsh braking frequency", impact: 0.15, direction: "up" }
+      ],
+      recommendation: "Book an M Certified mechanic to replace rear brake pads very soon.",
+    }
+  ],
+  beat: [
+    {
+      part: "V-Belt", component_id: "Transmission.Belt", health: 30,
+      failureProbability: 0.85, daysUntilFailure: 5, status: "Danger",
+      shapFactors: [
+        { feature: "Stop and go traffic usage", impact: 0.50, direction: "up" },
+        { feature: "Missed scheduled CVT service", impact: 0.35, direction: "up" }
+      ],
+      recommendation: "Replace V-Belt immediately to avoid breakdown mid-trip.",
+    },
+    {
+      part: "Engine Oil", component_id: "Fluid.Engine_Oil", health: 45,
+      failureProbability: 0.70, daysUntilFailure: 10, status: "Critical",
+      shapFactors: [
+        { feature: "Mileage since last oil change", impact: 0.60, direction: "up" },
+      ],
+      recommendation: "Replace engine oil within 10 days.",
+    }
+  ],
+  harley: [
+    {
+      part: "Battery", component_id: "Electrical.Battery", health: 50,
+      failureProbability: 0.40, daysUntilFailure: 60, status: "Warning",
+      shapFactors: [
+        { feature: "Garaged for prolonged duration", impact: 0.45, direction: "up" },
+        { feature: "Voltage drop cold start", impact: 0.20, direction: "up" }
+      ],
+      recommendation: "Keep bike on a trickle charger or prepare to replace battery soon.",
+    }
+  ]
+};
 
 function getStatusColor(status: string) {
   switch (status) {
@@ -105,18 +126,32 @@ function FactorsChart({ factors, showAdvanced }: { factors: { feature: string; i
 }
 
 export default function InsightsPage() {
+  const ctx = useActiveVehicle();
+  const currentKey = ctx?.activeVehicle || "avanza";
+  const currentVehicleData = ctx?.currentVehicleData || vehicleData.avanza;
+
+  const currentPredictions = predictionsData[currentKey] || predictionsData.avanza;
+
   const [advancedView, setAdvancedView] = useState(false);
+  const [expandedInsight, setExpandedInsight] = useState<number | null>(null);
 
   return (
     <div>
       <div className="page-header">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="flex items-center gap-3">
-              <Brain className="w-7 h-7" style={{ color: "var(--solana-purple)" }} />
+            <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
+              <Brain className="w-8 h-8 text-purple-400" />
               AI Predictive Insights
             </h1>
-            <p>Prediksi kegagalan komponen kendaraan berdasarkan data servis dan AI</p>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-sm font-semibold px-2 py-1 rounded bg-white/5 border border-slate-700/50 text-slate-300">
+                {currentVehicleData.name}
+              </span>
+              <span className="text-xs text-slate-500 font-mono border-l border-slate-700 pl-2">
+                {currentVehicleData.vin}
+              </span>
+            </div>
           </div>
           <button
             onClick={() => setAdvancedView(!advancedView)}
@@ -153,12 +188,12 @@ export default function InsightsPage() {
         )}
       </div>
 
-      {/* Prediction cards */}
-      <div className="flex flex-col gap-8">
-        {predictions.map((pred, i) => {
+      {/* Insights List */}
+      <div className="flex flex-col gap-4">
+        {currentPredictions.map((pred, i) => {
           const risk = getRiskLabel(pred.failureProbability);
           return (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card-static overflow-hidden">
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card-static overflow-hidden hover:bg-white/5 transition-colors cursor-pointer group">
               <div className="h-1" style={{ background: getStatusColor(pred.status) }} />
               <div className="p-8">
                 {/* Header */}

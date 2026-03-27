@@ -4,28 +4,56 @@ import { motion } from "framer-motion";
 import {
   Heart,
   Calendar,
-  Coins,
-  TrendingUp,
   Clock,
   Wrench,
   AlertTriangle,
   CheckCircle2,
   ArrowUpRight,
+  Activity,
 } from "lucide-react";
 import Link from "next/link";
 
-const recentEvents = [
-  { date: "2026-02-10", type: "Oil Change", mechanic: "Pak Hendra (★ 4.8)", mileage: "34,521 km", status: "Verified" },
-  { date: "2026-01-15", type: "Brake Pad Replacement", mechanic: "Workshop Maju Jaya (★ 4.5)", mileage: "31,200 km", status: "Verified" },
-  { date: "2025-11-20", type: "Full Inspection", mechanic: "Dealer Toyota BSD (★ 4.9)", mileage: "28,000 km", status: "Verified" },
-  { date: "2025-08-15", type: "CVT Fluid Replacement", mechanic: "Pak Hendra (★ 4.8)", mileage: "24,100 km", status: "Verified" },
-];
-
-const aiAlerts = [
-  { part: "CVT Belt", health: 42, risk: "High", prediction: "Replace within 45 days", color: "#F97316" },
-  { part: "Air Filter", health: 55, risk: "Medium", prediction: "Replace within 60 days", color: "#FACC15" },
-  { part: "Brake Fluid", health: 68, risk: "Medium", prediction: "Flush within 90 days", color: "#FACC15" },
-];
+const dashboardData = {
+  avanza: {
+    recentEvents: [
+      { date: "2026-02-10", type: "Oil Change", mechanic: "Pak Hendra (★ 4.8)", mileage: "34,521 km", status: "Verified" },
+      { date: "2026-01-15", type: "Brake Pad Replacement", mechanic: "Workshop Maju Jaya (★ 4.5)", mileage: "31,200 km", status: "Verified" },
+      { date: "2025-11-20", type: "Full Inspection", mechanic: "Dealer Toyota BSD (★ 4.9)", mileage: "28,000 km", status: "Verified" },
+      { date: "2025-08-15", type: "CVT Fluid Replacement", mechanic: "Pak Hendra (★ 4.8)", mileage: "24,100 km", status: "Verified" },
+    ],
+    aiAlerts: [
+      { part: "CVT Belt", health: 42, risk: "High", prediction: "Replace within 45 days", color: "#F97316" },
+      { part: "Air Filter", health: 55, risk: "Medium", prediction: "Replace within 60 days", color: "#FACC15" },
+      { part: "Brake Fluid", health: 68, risk: "Medium", prediction: "Flush within 90 days", color: "#FACC15" },
+    ]
+  },
+  bmw_m4: {
+    recentEvents: [
+      { date: "2026-03-01", type: "Suspension Check", mechanic: "EuroHaus M Performance (★ 4.9)", mileage: "12,400 km", status: "Verified" },
+      { date: "2025-10-12", type: "Tire Replacement", mechanic: "Bintang Racing (★ 4.7)", mileage: "9,800 km", status: "Verified" },
+    ],
+    aiAlerts: [
+      { part: "Brake Pads (Rear)", health: 60, risk: "Medium", prediction: "Replace within 30 days", color: "#FACC15" },
+    ]
+  },
+  beat: {
+    recentEvents: [
+      { date: "2026-01-05", type: "CVT & Roller Check", mechanic: "Ahass Motor (★ 4.5)", mileage: "14,200 km", status: "Verified" },
+    ],
+    aiAlerts: [
+      { part: "V-Belt", health: 30, risk: "High", prediction: "Replace immediately", color: "#EF4444" },
+      { part: "Engine Oil", health: 45, risk: "High", prediction: "Replace within 10 days", color: "#F97316" },
+    ]
+  },
+  harley: {
+    recentEvents: [
+      { date: "2025-12-20", type: "Primary Chain Adj", mechanic: "Mabua Custom (★ 5.0)", mileage: "8,900 km", status: "Verified" },
+    ],
+    aiAlerts: [
+      { part: "Battery", health: 50, risk: "Medium", prediction: "Check voltage", color: "#FACC15" },
+    ]
+  }
+};
 
 function HealthScoreRing({ score }: { score: number }) {
   const radius = 60;
@@ -54,71 +82,102 @@ function HealthScoreRing({ score }: { score: number }) {
   );
 }
 
+
+
+
+
+import { useActiveVehicle, vehicleData } from "@/context/ActiveVehicleContext";
+
 export default function DAppDashboard() {
+  const ctx = useActiveVehicle();
+  const currentKey = ctx?.activeVehicle || "avanza";
+  const currentVehicleData = ctx?.currentVehicleData || vehicleData.avanza;
+  const { recentEvents, aiAlerts } = dashboardData[currentKey] || dashboardData.avanza;
+
   return (
     <div>
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Vehicle Dashboard</h1>
-          <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Toyota Avanza 2025 · VIN: MHKA1BA1JFK000001</p>
+          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
+            Vehicle Dashboard
+          </h1>
+          <div className="mt-3 flex items-center gap-2">
+            <span className="text-sm font-semibold px-3 py-1.5 rounded-lg bg-white/5 border border-slate-700/50">
+              {currentVehicleData.name}
+            </span>
+            <span className="text-xs text-slate-500 font-mono ml-2 border-l border-slate-700 pl-3">
+              {currentVehicleData.vin}
+            </span>
+          </div>
         </div>
         <Link href="/dapp/viewer" className="glow-btn text-sm flex items-center gap-2" style={{ padding: "10px 20px" }}>
-          Open 3D Twin <ArrowUpRight className="w-4 h-4" />
+          View 3D Digital Twin <ArrowUpRight className="w-4 h-4" />
         </Link>
       </div>
 
       {/* Top cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-8 flex flex-col items-center">
-          <HealthScoreRing score={87} />
+          <HealthScoreRing score={currentVehicleData.health} />
           <p className="mt-3 text-sm font-semibold">Overall Health</p>
           <span className="badge badge-green mt-2">Good</span>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(153,69,255,0.12)" }}>
-              <Calendar className="w-5 h-5" style={{ color: "var(--solana-purple)" }} />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-8 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(153,69,255,0.12)" }}>
+                <Calendar className="w-5 h-5" style={{ color: "var(--solana-purple)" }} />
+              </div>
+              <div>
+                <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Next Service</p>
+                <p className="font-semibold">{currentVehicleData.nextService}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Next Service</p>
-              <p className="font-semibold">In 15 days</p>
-            </div>
-          </div>
-          <p className="text-sm" style={{ color: "var(--solana-text-muted)" }}>CVT Belt Inspection recommended</p>
-          <div className="mt-3 w-full h-1 rounded-full" style={{ background: "rgba(153,69,255,0.1)" }}>
-            <div className="h-1 rounded-full" style={{ width: "70%", background: "var(--solana-gradient)" }} />
-          </div>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(20,241,149,0.12)" }}>
-              <Coins className="w-5 h-5" style={{ color: "var(--solana-green)" }} />
-            </div>
-            <div>
-              <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>$NOC Balance</p>
-              <p className="text-2xl font-bold gradient-text">1,247</p>
+            <p className="text-sm mb-2" style={{ color: "var(--solana-text-muted)" }}>CVT Belt Inspection recommended</p>
+            <div className="flex gap-2 mb-4">
+              <span className="badge badge-purple" style={{ fontSize: "10px", padding: "2px 6px" }}>CVT Fluid</span>
+              <span className="badge badge-green" style={{ fontSize: "10px", padding: "2px 6px" }}>Filter</span>
             </div>
           </div>
-          <div className="flex items-center gap-1" style={{ color: "var(--solana-green)" }}>
-            <TrendingUp className="w-4 h-4" />
-            <span className="text-xs">+125 this month</span>
+          <div className="mt-auto">
+            <p className="text-xs mb-3 font-medium flex items-center gap-1" style={{ color: "var(--solana-text-muted)" }}>
+              Est. Cost: <span className="mono" style={{ color: "var(--solana-green)" }}>Rp 450k-600k</span>
+            </p>
+            <Link href="/dapp/book" className="glow-btn w-full text-xs py-2.5 cursor-pointer text-center block">Book Appointment</Link>
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(153,69,255,0.12)" }}>
-              <Clock className="w-5 h-5" style={{ color: "var(--solana-purple)" }} />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-8 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(153,69,255,0.12)" }}>
+                <Clock className="w-5 h-5" style={{ color: "var(--solana-purple)" }} />
+              </div>
+              <div>
+                <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Total Mileage</p>
+                <p className="text-2xl font-bold leading-tight">{currentVehicleData.mileage} <span className="text-sm font-normal text-gray-500">km</span></p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Total Mileage</p>
-              <p className="text-2xl font-bold">34,521 km</p>
+            
+            <div className="mt-5">
+              <div className="flex justify-between text-[10px] mb-1.5" style={{ color: "var(--solana-text-muted)" }}>
+                <span>Next Major Service Focus</span>
+                <span className="mono">40,000 km</span>
+              </div>
+              <div className="w-full h-1.5 rounded-full relative" style={{ background: "rgba(153,69,255,0.15)" }}>
+                <div className="h-1.5 rounded-full" style={{ width: "86%", background: "var(--solana-gradient)" }} />
+                <div className="absolute top-1/2 -mt-1 -right-1 w-2 h-2 rounded-full border border-black" style={{ background: "var(--solana-pink)" }} />
+              </div>
             </div>
           </div>
-          <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>12 service events on-chain</p>
+          <div className="mt-6 pt-3 border-t flex items-start gap-2" style={{ borderColor: "rgba(153,69,255,0.1)" }}>
+             <Activity className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "var(--solana-green)" }} />
+             <p className="text-[11px] leading-snug" style={{ color: "var(--solana-text-muted)" }}>
+               <span style={{ color: "var(--solana-green)" }}>↑ 12% higher</span> usage this week. Avg: 45 km/day.
+             </p>
+          </div>
         </motion.div>
       </div>
 

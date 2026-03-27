@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import * as THREE from "three";
+import { Vector3, DoubleSide } from "three";
+import type { Group } from "three";
 import { useFrame } from "@react-three/fiber";
-import { RoundedBox } from "@react-three/drei";
 
 function getHealthColor(health: number): string {
   if (health >= 90) return "#22C55E";
@@ -13,9 +13,9 @@ function getHealthColor(health: number): string {
   return "#EF4444";
 }
 
-const VIVID_BLACK = { color: "#0A0A0A", metalness: 0.92, roughness: 0.1, clearcoat: 1, clearcoatRoughness: 0.04 };
-const CHROME = { color: "#D8D8D8", metalness: 1, roughness: 0.04 };
-const MATTE_BLACK = { color: "#1A1A1A", metalness: 0.5, roughness: 0.6 };
+const VIVID_BLACK = { color: "#0A0A0A", metalness: 0.5, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.1 };
+const CHROME = { color: "#E4E4E8", metalness: 0.6, roughness: 0.2 };
+const MATTE_BLACK = { color: "#1A1A1A", metalness: 0.3, roughness: 0.7 };
 const RUBBER = { color: "#080808", metalness: 0.0, roughness: 0.85 };
 const LEATHER = { color: "#1A1008", metalness: 0.0, roughness: 0.7 };
 const RED_ACCENT = { color: "#CC0000", metalness: 0.7, roughness: 0.3 };
@@ -31,9 +31,10 @@ interface PartProps {
 }
 
 function Part({ name, health, onSelect, selected, xray, exploded, explodeOffset = [0, 0, 0], children, position = [0, 0, 0], rotation, drillParts }: PartProps) {
-  const ref = useRef<THREE.Group>(null);
+  const ref = useRef<Group>(null);
   const isSelected = selected === name;
   const [drill, setDrill] = useState(false);
+  const targetVec = useRef(new Vector3());
 
   const finalPos: [number, number, number] = exploded
     ? [position[0] + explodeOffset[0], position[1] + explodeOffset[1], position[2] + explodeOffset[2]]
@@ -41,7 +42,8 @@ function Part({ name, health, onSelect, selected, xray, exploded, explodeOffset 
 
   useFrame(() => {
     if (ref.current) {
-      ref.current.position.lerp(new THREE.Vector3(...finalPos), 0.08);
+      targetVec.current.set(...finalPos);
+      ref.current.position.lerp(targetVec.current, 0.08);
     }
   });
 
@@ -50,7 +52,7 @@ function Part({ name, health, onSelect, selected, xray, exploded, explodeOffset 
       <group onClick={(e) => { e.stopPropagation(); if (drill && !isSelected) setDrill(false); onSelect(name, health); if (isSelected && drillParts) setDrill(!drill); }}>
         {children}
         {isSelected && (
-          <mesh><ringGeometry args={[0.25, 0.29, 32]} /><meshBasicMaterial color={getHealthColor(health)} transparent opacity={0.6} side={THREE.DoubleSide} /></mesh>
+          <mesh><ringGeometry args={[0.25, 0.29, 32]} /><meshBasicMaterial color={getHealthColor(health)} transparent opacity={0.6} side={DoubleSide} /></mesh>
         )}
       </group>
       {drill && drillParts && (
@@ -137,7 +139,7 @@ const partData: Record<string, { health: number; drill?: { name: string; health:
 };
 
 export default function HarleyDavidsonModel({ onSelectPart, selectedPart, xray, exploded }: HarleyProps) {
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<Group>(null);
 
   const P = (name: string, pos: [number, number, number], explOff: [number, number, number], children: React.ReactNode, rot?: [number, number, number]) => {
     const pd = partData[name] || { health: 80 };
@@ -173,7 +175,7 @@ export default function HarleyDavidsonModel({ onSelectPart, selectedPart, xray, 
       {/* Fuel tank — muscular shape */}
       {P("Body.FuelTank", [0, 0.82, 0.25], [0, 0.8, 0.4],
         <group>
-          <RoundedBox args={[0.38, 0.22, 0.55]} radius={0.05} smoothness={4} castShadow>{bodyMat}</RoundedBox>
+          <mesh castShadow><boxGeometry args={[0.38, 0.22, 0.55]} />{bodyMat}</mesh>
           {/* Tank badge */}
           <mesh position={[-0.195, 0.02, 0]}><boxGeometry args={[0.005, 0.08, 0.2]} /><meshStandardMaterial {...CHROME} /></mesh>
           <mesh position={[0.195, 0.02, 0]}><boxGeometry args={[0.005, 0.08, 0.2]} /><meshStandardMaterial {...CHROME} /></mesh>
@@ -182,26 +184,26 @@ export default function HarleyDavidsonModel({ onSelectPart, selectedPart, xray, 
         </group>
       )}
       {P("Body.FrontFender", [0, 0.52, 0.92], [0, 0.4, 0.8],
-        <RoundedBox args={[0.2, 0.04, 0.4]} radius={0.015} smoothness={4} castShadow>{bodyMat}</RoundedBox>
+        <mesh castShadow><boxGeometry args={[0.2, 0.04, 0.4]} />{bodyMat}</mesh>
       )}
       {P("Body.RearFender", [0, 0.38, -0.72], [0, 0.3, -0.5],
-        <RoundedBox args={[0.22, 0.04, 0.35]} radius={0.015} smoothness={4} castShadow>{bodyMat}</RoundedBox>
+        <mesh castShadow><boxGeometry args={[0.22, 0.04, 0.35]} />{bodyMat}</mesh>
       )}
       {P("Body.TailSection", [0, 0.58, -0.55], [0, 0.5, -0.5],
-        <RoundedBox args={[0.25, 0.1, 0.25]} radius={0.04} smoothness={4}>{bodyMat}</RoundedBox>
+        <mesh><boxGeometry args={[0.25, 0.1, 0.25]} />{bodyMat}</mesh>
       )}
       {P("Body.SidePanel_L", [-0.2, 0.55, -0.1], [-0.4, 0.3, 0],
-        <RoundedBox args={[0.04, 0.15, 0.35]} radius={0.015} smoothness={4}>{bodyMat}</RoundedBox>
+        <mesh><boxGeometry args={[0.04, 0.15, 0.35]} />{bodyMat}</mesh>
       )}
       {P("Body.SidePanel_R", [0.2, 0.55, -0.1], [0.4, 0.3, 0],
-        <RoundedBox args={[0.04, 0.15, 0.35]} radius={0.015} smoothness={4}>{bodyMat}</RoundedBox>
+        <mesh><boxGeometry args={[0.04, 0.15, 0.35]} />{bodyMat}</mesh>
       )}
 
       {/* ===== ENGINE — Rev Max 1250T V-Twin ===== */}
       {P("Engine.RevMax1250T", [0, 0.35, 0.15], [0, 1.2, 0.8],
         <group>
           {/* V-Twin block */}
-          <RoundedBox args={[0.28, 0.3, 0.35]} radius={0.04} smoothness={4}><meshStandardMaterial {...MATTE_BLACK} transparent={xray} opacity={xray ? 0.15 : 1} /></RoundedBox>
+          <mesh><boxGeometry args={[0.28, 0.3, 0.35]} /><meshStandardMaterial {...MATTE_BLACK} transparent={xray} opacity={xray ? 0.15 : 1} /></mesh>
           {/* Crankcase */}
           <mesh position={[0, -0.12, 0]}><boxGeometry args={[0.3, 0.08, 0.3]} /><meshStandardMaterial color="#2A2A2A" metalness={0.8} roughness={0.3} /></mesh>
         </group>

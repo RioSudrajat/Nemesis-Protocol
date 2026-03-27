@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Bell, AlertTriangle, Wrench, Coins, Shield, CheckCircle2, Trash2 } from "lucide-react";
+import { Bell, AlertTriangle, Wrench, Coins, Shield, CheckCircle2, Trash2, CalendarCheck, Receipt, Star } from "lucide-react";
+import { SharedNotificationCard } from "@/components/ui/SharedNotificationCard";
+import { useBooking } from "@/context/BookingContext";
 
 const initialNotifications = [
   { id: 1, type: "ai_alert", title: "CVT Belt — Risiko Tinggi", message: "Prediksi kegagalan dalam 45 hari. Segera jadwalkan inspeksi.", time: "2 jam lalu", read: false },
@@ -19,17 +21,58 @@ const typeConfig: Record<string, { icon: React.ReactNode; color: string }> = {
   maintenance_due: { icon: <Wrench className="w-5 h-5" />, color: "var(--solana-cyan)" },
   token_reward: { icon: <Coins className="w-5 h-5" />, color: "var(--solana-green)" },
   system: { icon: <Shield className="w-5 h-5" />, color: "var(--solana-purple)" },
+  // Booking notification types
+  booking_pending: { icon: <CalendarCheck className="w-5 h-5" />, color: "#FACC15" },
+  booking_accepted: { icon: <CheckCircle2 className="w-5 h-5" />, color: "var(--solana-green)" },
+  booking_rejected: { icon: <AlertTriangle className="w-5 h-5" />, color: "#EF4444" },
+  booking_service: { icon: <Wrench className="w-5 h-5" />, color: "var(--solana-cyan)" },
+  booking_invoice: { icon: <Receipt className="w-5 h-5" />, color: "#F97316" },
+  booking_paid: { icon: <CheckCircle2 className="w-5 h-5" />, color: "var(--solana-green)" },
+  booking_completed: { icon: <Star className="w-5 h-5" />, color: "var(--solana-purple)" },
 };
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState(initialNotifications);
+  const bookingCtx = useBooking();
+  const [staticNotifications, setStaticNotifications] = useState(initialNotifications);
   const [filter, setFilter] = useState<string>("all");
 
-  const markAllRead = () => setNotifications(notifications.map(n => ({ ...n, read: true })));
-  const deleteNotif = (id: number) => setNotifications(notifications.filter(n => n.id !== id));
-  const unreadCount = notifications.filter(n => !n.read).length;
+  // Merge static + booking notifications (user-side only)
+  const userBookingNotifs = (bookingCtx?.bookingNotifications || [])
+    .filter(n => n.targetRole === "user")
+    .map(n => ({
+      id: n.id,
+      type: n.type,
+      title: n.title,
+      message: n.message,
+      time: n.time,
+      read: n.read,
+    }));
 
-  const filtered = filter === "all" ? notifications : notifications.filter(n => n.type === filter);
+  const allNotifications = [...userBookingNotifs, ...staticNotifications];
+
+  const markAllRead = () => {
+    setStaticNotifications(staticNotifications.map(n => ({ ...n, read: true })));
+    bookingCtx?.markAllNotificationsRead("user");
+  };
+
+  const deleteNotif = (id: number | string) => {
+    // Check if it's a booking notification
+    if (typeof id === "string" && id.startsWith("BN-")) {
+      bookingCtx?.deleteNotification(id);
+    } else {
+      setStaticNotifications(staticNotifications.filter(n => n.id !== Number(id)));
+    }
+  };
+
+  const unreadCount = allNotifications.filter(n => !n.read).length;
+
+  const isBookingType = (type: string) => type.startsWith("booking_");
+
+  const filtered = filter === "all"
+    ? allNotifications
+    : filter === "booking"
+    ? allNotifications.filter(n => isBookingType(n.type))
+    : allNotifications.filter(n => n.type === filter);
 
   return (
     <div>
@@ -46,7 +89,7 @@ export default function NotificationsPage() {
             <p>Alerts, rewards, and maintenance reminders</p>
           </div>
           {unreadCount > 0 && (
-            <button onClick={markAllRead} className="flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition-colors" style={{ background: "rgba(153,69,255,0.1)", color: "var(--solana-purple)" }}>
+            <button onClick={markAllRead} className="flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition-colors cursor-pointer" style={{ background: "rgba(153,69,255,0.1)", color: "var(--solana-purple)" }}>
               <CheckCircle2 className="w-4 h-4" /> Mark all read
             </button>
           )}
@@ -57,12 +100,13 @@ export default function NotificationsPage() {
       <div className="flex flex-wrap gap-3 mb-8">
         {[
           { key: "all", label: "All" },
+          { key: "booking", label: "Booking" },
           { key: "ai_alert", label: "AI Alerts" },
           { key: "maintenance_due", label: "Maintenance" },
           { key: "token_reward", label: "Rewards" },
           { key: "system", label: "System" },
         ].map(f => (
-          <button key={f.key} onClick={() => setFilter(f.key)} className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all" style={{ background: filter === f.key ? "rgba(153,69,255,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${filter === f.key ? "var(--solana-purple)" : "rgba(153,69,255,0.15)"}`, color: filter === f.key ? "var(--solana-purple)" : "var(--solana-text-muted)" }}>
+          <button key={f.key} onClick={() => setFilter(f.key)} className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: filter === f.key ? "rgba(153,69,255,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${filter === f.key ? "var(--solana-purple)" : "rgba(153,69,255,0.15)"}`, color: filter === f.key ? "var(--solana-purple)" : "var(--solana-text-muted)" }}>
             {f.label}
           </button>
         ))}
@@ -79,22 +123,23 @@ export default function NotificationsPage() {
           filtered.map((n, i) => {
             const config = typeConfig[n.type] || typeConfig.system;
             return (
-              <motion.div key={n.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-                className="glass-card-static p-6 flex items-start gap-5"
-                style={{ borderLeft: !n.read ? `4px solid ${config.color}` : `1px solid rgba(153,69,255,0.15)`, opacity: n.read ? 0.7 : 1 }}
-              >
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${config.color}15`, color: config.color }}>
-                  {config.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-base">{n.title}</p>
-                  <p className="text-sm mt-2" style={{ color: "var(--solana-text-muted)" }}>{n.message}</p>
-                  <p className="text-xs mono mt-3" style={{ color: "var(--solana-text-muted)", opacity: 0.7 }}>{n.time}</p>
-                </div>
-                <button onClick={() => deleteNotif(n.id)} className="p-3 rounded-lg hover:bg-white/5 transition-colors shrink-0">
-                  <Trash2 className="w-5 h-5" style={{ color: "var(--solana-text-muted)" }} />
-                </button>
-              </motion.div>
+              <SharedNotificationCard
+                key={n.id}
+                id={n.id}
+                index={i}
+                title={n.title}
+                message={n.message}
+                time={n.time}
+                read={n.read}
+                icon={config.icon}
+                color={config.color}
+                onDelete={deleteNotif}
+                onClick={
+                  isBookingType(n.type) && typeof n.id === "string"
+                    ? () => bookingCtx?.markNotificationRead(n.id as string)
+                    : undefined
+                }
+              />
             );
           })
         )}
