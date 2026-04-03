@@ -200,7 +200,7 @@ const features = [
   {
     icon: Wrench,
     title: "Proof of Maintenance",
-    desc: "Mechanics earn $NOC tokens for every verified service logged on-chain.",
+    desc: "Mechanics earn rewards for every verified service logged on-chain.",
     color: "#FACC15",
     bgColor: "rgba(250, 204, 21, 0.12)",
     glowColor: "rgba(250, 204, 21, 0.15)",
@@ -245,7 +245,7 @@ const stats = [
   { icon: Car, target: 12847, suffix: "", label: "Vehicles Registered" },
   { icon: Database, target: 87432, suffix: "", label: "Maintenance Events" },
   { icon: Fingerprint, target: 2341, suffix: "", label: "Verified Workshops" },
-  { icon: TrendingUp, target: 5200000, suffix: "", label: "Tokens Distributed", displaySuffix: " $NOC" },
+  { icon: TrendingUp, target: 152000, suffix: "+", label: "Service Records On-Chain" },
 ];
 
 /* ——————————————— Partners ——————————————— */
@@ -463,13 +463,7 @@ export default function LandingPage() {
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-1" style={{ background: "rgba(153,69,255,0.1)" }}>
                     <s.icon className="w-6 h-6" style={{ color: "var(--solana-green)" }} />
                   </div>
-                  {s.displaySuffix ? (
-                    <span className="mono font-bold text-3xl md:text-4xl gradient-text">
-                      5.2M<span className="text-2xl md:text-3xl"> $NOC</span>
-                    </span>
-                  ) : (
-                    <AnimatedCounter target={s.target} suffix={s.suffix} label={s.label} />
-                  )}
+                  <AnimatedCounter target={s.target} suffix={s.suffix} label={s.label} />
                   <p className="text-sm font-semibold" style={{ color: "var(--solana-text-muted)" }}>{s.label}</p>
                 </motion.div>
               ))}
