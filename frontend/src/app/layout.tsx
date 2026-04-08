@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${orbitron.variable} ${exo2.variable}`}>
-      <body className="font-exo bg-[#0A0A0B] text-zinc-100 antialiased selection:bg-teal-400/25 selection:text-teal-100">
+      <body className="font-exo bg-[#1A1D23] text-zinc-100 antialiased selection:bg-teal-400/25 selection:text-teal-900">
         <ToastProvider>
           <AdminProvider>
             <PartCatalogProvider>

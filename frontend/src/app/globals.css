@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  /* === Base 1: Neutral === */
-  --bg-base: #0A0A0B;
-  --bg-surface: #111113;
-  --bg-surface-2: #18181B;
+  /* === Base 1: Neutral (soft charcoal — corporate/automotive, not pitch black) === */
+  --bg-base: #1A1D23;
+  --bg-surface: #22262E;
+  --bg-surface-2: #2B3038;
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-strong: rgba(255, 255, 255, 0.12);
   --text-primary: #F4F4F5;
@@ -18,12 +18,12 @@
   --accent-soft: rgba(94, 234, 212, 0.12);
   --accent-border: rgba(94, 234, 212, 0.25);
 
-  /* === Status (muted, semantic only) === */
+  /* === Status === */
   --status-success: #86EFAC;
   --status-warning: #FCD34D;
   --status-danger: #FCA5A5;
 
-  /* === Legacy aliases (keep existing code working) === */
+  /* === Legacy aliases === */
   --solana-purple: var(--accent);
   --solana-purple-dark: var(--accent-strong);
   --solana-green: var(--accent);
@@ -33,13 +33,75 @@
   --solana-dark: var(--bg-base);
   --solana-dark-2: var(--bg-surface);
   --solana-dark-3: var(--bg-surface-2);
-  --solana-card: rgba(17, 17, 19, 0.7);
+  --solana-card: rgba(34, 38, 46, 0.7);
   --solana-card-border: var(--accent-border);
   --solana-text: var(--text-primary);
   --solana-text-muted: var(--text-muted);
   --solana-gradient: linear-gradient(135deg, #2DD4BF 0%, #14B8A6 100%);
   --solana-gradient-2: linear-gradient(135deg, #5EEAD4 0%, #14B8A6 100%);
 }
+
+/* === Light theme (landing page only) === */
+.theme-light {
+  --bg-base: #FAFAFA;
+  --bg-surface: #FFFFFF;
+  --bg-surface-2: #F4F4F5;
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.14);
+  --text-primary: #0A0A0B;
+  --text-muted: #52525B;
+  --text-dim: #71717A;
+  --solana-card: rgba(255, 255, 255, 0.85);
+  --solana-card-border: rgba(20, 184, 166, 0.22);
+  background-color: #FAFAFA;
+  color: #0A0A0B;
+}
+
+.theme-light .glass-card,
+.theme-light .glass-card-static {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(20, 184, 166, 0.22);
+}
+.theme-light .glass-card:hover {
+  border-color: rgba(20, 184, 166, 0.45);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08), 0 0 40px rgba(20, 184, 166, 0.06);
+}
+.theme-light .gradient-text,
+.theme-light .gradient-text-2 {
+  background: linear-gradient(135deg, #0F766E 0%, #14B8A6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.theme-light .glow-btn {
+  background: linear-gradient(135deg, #14B8A6 0%, #0F766E 100%);
+  color: #FFFFFF;
+}
+.theme-light .glow-btn-outline {
+  color: #0A0A0B;
+  border-color: rgba(20, 184, 166, 0.5);
+}
+.theme-light .glow-btn-outline:hover {
+  background: rgba(20, 184, 166, 0.08);
+}
+.theme-light .hero-grid {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.10) 1px, transparent 1px);
+}
+.theme-light .orb-purple,
+.theme-light .orb-green,
+.theme-light .orb-cyan {
+  background: rgba(20, 184, 166, 0.10);
+}
+.theme-light .orbit-ring { border-color: rgba(15, 23, 42, 0.08); }
+.theme-light .orbit-ring-2 { border-color: rgba(15, 23, 42, 0.06); }
+.theme-light .badge-purple,
+.theme-light .badge-green {
+  background: rgba(20, 184, 166, 0.10);
+  color: #0F766E;
+  border-color: rgba(20, 184, 166, 0.3);
+}
+/* NOTE: removed blanket .theme-light overrides for text-white / text-slate-* / bg-white\/*
+   They broke intentional dark-on-white sections (navbar dark CTA button, final CTA card).
+   Landing page now uses explicit text-zinc-{500|600|900} and text-teal-{600|700} everywhere. */
 
 html {
   scroll-behavior: smooth;
@@ -521,7 +583,7 @@ code, pre, .mono {
 
 /* === Typography & Page content spacing === */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-orbitron), sans-serif;
+  font-family: var(--font-exo2), 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.2;
   letter-spacing: -0.02em;
 }

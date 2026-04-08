@@ -222,10 +222,10 @@ export default function WarrantyPage() {
                 )}
 
                 <div className="flex gap-2 mb-4">
-                  <Link href={`/enterprise/vin/${reviewRow.vin}`} className="flex-1 text-xs px-3 py-2 rounded-lg flex items-center justify-center gap-1.5" style={{ background: "rgba(94, 234, 212,0.05)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
+                  <Link href={`/enterprise/fleet?vin=${reviewRow.vin}`} className="flex-1 text-xs px-3 py-2 rounded-lg flex items-center justify-center gap-1.5" style={{ background: "rgba(94, 234, 212,0.05)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
                     <History className="w-3.5 h-3.5" /> Riwayat Servis
                   </Link>
-                  <Link href={`/enterprise/twin?vin=${reviewRow.vin}`} className="flex-1 text-xs px-3 py-2 rounded-lg flex items-center justify-center gap-1.5" style={{ background: "rgba(0,194,255,0.05)", color: "var(--solana-cyan)", border: "1px solid rgba(0,194,255,0.15)" }}>
+                  <Link href={`/enterprise/models?vin=${reviewRow.vin}`} className="flex-1 text-xs px-3 py-2 rounded-lg flex items-center justify-center gap-1.5" style={{ background: "rgba(94, 234, 212,0.05)", color: "var(--solana-cyan)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
                     <Box className="w-3.5 h-3.5" /> Audit 3D Twin
                   </Link>
                 </div>
