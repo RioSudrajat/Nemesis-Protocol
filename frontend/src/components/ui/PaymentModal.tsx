@@ -116,7 +116,7 @@ export function PaymentModal({
                     {serviceDetails.parts.map((p, idx) => (
                       <div key={idx} className="flex justify-between items-center text-sm">
                         <span className="text-slate-300 flex items-center gap-1.5">
-                          {p.isOem && <CheckCircle2 className="w-3 h-3 text-green-400" />}
+                          {p.isOem && <CheckCircle2 className="w-3 h-3 text-teal-400" />}
                           {p.name}
                         </span>
                         <span className="mono text-slate-400 text-xs">Rp {p.priceIDR.toLocaleString('id-ID')}</span>
@@ -138,12 +138,7 @@ export function PaymentModal({
                       <span className="mono text-slate-300">Rp {serviceDetails.serviceCost.toLocaleString('id-ID')}</span>
                     </div>
                   )}
-                  {typeof serviceDetails.gasFee === 'number' && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-400">Network Gas Fee</span>
-                      <span className="mono text-slate-300">Rp {serviceDetails.gasFee.toLocaleString('id-ID')}</span>
-                    </div>
-                  )}
+                  {/* Network gas fee is absorbed by the workshop — not billed to customer */}
                   <div className="flex justify-between items-end pt-2 mt-2 border-t border-slate-700">
                     <span className="text-sm text-slate-400">Total Due</span>
                     <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
@@ -187,12 +182,12 @@ export function PaymentModal({
                   disabled={isProcessing}
                   className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
                     selectedMethod === "web3"
-                      ? "border-purple-500 bg-purple-500/10"
+                      ? "border-teal-500 bg-teal-500/10"
                       : "border-slate-700 bg-slate-800/50 hover:border-slate-600"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-purple-500/20 text-purple-400">
+                    <div className="p-2 rounded-lg bg-teal-500/20 text-teal-400">
                       <Wallet className="w-5 h-5" />
                     </div>
                     <div className="text-left">
@@ -211,12 +206,12 @@ export function PaymentModal({
                   className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-700 bg-slate-800/30 opacity-60 cursor-not-allowed"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-orange-500/20 text-orange-400">
+                    <div className="p-2 rounded-lg bg-teal-500/20 text-teal-400">
                       <Coins className="w-5 h-5" />
                     </div>
                     <div className="text-left">
                       <div className="font-medium text-white">Pay with $NOC</div>
-                      <div className="text-xs text-orange-400 font-medium tracking-wide text-[10px] uppercase">Coming Soon</div>
+                      <div className="text-xs text-teal-400 font-medium tracking-wide text-[10px] uppercase">Coming Soon</div>
                     </div>
                   </div>
                   <div className="text-right">
@@ -229,7 +224,7 @@ export function PaymentModal({
               <button
                 onClick={handlePayment}
                 disabled={!selectedMethod || isProcessing}
-                className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-medium hover:from-blue-500 hover:to-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20"
+                className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-teal-600 text-white font-medium hover:from-blue-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-500/20"
               >
                 {isProcessing ? (
                   <>
@@ -248,7 +243,7 @@ export function PaymentModal({
               animate={{ opacity: 1, scale: 1 }}
               className="py-10 flex flex-col items-center justify-center text-center space-y-4"
             >
-              <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 mb-2">
+              <div className="w-16 h-16 rounded-full bg-teal-500/20 flex items-center justify-center text-teal-400 mb-2">
                 <CheckCircle className="w-10 h-10" />
               </div>
               <h2 className="text-2xl font-bold text-white">Payment Successful!</h2>

@@ -28,7 +28,7 @@ const staticReviews: ReviewItem[] = [
 const badges = [
   { label: "Verified Workshop", icon: Shield, color: "var(--solana-green)" },
   { label: "OEM Certified", icon: Award, color: "var(--solana-purple)" },
-  { label: "Top Rated Q1 2026", icon: Star, color: "#FACC15" },
+  { label: "Top Rated Q1 2026", icon: Star, color: "#FCD34D" },
 ];
 
 export default function ReputationPage() {
@@ -66,7 +66,7 @@ export default function ReputationPage() {
     <div>
       <div className="page-header">
         <h1 className="flex items-center gap-3">
-          <Star className="w-7 h-7" style={{ color: "#FACC15" }} />
+          <Star className="w-7 h-7" style={{ color: "#FCD34D" }} />
           Reputation
         </h1>
         <p>Your on-chain reputation score and customer reviews</p>
@@ -74,12 +74,12 @@ export default function ReputationPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 mb-12">
         {/* Score ring */}
-        <div className="glass-card p-10 flex flex-col items-center text-center" style={{ background: "linear-gradient(135deg, rgba(153,69,255,0.1) 0%, rgba(250,204,21,0.06) 100%)" }}>
+        <div className="glass-card p-10 flex flex-col items-center text-center" style={{ background: "linear-gradient(135deg, rgba(94, 234, 212,0.1) 0%, rgba(250,204,21,0.06) 100%)" }}>
           <div className="relative w-40 h-40 mb-6">
             <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(153,69,255,0.1)" strokeWidth="8" />
+              <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(94, 234, 212,0.1)" strokeWidth="8" />
               <circle cx="50" cy="50" r="42" fill="none" stroke="url(#repGradient)" strokeWidth="8" strokeDasharray={`${(Number(avgRating) / 5) * 264} 264`} strokeLinecap="round" />
-              <defs><linearGradient id="repGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#FACC15" /><stop offset="100%" stopColor="#22C55E" /></linearGradient></defs>
+              <defs><linearGradient id="repGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#FCD34D" /><stop offset="100%" stopColor="#86EFAC" /></linearGradient></defs>
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-4xl font-bold">{avgRating}</span>
@@ -129,7 +129,7 @@ export default function ReputationPage() {
       <h2 className="text-xl font-semibold mb-6">
         Recent Reviews
         {bookingReviews.length > 0 && (
-          <span className="ml-3 text-sm px-2.5 py-1 rounded-full font-medium" style={{ background: "rgba(20,241,149,0.1)", color: "var(--solana-green)", border: "1px solid rgba(20,241,149,0.2)" }}>
+          <span className="ml-3 text-sm px-2.5 py-1 rounded-full font-medium" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
             +{bookingReviews.length} baru via booking
           </span>
         )}
@@ -146,14 +146,14 @@ export default function ReputationPage() {
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-sm">{r.customer}</p>
                     {"isFromBooking" in r && r.isFromBooking && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: "rgba(153,69,255,0.1)", color: "var(--solana-purple)", border: "1px solid rgba(153,69,255,0.2)" }}>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-purple)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
                         via Booking
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-1 mt-0.5">
                     {Array.from({ length: 5 }).map((_, j) => (
-                      <Star key={j} className="w-3 h-3" style={{ color: j < r.rating ? "#FACC15" : "rgba(148,163,184,0.3)" }} fill={j < r.rating ? "#FACC15" : "none"} />
+                      <Star key={j} className="w-3 h-3" style={{ color: j < r.rating ? "#FCD34D" : "rgba(148,163,184,0.3)" }} fill={j < r.rating ? "#FCD34D" : "none"} />
                     ))}
                   </div>
                 </div>

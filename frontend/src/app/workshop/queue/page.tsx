@@ -39,7 +39,7 @@ export default function WorkshopQueue() {
     <div className="max-w-6xl mx-auto">
       <div className="page-header mb-8">
         <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
-          <Users className="w-7 h-7 text-purple-400" />
+          <Users className="w-7 h-7 text-teal-400" />
           Active Service Queue
         </h1>
         <p className="text-sm mt-1 text-slate-400">Manage vehicles currently in the workshop that need servicing.</p>
@@ -101,7 +101,7 @@ export default function WorkshopQueue() {
                <Link href={`/workshop/vehicle/${item.vin}`} className="flex-1 px-4 py-2.5 rounded-lg border border-slate-700 text-slate-300 text-sm font-medium hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
                  Patient History
                </Link>
-               <Link href={`/workshop/maintenance?vin=${item.vin}&fromBooking=true`} className="flex-1 px-4 py-2.5 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm font-medium hover:from-purple-500 hover:to-blue-500 shadow-lg shadow-purple-500/20 transition-all flex items-center justify-center gap-2">
+               <Link href={`/workshop/maintenance?vin=${item.vin}&fromBooking=true`} className="flex-1 px-4 py-2.5 rounded-lg bg-gradient-to-r from-teal-600 to-blue-600 text-white text-sm font-medium hover:from-teal-500 hover:to-blue-500 shadow-lg shadow-teal-500/20 transition-all flex items-center justify-center gap-2">
                  <Wrench className="w-4 h-4" /> Log Servis
                </Link>
              </div>
@@ -109,13 +109,13 @@ export default function WorkshopQueue() {
         ))}
         
         {/* Scan New Card */}
-        <Link href="/workshop/scan" className="glass-card-static p-6 border border-dashed border-slate-600 hover:border-purple-500/50 hover:bg-purple-500/5 flex flex-col items-center justify-center text-center transition-all min-h-[220px] group cursor-pointer">
-          <div className="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center mb-4 text-slate-400 group-hover:bg-purple-500/20 group-hover:text-purple-400 transition-colors">
+        <Link href="/workshop/scan" className="glass-card-static p-6 border border-dashed border-slate-600 hover:border-teal-500/50 hover:bg-teal-500/5 flex flex-col items-center justify-center text-center transition-all min-h-[220px] group cursor-pointer">
+          <div className="w-14 h-14 rounded-full bg-slate-800 flex items-center justify-center mb-4 text-slate-400 group-hover:bg-teal-500/20 group-hover:text-teal-400 transition-colors">
             <Car className="w-6 h-6" />
           </div>
           <h3 className="text-lg font-bold text-white mb-1">Scan Another Vehicle</h3>
           <p className="text-sm text-slate-400">Add a new patient to the workshop queue</p>
-          <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-purple-400opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-teal-400 opacity-0 group-hover:opacity-100 transition-opacity">
             Proceed to Scanner <ArrowRight className="w-4 h-4" />
           </div>
         </Link>

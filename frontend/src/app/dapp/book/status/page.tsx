@@ -18,7 +18,8 @@ const bookingSteps: { key: BookingStatus[]; label: string; desc: string }[] = [
   { key: ["ACCEPTED"],      label: "Diterima", desc: "Bengkel mengkonfirmasi" },
   { key: ["IN_SERVICE"],    label: "Servis",   desc: "Kendaraan sedang dikerjakan" },
   { key: ["INVOICE_SENT"],  label: "Invoice",  desc: "Invoice diterima" },
-  { key: ["PAID"],          label: "Bayar",    desc: "Menunggu review Anda" },
+  { key: ["PAID", "ANCHORING"], label: "Anchor", desc: "Bengkel menandatangani log on-chain" },
+  { key: ["ANCHORED"],      label: "Review",   desc: "Beri ulasan Anda" },
   { key: ["COMPLETED"],     label: "Selesai",  desc: "Servis selesai & tercatat" },
 ];
 
@@ -26,7 +27,8 @@ const walkinSteps: { key: BookingStatus[]; label: string; desc: string }[] = [
   { key: ["ACCEPTED"],      label: "Tiba",     desc: "Kendaraan terdaftar di bengkel" },
   { key: ["IN_SERVICE"],    label: "Servis",   desc: "Kendaraan sedang dikerjakan" },
   { key: ["INVOICE_SENT"],  label: "Invoice",  desc: "Invoice diterima" },
-  { key: ["PAID"],          label: "Bayar",    desc: "Menunggu review Anda" },
+  { key: ["PAID", "ANCHORING"], label: "Anchor", desc: "Bengkel menandatangani log on-chain" },
+  { key: ["ANCHORED"],      label: "Review",   desc: "Beri ulasan Anda" },
   { key: ["COMPLETED"],     label: "Selesai",  desc: "Servis selesai & tercatat" },
 ];
 
@@ -65,17 +67,17 @@ function StatusSidebarPanel({
   return (
     <div
       className="hidden lg:flex flex-col w-56 xl:w-64 shrink-0 rounded-2xl p-5"
-      style={{ background: "rgba(153,69,255,0.04)", border: "1px solid rgba(153,69,255,0.12)" }}
+      style={{ background: "rgba(94, 234, 212,0.04)", border: "1px solid rgba(94, 234, 212,0.12)" }}
     >
       {/* Live badge */}
       <div className="flex items-center gap-2 mb-6">
         {isActive ? (
-          <span className="flex items-center gap-1.5 text-[10px] font-semibold px-2 py-1 rounded-full" style={{ background: "rgba(20,241,149,0.1)", color: "var(--solana-green)", border: "1px solid rgba(20,241,149,0.2)" }}>
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+          <span className="flex items-center gap-1.5 text-[10px] font-semibold px-2 py-1 rounded-full" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
+            <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
             LIVE
           </span>
         ) : (
-          <span className="text-[10px] font-semibold px-2 py-1 rounded-full" style={{ background: "rgba(153,69,255,0.1)", color: "var(--solana-purple)" }}>
+          <span className="text-[10px] font-semibold px-2 py-1 rounded-full" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-purple)" }}>
             {isRejected ? "DITOLAK" : "SELESAI"}
           </span>
         )}
@@ -99,11 +101,11 @@ function StatusSidebarPanel({
                     className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 z-10"
                     style={{
                       background: isDone
-                        ? "rgba(20,241,149,0.15)"
+                        ? "rgba(94, 234, 212,0.15)"
                         : isCurrent
                         ? "var(--solana-gradient)"
-                        : "rgba(153,69,255,0.06)",
-                      border: `2px solid ${isDone ? "var(--solana-green)" : isCurrent ? "transparent" : "rgba(153,69,255,0.15)"}`,
+                        : "rgba(94, 234, 212,0.06)",
+                      border: `2px solid ${isDone ? "var(--solana-green)" : isCurrent ? "transparent" : "rgba(94, 234, 212,0.15)"}`,
                     }}
                   >
                     {isDone ? (
@@ -117,13 +119,13 @@ function StatusSidebarPanel({
                         <span className="w-2 h-2 rounded-full bg-white" />
                       )
                     ) : (
-                      <span className="text-[9px] font-bold" style={{ color: "rgba(153,69,255,0.4)" }}>{i + 1}</span>
+                      <span className="text-[9px] font-bold" style={{ color: "rgba(94, 234, 212,0.4)" }}>{i + 1}</span>
                     )}
                   </div>
                   {i < steps.length - 1 && (
                     <div
                       className="w-0.5 flex-1 min-h-[28px]"
-                      style={{ background: isDone ? "var(--solana-green)" : "rgba(153,69,255,0.1)" }}
+                      style={{ background: isDone ? "var(--solana-green)" : "rgba(94, 234, 212,0.1)" }}
                     />
                   )}
                 </div>
@@ -131,7 +133,7 @@ function StatusSidebarPanel({
                 <div className="pb-6">
                   <p
                     className="text-xs font-semibold leading-tight"
-                    style={{ color: isFuture ? "rgba(153,69,255,0.3)" : isCurrent ? "white" : "var(--solana-green)" }}
+                    style={{ color: isFuture ? "rgba(94, 234, 212,0.3)" : isCurrent ? "white" : "var(--solana-green)" }}
                   >
                     {step.label}
                   </p>
@@ -149,14 +151,14 @@ function StatusSidebarPanel({
 
       {isRejected && (
         <div className="flex-1 flex flex-col items-center justify-center text-center py-4">
-          <XCircle className="w-10 h-10 mb-3" style={{ color: "#EF4444" }} />
-          <p className="text-sm font-semibold" style={{ color: "#EF4444" }}>Booking Ditolak</p>
+          <XCircle className="w-10 h-10 mb-3" style={{ color: "#FCA5A5" }} />
+          <p className="text-sm font-semibold" style={{ color: "#FCA5A5" }}>Booking Ditolak</p>
           <p className="text-[10px] mt-1" style={{ color: "var(--solana-text-muted)" }}>Data kendaraan tidak dibagikan</p>
         </div>
       )}
 
       {/* Workshop info */}
-      <div className="pt-4 border-t" style={{ borderColor: "rgba(153,69,255,0.1)" }}>
+      <div className="pt-4 border-t" style={{ borderColor: "rgba(94, 234, 212,0.1)" }}>
         <p className="text-[10px] mb-1 font-medium" style={{ color: "var(--solana-text-muted)" }}>Bengkel</p>
         <p className="text-xs font-semibold leading-tight">{workshopName}</p>
         {bookingDate && (
@@ -164,7 +166,7 @@ function StatusSidebarPanel({
             {bookingDate} · {bookingTime}
           </p>
         )}
-        <p className="text-[10px] mono mt-2" style={{ color: "rgba(153,69,255,0.4)" }}>
+        <p className="text-[10px] mono mt-2" style={{ color: "rgba(94, 234, 212,0.4)" }}>
           #{sessionId.slice(-8)}
         </p>
       </div>
@@ -191,7 +193,7 @@ export default function BookingStatusPage() {
         </p>
         <div className="flex gap-3">
           <Link href="/dapp/book" className="glow-btn px-6 py-2.5 text-sm">Booking Bengkel</Link>
-          <Link href="/dapp/qr" className="px-6 py-2.5 text-sm rounded-xl cursor-pointer" style={{ background: "rgba(153,69,255,0.1)", color: "var(--solana-purple)", border: "1px solid rgba(153,69,255,0.2)" }}>
+          <Link href="/dapp/qr" className="px-6 py-2.5 text-sm rounded-xl cursor-pointer" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-purple)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
             <WifiIcon className="w-4 h-4 inline mr-1.5" />QR / NFC
           </Link>
         </div>
@@ -213,7 +215,7 @@ export default function BookingStatusPage() {
             {booking.type === "walkin" ? "Walk-In" : "Booking"} · {booking.id}
           </p>
         </div>
-        <Link href="/dapp/notifications" className="relative p-2.5 rounded-xl hover:bg-white/5 transition-colors" style={{ color: "var(--solana-text-muted)", border: "1px solid rgba(153,69,255,0.15)" }}>
+        <Link href="/dapp/notifications" className="relative p-2.5 rounded-xl hover:bg-white/5 transition-colors" style={{ color: "var(--solana-text-muted)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
           <Bell className="w-5 h-5" />
           {unreadNotifCount > 0 && (
             <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center" style={{ background: "var(--solana-purple)", color: "#fff" }}>
@@ -233,13 +235,13 @@ export default function BookingStatusPage() {
               return (
                 <div key={step.label} className="flex items-center">
                   <div className="flex flex-col items-center">
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: isDone ? "rgba(20,241,149,0.15)" : isCurrent ? "var(--solana-gradient)" : "rgba(153,69,255,0.06)", border: `2px solid ${isDone ? "var(--solana-green)" : isCurrent ? "transparent" : "rgba(153,69,255,0.1)"}` }}>
-                      {isDone ? <CheckCircle2 className="w-3.5 h-3.5" style={{ color: "var(--solana-green)" }} /> : isCurrent ? <span className="w-2 h-2 rounded-full bg-white" /> : <span className="text-[9px]" style={{ color: "rgba(153,69,255,0.3)" }}>{i+1}</span>}
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: isDone ? "rgba(94, 234, 212,0.15)" : isCurrent ? "var(--solana-gradient)" : "rgba(94, 234, 212,0.06)", border: `2px solid ${isDone ? "var(--solana-green)" : isCurrent ? "transparent" : "rgba(94, 234, 212,0.1)"}` }}>
+                      {isDone ? <CheckCircle2 className="w-3.5 h-3.5" style={{ color: "var(--solana-green)" }} /> : isCurrent ? <span className="w-2 h-2 rounded-full bg-white" /> : <span className="text-[9px]" style={{ color: "rgba(94, 234, 212,0.3)" }}>{i+1}</span>}
                     </div>
-                    <span className="text-[9px] mt-1 font-medium" style={{ color: i <= stepIndex ? "var(--solana-text)" : "rgba(153,69,255,0.3)" }}>{step.label}</span>
+                    <span className="text-[9px] mt-1 font-medium" style={{ color: i <= stepIndex ? "var(--solana-text)" : "rgba(94, 234, 212,0.3)" }}>{step.label}</span>
                   </div>
                   {i < getSteps(booking.type).length - 1 && (
-                    <div className="w-8 h-0.5 mx-1 -mt-4" style={{ background: isDone ? "var(--solana-green)" : "rgba(153,69,255,0.1)" }} />
+                    <div className="w-8 h-0.5 mx-1 -mt-4" style={{ background: isDone ? "var(--solana-green)" : "rgba(94, 234, 212,0.1)" }} />
                   )}
                 </div>
               );
@@ -269,10 +271,10 @@ export default function BookingStatusPage() {
 
               {/* PENDING (booking only) */}
               {booking.status === "PENDING" && booking.type === "booking" && (
-                <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: "#FACC15" }}>
+                <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: "#FCD34D" }}>
                   <div className="flex items-center gap-3 mb-4">
                     <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}>
-                      <Loader2 className="w-6 h-6" style={{ color: "#FACC15" }} />
+                      <Loader2 className="w-6 h-6" style={{ color: "#FCD34D" }} />
                     </motion.div>
                     <div>
                       <h3 className="font-semibold">Menunggu Konfirmasi</h3>
@@ -282,7 +284,7 @@ export default function BookingStatusPage() {
                   <p className="text-xs mb-4" style={{ color: "var(--solana-text-muted)" }}>
                     Notifikasi akan muncul otomatis saat bengkel mengkonfirmasi atau menolak.
                   </p>
-                  <Link href="/dapp/notifications" className="text-xs flex items-center gap-1.5 w-fit px-3 py-1.5 rounded-lg" style={{ background: "rgba(250,204,21,0.05)", color: "#FACC15", border: "1px solid rgba(250,204,21,0.2)" }}>
+                  <Link href="/dapp/notifications" className="text-xs flex items-center gap-1.5 w-fit px-3 py-1.5 rounded-lg" style={{ background: "rgba(250,204,21,0.05)", color: "#FCD34D", border: "1px solid rgba(250,204,21,0.2)" }}>
                     <Bell className="w-3.5 h-3.5" /> Lihat Notifikasi
                   </Link>
                 </div>
@@ -304,7 +306,7 @@ export default function BookingStatusPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl" style={{ background: "rgba(20,241,149,0.05)", border: "1px solid rgba(20,241,149,0.15)" }}>
+                  <div className="p-3 rounded-xl" style={{ background: "rgba(94, 234, 212,0.05)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
                     <p className="text-xs" style={{ color: "var(--solana-green)" }}>
                       {booking.type === "walkin"
                         ? `Data kendaraan Anda telah dibagikan ke ${booking.workshop.name} untuk keperluan servis.`
@@ -334,28 +336,27 @@ export default function BookingStatusPage() {
 
               {/* INVOICE_SENT */}
               {booking.status === "INVOICE_SENT" && booking.invoice && (
-                <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: "#F97316" }}>
+                <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: "#5EEAD4" }}>
                   <div className="flex items-center gap-3 mb-4">
-                    <Receipt className="w-6 h-6" style={{ color: "#F97316" }} />
+                    <Receipt className="w-6 h-6" style={{ color: "#5EEAD4" }} />
                     <div>
                       <h3 className="font-semibold">Invoice Diterima</h3>
                       <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>{booking.invoice.serviceType} — {booking.workshop.name}</p>
                     </div>
                   </div>
-                  <div className="rounded-xl p-4 mb-4 space-y-2" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(153,69,255,0.1)" }}>
+                  <div className="rounded-xl p-4 mb-4 space-y-2" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(94, 234, 212,0.1)" }}>
                     {booking.invoice.parts.map((part, i) => (
                       <div key={i} className="flex justify-between text-xs">
                         <span style={{ color: "var(--solana-text-muted)" }}>
-                          {part.name} {part.isOEM && <span className="text-[9px] px-1 rounded" style={{ background: "rgba(20,241,149,0.1)", color: "var(--solana-green)" }}>OEM</span>}
+                          {part.name} {part.isOEM && <span className="text-[9px] px-1 rounded" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-green)" }}>OEM</span>}
                         </span>
                         <span className="mono">Rp {part.price.toLocaleString()}</span>
                       </div>
                     ))}
-                    <div className="border-t pt-2" style={{ borderColor: "rgba(153,69,255,0.1)" }}>
+                    <div className="border-t pt-2" style={{ borderColor: "rgba(94, 234, 212,0.1)" }}>
                       <div className="flex justify-between text-xs"><span style={{ color: "var(--solana-text-muted)" }}>Biaya Servis</span><span className="mono">Rp {booking.invoice.serviceCost.toLocaleString()}</span></div>
-                      <div className="flex justify-between text-xs mt-1"><span style={{ color: "var(--solana-text-muted)" }}>Gas Fee</span><span className="mono">Rp {booking.invoice.gasFee.toLocaleString()}</span></div>
                     </div>
-                    <div className="border-t pt-2" style={{ borderColor: "rgba(153,69,255,0.1)" }}>
+                    <div className="border-t pt-2" style={{ borderColor: "rgba(94, 234, 212,0.1)" }}>
                       <div className="flex justify-between text-sm font-bold">
                         <span>Total</span>
                         <span className="gradient-text">Rp {booking.invoice.totalIDR.toLocaleString()}</span>
@@ -363,7 +364,7 @@ export default function BookingStatusPage() {
                     </div>
                   </div>
                   {booking.invoice.mechanicNotes && (
-                    <div className="rounded-xl p-3 mb-4 text-xs" style={{ background: "rgba(153,69,255,0.05)", border: "1px solid rgba(153,69,255,0.1)" }}>
+                    <div className="rounded-xl p-3 mb-4 text-xs" style={{ background: "rgba(94, 234, 212,0.05)", border: "1px solid rgba(94, 234, 212,0.1)" }}>
                       <p className="font-medium mb-1">Catatan Mekanik:</p>
                       <p style={{ color: "var(--solana-text-muted)" }}>{booking.invoice.mechanicNotes}</p>
                     </div>
@@ -374,13 +375,46 @@ export default function BookingStatusPage() {
                 </div>
               )}
 
-              {/* PAID - Review form */}
-              {booking.status === "PAID" && !reviewSubmitted && (
+              {/* PAID - waiting for workshop sign anchoring */}
+              {booking.status === "PAID" && (
+                <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: "var(--solana-cyan)" }}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}>
+                      <Loader2 className="w-6 h-6" style={{ color: "var(--solana-cyan)" }} />
+                    </motion.div>
+                    <div>
+                      <h3 className="font-semibold">Pembayaran Berhasil ✅</h3>
+                      <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Menunggu bengkel menandatangani transaksi anchoring on-chain.</p>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-xl text-xs" style={{ background: "rgba(0,194,255,0.05)", border: "1px solid rgba(0,194,255,0.15)", color: "var(--solana-cyan)" }}>
+                    Bengkel akan menandatangani pembaruan cNFT pada tree enterprise. Setelah selesai, riwayat servis muncul di Service Timeline Anda.
+                  </div>
+                </div>
+              )}
+
+              {/* ANCHORING - in progress */}
+              {booking.status === "ANCHORING" && (
+                <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: "var(--solana-purple)" }}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}>
+                      <Loader2 className="w-6 h-6" style={{ color: "var(--solana-purple)" }} />
+                    </motion.div>
+                    <div>
+                      <h3 className="font-semibold">Anchoring Log Servis ⏳</h3>
+                      <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Bengkel sedang menandatangani transaksi pada Solana.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ANCHORED - Review form */}
+              {booking.status === "ANCHORED" && !reviewSubmitted && (
                 <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: "var(--solana-purple)" }}>
                   <div className="flex items-center gap-3 mb-4">
                     <Star className="w-6 h-6" style={{ color: "var(--solana-purple)" }} />
                     <div>
-                      <h3 className="font-semibold">Pembayaran Berhasil!</h3>
+                      <h3 className="font-semibold">Anchoring Selesai ✅</h3>
                       <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Beri review untuk {booking.workshop.name}</p>
                     </div>
                   </div>
@@ -389,14 +423,14 @@ export default function BookingStatusPage() {
                     <div className="flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map((s) => (
                         <button key={s} onClick={() => setRating(s)} className="cursor-pointer p-0.5">
-                          <Star className="w-7 h-7 transition-colors" style={{ color: s <= rating ? "#FACC15" : "rgba(153,69,255,0.2)", fill: s <= rating ? "#FACC15" : "none" }} />
+                          <Star className="w-7 h-7 transition-colors" style={{ color: s <= rating ? "#FCD34D" : "rgba(94, 234, 212,0.2)", fill: s <= rating ? "#FCD34D" : "none" }} />
                         </button>
                       ))}
                     </div>
                   </div>
                   <div className="mb-4">
                     <p className="text-xs mb-2" style={{ color: "var(--solana-text-muted)" }}>Komentar (opsional)</p>
-                    <textarea value={reviewComment} onChange={(e) => setReviewComment(e.target.value)} placeholder="Ceritakan pengalaman servis Anda..." rows={3} className="w-full px-3 py-2.5 rounded-xl bg-white/5 text-sm outline-none resize-none" style={{ border: "1px solid rgba(153,69,255,0.15)", color: "var(--solana-text)" }} />
+                    <textarea value={reviewComment} onChange={(e) => setReviewComment(e.target.value)} placeholder="Ceritakan pengalaman servis Anda..." rows={3} className="w-full px-3 py-2.5 rounded-xl bg-white/5 text-sm outline-none resize-none" style={{ border: "1px solid rgba(94, 234, 212,0.15)", color: "var(--solana-text)" }} />
                   </div>
                   <div className="flex items-center gap-2 text-[10px] mb-4" style={{ color: "var(--solana-green)" }}>
                     <ShieldCheck className="w-3.5 h-3.5" />
@@ -410,9 +444,9 @@ export default function BookingStatusPage() {
 
               {/* REJECTED */}
               {isRejected && (
-                <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: "#EF4444" }}>
+                <div className="glass-card p-6 border-l-4" style={{ borderLeftColor: "#FCA5A5" }}>
                   <div className="flex items-center gap-3 mb-4">
-                    <XCircle className="w-6 h-6" style={{ color: "#EF4444" }} />
+                    <XCircle className="w-6 h-6" style={{ color: "#FCA5A5" }} />
                     <div>
                       <h3 className="font-semibold">Booking Ditolak</h3>
                       <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Bengkel tidak dapat menerima booking pada waktu yang dipilih</p>
@@ -436,13 +470,13 @@ export default function BookingStatusPage() {
                     </div>
                   </div>
                   {booking.review && (
-                    <div className="p-3 rounded-xl mb-4 flex items-center gap-2" style={{ background: "rgba(20,241,149,0.05)", border: "1px solid rgba(20,241,149,0.15)" }}>
+                    <div className="p-3 rounded-xl mb-4 flex items-center gap-2" style={{ background: "rgba(94, 234, 212,0.05)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
                       <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: "var(--solana-green)" }} />
                       <p className="text-xs" style={{ color: "var(--solana-green)" }}>Review ({booking.review.rating}/5 ⭐) — On-chain anchored ✓</p>
                     </div>
                   )}
                   <div className="flex gap-2">
-                    <Link href="/dapp/timeline" className="flex-1 py-2 text-xs text-center rounded-xl flex items-center justify-center gap-1.5 cursor-pointer" style={{ background: "rgba(20,241,149,0.1)", color: "var(--solana-green)", border: "1px solid rgba(20,241,149,0.2)" }}>
+                    <Link href="/dapp/timeline" className="flex-1 py-2 text-xs text-center rounded-xl flex items-center justify-center gap-1.5 cursor-pointer" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
                       <FileText className="w-3.5 h-3.5" /> Lihat Timeline
                     </Link>
                     <Link href="/dapp/book" className="flex-1 glow-btn py-2 text-xs text-center block cursor-pointer" onClick={() => ctx?.reset()}>
@@ -508,10 +542,10 @@ export default function BookingStatusPage() {
                   </p>
                 </div>
               ) : (
-                <div className="glass-card p-4 border-l-4" style={{ borderLeftColor: isRejected ? "#EF4444" : "rgba(153,69,255,0.3)" }}>
+                <div className="glass-card p-4 border-l-4" style={{ borderLeftColor: isRejected ? "#FCA5A5" : "rgba(94, 234, 212,0.3)" }}>
                   <div className="flex items-center gap-2 mb-1">
-                    <Lock className="w-4 h-4" style={{ color: isRejected ? "#EF4444" : "var(--solana-text-muted)" }} />
-                    <h3 className="text-sm font-semibold" style={{ color: isRejected ? "#EF4444" : "var(--solana-text-muted)" }}>
+                    <Lock className="w-4 h-4" style={{ color: isRejected ? "#FCA5A5" : "var(--solana-text-muted)" }} />
+                    <h3 className="text-sm font-semibold" style={{ color: isRejected ? "#FCA5A5" : "var(--solana-text-muted)" }}>
                       {isRejected ? "Akses Ditolak" : "Akses Dicabut"}
                     </h3>
                   </div>
@@ -544,7 +578,6 @@ export default function BookingStatusPage() {
               isOem: p.isOEM,
             })),
             serviceCost: booking.invoice.serviceCost,
-            gasFee: booking.invoice.gasFee,
           }}
           onPaymentComplete={() => { ctx?.payInvoice(); setPaymentOpen(false); }}
         />

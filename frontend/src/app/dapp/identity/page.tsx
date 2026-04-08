@@ -46,10 +46,10 @@ export default function IdentityPage() {
 
       {/* Tab Toggle */}
       <div className="flex gap-3 mb-8">
-        <button onClick={() => setActiveTab("qr")} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: activeTab === "qr" ? "rgba(153,69,255,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${activeTab === "qr" ? "var(--solana-purple)" : "rgba(153,69,255,0.2)"}`, color: activeTab === "qr" ? "var(--solana-purple)" : "var(--solana-text-muted)" }}>
+        <button onClick={() => setActiveTab("qr")} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: activeTab === "qr" ? "rgba(94, 234, 212,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${activeTab === "qr" ? "var(--solana-purple)" : "rgba(94, 234, 212,0.2)"}`, color: activeTab === "qr" ? "var(--solana-purple)" : "var(--solana-text-muted)" }}>
           <Scan className="w-5 h-5" /> QR Code
         </button>
-        <button onClick={() => setActiveTab("nfc")} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: activeTab === "nfc" ? "rgba(20,241,149,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${activeTab === "nfc" ? "var(--solana-green)" : "rgba(153,69,255,0.2)"}`, color: activeTab === "nfc" ? "var(--solana-green)" : "var(--solana-text-muted)" }}>
+        <button onClick={() => setActiveTab("nfc")} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: activeTab === "nfc" ? "rgba(94, 234, 212,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${activeTab === "nfc" ? "var(--solana-green)" : "rgba(94, 234, 212,0.2)"}`, color: activeTab === "nfc" ? "var(--solana-green)" : "var(--solana-text-muted)" }}>
           <CreditCard className="w-5 h-5" /> NFC Card
         </button>
       </div>
@@ -73,7 +73,7 @@ export default function IdentityPage() {
                 </div>
                 <p className="text-xs mono mb-4" style={{ color: "var(--solana-text-muted)" }}>NOC ID #{currentVehicleData.vin.substring(currentVehicleData.vin.length - 5)} · {currentVehicleData.name}</p>
                 {timeLimit && (
-                  <div className="flex items-center gap-2 mb-4 px-4 py-2 rounded-xl" style={{ background: "rgba(20,241,149,0.08)", border: "1px solid rgba(20,241,149,0.2)" }}>
+                  <div className="flex items-center gap-2 mb-4 px-4 py-2 rounded-xl" style={{ background: "rgba(94, 234, 212,0.08)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
                     <Clock className="w-4 h-4" style={{ color: "var(--solana-green)" }} />
                     <span className="text-xs font-semibold" style={{ color: "var(--solana-green)" }}>{timeLeft > 0 ? `Expires in ${formatTime(timeLeft)}` : "Expired"}</span>
                   </div>
@@ -106,14 +106,14 @@ export default function IdentityPage() {
                 </div>
                 <div className="glass-card-static p-8">
                   <h3 className="text-base font-semibold mb-6">Vehicle Identity Card</h3>
-                  <div className="p-5 rounded-xl" style={{ background: "linear-gradient(135deg, rgba(153,69,255,0.12) 0%, rgba(20,241,149,0.06) 100%)", border: "1px solid rgba(153,69,255,0.2)" }}>
+                  <div className="p-5 rounded-xl" style={{ background: "linear-gradient(135deg, rgba(94, 234, 212,0.12) 0%, rgba(94, 234, 212,0.06) 100%)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
                     <div className="flex justify-between items-start mb-4">
                       <div><p className="text-lg font-bold">{currentVehicleData.name}</p><p className="text-xs mono" style={{ color: "var(--solana-text-muted)" }}>VIN: {currentVehicleData.vin}</p></div>
                       <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--solana-gradient)" }}><Shield className="w-5 h-5 text-white" /></div>
                     </div>
                     <div className="grid grid-cols-3 gap-3">
                       <div><p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>NOC ID</p><p className="font-semibold mono text-sm">#{currentVehicleData.vin.substring(currentVehicleData.vin.length - 5)}</p></div>
-                      <div><p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Health</p><p className="font-semibold text-sm" style={{ color: "#A3E635" }}>{currentVehicleData.health}</p></div>
+                      <div><p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Health</p><p className="font-semibold text-sm" style={{ color: "#5EEAD4" }}>{currentVehicleData.health}</p></div>
                       <div><p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Services</p><p className="font-semibold text-sm">12</p></div>
                     </div>
                   </div>
@@ -127,7 +127,7 @@ export default function IdentityPage() {
               {/* NFC Card */}
               <div className="flex flex-col gap-6">
                 <div className="relative w-full max-w-md mx-auto aspect-[1.586/1] rounded-2xl p-6 flex flex-col justify-between shadow-2xl overflow-hidden transition-all duration-300"
-                  style={{ background: isActive ? "linear-gradient(135deg, rgba(153,69,255,0.7) 0%, rgba(20,241,149,0.3) 100%)" : "rgba(30,30,50,0.8)", border: `1px solid ${isActive ? "rgba(153,69,255,0.5)" : "rgba(255,255,255,0.1)"}`, filter: isActive ? "none" : "grayscale(100%)" }}>
+                  style={{ background: isActive ? "linear-gradient(135deg, rgba(94, 234, 212,0.7) 0%, rgba(94, 234, 212,0.3) 100%)" : "rgba(30,30,50,0.8)", border: `1px solid ${isActive ? "rgba(94, 234, 212,0.5)" : "rgba(255,255,255,0.1)"}`, filter: isActive ? "none" : "grayscale(100%)" }}>
                   <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
                   <div className="flex justify-between items-start relative z-10">
                     <div className="flex items-center gap-2"><Shield className="w-6 h-6 text-white" /><span className="font-bold text-lg text-white">NOC ID</span></div>
@@ -138,12 +138,12 @@ export default function IdentityPage() {
                     <p className="text-white font-bold text-xl mb-4 tracking-wide">{currentVehicleData.name}</p>
                     <div className="flex justify-between items-end">
                       <p className="text-white/80 mono text-sm tracking-widest">NFC-{currentVehicleData.vin.substring(currentVehicleData.vin.length - 8, currentVehicleData.vin.length - 4)}-{currentVehicleData.vin.substring(currentVehicleData.vin.length - 4)}</p>
-                      <div className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: isActive ? "rgba(20,241,149,0.2)" : "rgba(255,0,0,0.2)", color: isActive ? "#14F195" : "#EF4444" }}>{isActive ? "ACTIVE" : "FROZEN"}</div>
+                      <div className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: isActive ? "rgba(94, 234, 212,0.2)" : "rgba(255,0,0,0.2)", color: isActive ? "#5EEAD4" : "#FCA5A5" }}>{isActive ? "ACTIVE" : "FROZEN"}</div>
                     </div>
                   </div>
                 </div>
                 <div className="flex gap-4 max-w-md mx-auto w-full">
-                  <button onClick={() => setIsActive(!isActive)} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all cursor-pointer" style={{ background: isActive ? "rgba(239,68,68,0.1)" : "rgba(20,241,149,0.1)", color: isActive ? "#EF4444" : "#14F195", border: `1px solid ${isActive ? "rgba(239,68,68,0.3)" : "rgba(20,241,149,0.3)"}` }}>
+                  <button onClick={() => setIsActive(!isActive)} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all cursor-pointer" style={{ background: isActive ? "rgba(239,68,68,0.1)" : "rgba(94, 234, 212,0.1)", color: isActive ? "#FCA5A5" : "#5EEAD4", border: `1px solid ${isActive ? "rgba(239,68,68,0.3)" : "rgba(94, 234, 212,0.3)"}` }}>
                     <Power className="w-4 h-4" /> {isActive ? "Freeze Card" : "Unfreeze Card"}
                   </button>
                   <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold glow-btn-outline cursor-pointer text-sm">
@@ -170,7 +170,7 @@ export default function IdentityPage() {
                     {scanHistory.map((scan, i) => (
                       <div key={i} className="flex justify-between items-center p-3 border-b" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
                         <div><p className="text-sm font-medium">{scan.location}</p><p className="text-xs mono mt-1" style={{ color: "var(--solana-text-muted)" }}>{scan.date}</p></div>
-                        <span className="text-xs px-2 py-1 rounded-md" style={{ background: "rgba(20,241,149,0.1)", color: "var(--solana-green)" }}>{scan.auth}</span>
+                        <span className="text-xs px-2 py-1 rounded-md" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-green)" }}>{scan.auth}</span>
                       </div>
                     ))}
                   </div>
@@ -187,12 +187,12 @@ export default function IdentityPage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
             <button onClick={() => setIsFullscreen(false)} className="absolute top-6 right-6 p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors cursor-pointer"><X className="w-6 h-6 text-white" /></button>
             <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="flex flex-col items-center">
-              <div className="w-80 h-80 sm:w-96 sm:h-96 rounded-3xl flex items-center justify-center relative shadow-2xl" style={{ background: "white", padding: 24, boxShadow: "0 0 50px rgba(153,69,255,0.2)" }}>
+              <div className="w-80 h-80 sm:w-96 sm:h-96 rounded-3xl flex items-center justify-center relative shadow-2xl" style={{ background: "white", padding: 24, boxShadow: "0 0 50px rgba(94, 234, 212,0.2)" }}>
                 <div className="w-full h-full" style={{ background: `repeating-conic-gradient(#0E0E1A 0% 25%, transparent 0% 50%) 50% / 24px 24px`, borderRadius: 12 }} />
                 <div className="absolute inset-0 flex items-center justify-center"><div className="w-20 h-20 rounded-2xl flex items-center justify-center" style={{ background: "var(--solana-gradient)" }}><Shield className="w-10 h-10 text-white" /></div></div>
               </div>
               <p className="text-lg mono mt-8 font-bold text-white tracking-widest">NOC ID #00001</p>
-              {timeLimit && <div className="mt-4 px-6 py-3 rounded-2xl bg-black/50 border border-green-500/30 text-green-400 font-mono text-xl">{timeLeft > 0 ? formatTime(timeLeft) : "EXPIRED"}</div>}
+              {timeLimit && <div className="mt-4 px-6 py-3 rounded-2xl bg-black/50 border border-teal-500/30 text-teal-400 font-mono text-xl">{timeLeft > 0 ? formatTime(timeLeft) : "EXPIRED"}</div>}
             </motion.div>
           </motion.div>
         )}

@@ -69,7 +69,7 @@ export default function RecallsPage() {
         <div className="glass-card-static p-6 rounded-2xl">
           <p className="text-sm mb-2" style={{ color: "var(--solana-text-muted)" }}>Active Campaigns</p>
           <div className="flex items-center gap-3">
-            <ShieldAlert className="w-6 h-6 text-orange-500" />
+            <ShieldAlert className="w-6 h-6 text-teal-500" />
             <span className="text-3xl font-bold">2</span>
           </div>
         </div>
@@ -84,7 +84,7 @@ export default function RecallsPage() {
           <p className="text-sm mb-2" style={{ color: "var(--solana-text-muted)" }}>Global Compliance Rate</p>
           <div className="flex items-center gap-3">
             <CheckCircle2 className="w-6 h-6" style={{ color: "var(--solana-green)" }} />
-            <span className="text-3xl font-bold text-green-500">74%</span>
+            <span className="text-3xl font-bold text-teal-500">74%</span>
           </div>
         </div>
       </div>
@@ -92,7 +92,7 @@ export default function RecallsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <div className="flex gap-2">
           {["all", "active", "closed"].map(f => (
-            <button key={f} onClick={() => setFilter(f)} className="px-5 py-2 rounded-lg text-sm font-medium capitalize transition-all" style={{ background: filter === f ? "rgba(153,69,255,0.15)" : "transparent", color: filter === f ? "var(--solana-purple)" : "var(--solana-text-muted)", border: filter === f ? "1px solid var(--solana-purple)" : "1px solid rgba(255,255,255,0.1)" }}>
+            <button key={f} onClick={() => setFilter(f)} className="px-5 py-2 rounded-lg text-sm font-medium capitalize transition-all" style={{ background: filter === f ? "rgba(94, 234, 212,0.15)" : "transparent", color: filter === f ? "var(--solana-purple)" : "var(--solana-text-muted)", border: filter === f ? "1px solid var(--solana-purple)" : "1px solid rgba(255,255,255,0.1)" }}>
               {f}
             </button>
           ))}
@@ -103,7 +103,7 @@ export default function RecallsPage() {
         </div>
       </div>
 
-      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(153,69,255,0.2)" }}>
+      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
         <table className="data-table">
           <thead>
             <tr>
@@ -119,17 +119,17 @@ export default function RecallsPage() {
           <tbody>
             {filtered.length > 0 ? filtered.map((c, i) => (
               <motion.tr key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="hover:bg-white/5 transition-colors">
-                <td className="mono font-medium text-sm text-purple-400">{c.id}</td>
+                <td className="mono font-medium text-sm text-teal-400">{c.id}</td>
                 <td className="font-medium">{c.title}</td>
                 <td>
-                  <span className="badge" style={{ background: c.status === "Active" ? "rgba(249,115,22,0.15)" : "rgba(34,197,94,0.15)", color: c.status === "Active" ? "#F97316" : "#22C55E", border: `1px solid ${c.status === "Active" ? "#F97316" : "#22C55E"}40` }}>
+                  <span className="badge" style={{ background: c.status === "Active" ? "rgba(94, 234, 212,0.15)" : "rgba(34,197,94,0.15)", color: c.status === "Active" ? "#5EEAD4" : "#86EFAC", border: `1px solid ${c.status === "Active" ? "#5EEAD4" : "#86EFAC"}40` }}>
                     {c.status}
                   </span>
                 </td>
                 <td>
                   <div className="flex items-center gap-3">
                     <div className="w-24 h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.1)" }}>
-                      <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${c.completion}%`, background: c.completion > 80 ? "var(--solana-green)" : c.completion > 50 ? "#FACC15" : "var(--solana-purple)" }} />
+                      <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${c.completion}%`, background: c.completion > 80 ? "var(--solana-green)" : c.completion > 50 ? "#FCD34D" : "var(--solana-purple)" }} />
                     </div>
                     <span className="text-sm font-semibold">{c.completion}%</span>
                   </div>
@@ -141,7 +141,7 @@ export default function RecallsPage() {
                   </span>
                 </td>
                 <td>
-                  <Link href={`/enterprise/recalls/${c.id}`} className="p-2 rounded-lg hover:bg-white/10 transition-colors text-purple-400 inline-block">
+                  <Link href={`/enterprise/recalls/${c.id}`} className="p-2 rounded-lg hover:bg-white/10 transition-colors text-teal-400 inline-block">
                     <ArrowUpRight className="w-4 h-4" />
                   </Link>
                 </td>
@@ -161,7 +161,7 @@ export default function RecallsPage() {
       {/* Issue New Recall Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}>
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-card p-6 rounded-2xl w-full max-w-md border" style={{ borderColor: "rgba(153,69,255,0.3)" }}>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-card p-6 rounded-2xl w-full max-w-md border" style={{ borderColor: "rgba(94, 234, 212,0.3)" }}>
             <div className="flex justify-between items-center mb-5">
               <h3 className="text-lg font-bold">Issue New Recall</h3>
               <button onClick={() => setShowModal(false)} className="p-1 rounded hover:bg-white/10 transition-colors"><X className="w-5 h-5" /></button>

@@ -38,7 +38,33 @@ export type BookingStatus =
   | "IN_SERVICE"
   | "INVOICE_SENT"
   | "PAID"
+  | "ANCHORING"
+  | "ANCHORED"
   | "COMPLETED";
+
+export type WarrantyClaimStatus = "Pending" | "Approved" | "Rejected";
+
+export interface WarrantyClaimDraft {
+  category: "Engine" | "Drivetrain" | "Electrical" | "Suspension" | "Body" | "Other";
+  description: string;
+  estimatedAmountIDR: number;
+  evidencePhotos: string[];
+  submittedByWorkshopId: string;
+  submittedByWorkshopName: string;
+  submittedAt: string;
+  aiPreScore: number;
+}
+
+export interface WarrantyClaimRecord extends WarrantyClaimDraft {
+  id: string;
+  bookingId: string;
+  vin: string;
+  vehicleName: string;
+  status: WarrantyClaimStatus;
+  reimbursementIDR?: number;
+  rejectionReason?: string;
+  resubmissionCount?: number;
+}
 
 export type SessionType = "booking" | "walkin";
 
@@ -53,6 +79,7 @@ export interface InvoicePart {
 export interface InvoiceData {
   parts: InvoicePart[];
   serviceCost: number;
+  /** Internal workshop overhead (anchoring gas). NOT billed to customer — kept for accounting. */
   gasFee: number;
   totalIDR: number;
   serviceType: string;
@@ -83,6 +110,8 @@ export interface BookingRequest {
   createdAt: string;
   invoice: InvoiceData | null;
   review: ReviewData | null;
+  anchorTxSig?: string;
+  warrantyClaim?: WarrantyClaimDraft;
 }
 
 // Completed booking for timeline/ledger integration
@@ -109,7 +138,7 @@ export interface CompletedBooking {
 // Notification item for booking events
 export interface BookingNotification {
   id: string;
-  type: "booking_pending" | "booking_accepted" | "booking_rejected" | "booking_service" | "booking_invoice" | "booking_paid" | "booking_completed" | "warranty_update" | "recall_notice" | "kyc_change" | "dispute_filed" | "dispute_resolved";
+  type: "booking_pending" | "booking_accepted" | "booking_rejected" | "booking_service" | "booking_invoice" | "booking_paid" | "booking_completed" | "service_anchoring" | "service_anchored" | "warranty_submitted" | "warranty_update" | "recall_notice" | "kyc_change" | "dispute_filed" | "dispute_resolved";
   title: string;
   message: string;
   time: string;
@@ -133,14 +162,19 @@ interface BookingContextType {
   rejectBooking: () => void;
   startService: () => void;
   sendInvoice: (invoice: InvoiceData) => void;
+  attachWarrantyClaim: (draft: WarrantyClaimDraft, vin: string, vehicleName: string) => void;
   // User-side actions
   payInvoice: () => void;
+  signAnchoring: () => void;
   submitReview: (review: ReviewData) => void;
   reset: () => void;
   dataAccessActive: boolean;
   // Completed bookings & notifications
   completedBookings: CompletedBooking[];
   bookingNotifications: BookingNotification[];
+  warrantyClaims: WarrantyClaimRecord[];
+  updateWarrantyClaimStatus: (id: string, status: WarrantyClaimStatus, opts?: { reimbursementIDR?: number; rejectionReason?: string }) => void;
+  resubmitWarrantyClaim: (id: string, updates: { description: string; evidencePhotos: string[] }) => void;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: (role: BookingNotification["targetRole"]) => void;
   deleteNotification: (id: string) => void;
@@ -150,6 +184,7 @@ interface BookingContextType {
 const STORAGE_KEY = "noc-booking-state";
 const COMPLETED_KEY = "noc-completed-bookings";
 const NOTIF_KEY = "noc-booking-notifications";
+const WARRANTY_KEY = "noc-warranty-claims";
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
@@ -181,6 +216,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const [booking, setBooking] = useState<BookingRequest | null>(null);
   const [completedBookings, setCompletedBookings] = useState<CompletedBooking[]>([]);
   const [bookingNotifications, setBookingNotifications] = useState<BookingNotification[]>([]);
+  const [warrantyClaims, setWarrantyClaims] = useState<WarrantyClaimRecord[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
   // Hydrate from localStorage on mount
@@ -196,6 +232,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     });
     setCompletedBookings(deduped);
     setBookingNotifications(loadJSON<BookingNotification[]>(NOTIF_KEY, []));
+    setWarrantyClaims(loadJSON<WarrantyClaimRecord[]>(WARRANTY_KEY, []));
     setHydrated(true);
   }, []);
 
@@ -219,6 +256,11 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     saveJSON(NOTIF_KEY, bookingNotifications);
   }, [bookingNotifications, hydrated]);
 
+  useEffect(() => {
+    if (!hydrated) return;
+    saveJSON(WARRANTY_KEY, warrantyClaims);
+  }, [warrantyClaims, hydrated]);
+
   // Sync across browser tabs via storage event
   useEffect(() => {
     const handler = (e: StorageEvent) => {
@@ -228,6 +270,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         setCompletedBookings(e.newValue ? JSON.parse(e.newValue) : []);
       } else if (e.key === NOTIF_KEY) {
         setBookingNotifications(e.newValue ? JSON.parse(e.newValue) : []);
+      } else if (e.key === WARRANTY_KEY) {
+        setWarrantyClaims(e.newValue ? JSON.parse(e.newValue) : []);
       }
     };
     window.addEventListener("storage", handler);
@@ -352,8 +396,112 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     addNotification(
       "booking_paid",
       "Pembayaran Diterima 💰",
-      "Pelanggan telah menyelesaikan pembayaran. Menunggu review.",
+      "Pelanggan telah menyelesaikan pembayaran. Silakan tandatangani transaksi anchoring untuk mencatat log servis on-chain.",
       "workshop"
+    );
+  }, [addNotification]);
+
+  const signAnchoring = useCallback(() => {
+    setBooking((prev) => prev ? { ...prev, status: "ANCHORING" } : null);
+    addNotification(
+      "service_anchoring",
+      "Menandatangani Log Servis ⏳",
+      "Wallet bengkel sedang menandatangani pembaruan cNFT pada tree enterprise.",
+      "workshop"
+    );
+    setTimeout(() => {
+      const txSig = `${Math.random().toString(36).slice(2, 6)}...${Math.random().toString(36).slice(2, 6)}`;
+      setBooking((prev) => prev ? { ...prev, status: "ANCHORED", anchorTxSig: txSig } : null);
+      addNotification(
+        "service_anchored",
+        "Log Servis Tercatat On-Chain ✅",
+        `Riwayat servis telah di-anchor ke Solana. Tx: ${txSig}`,
+        "user"
+      );
+      addNotification(
+        "service_anchored",
+        "Anchoring Selesai ✅",
+        `Log servis berhasil dicatat on-chain. Tx: ${txSig}`,
+        "workshop"
+      );
+    }, 2500);
+  }, [addNotification]);
+
+  const attachWarrantyClaim = useCallback((draft: WarrantyClaimDraft, vin: string, vehicleName: string) => {
+    setBooking((prev) => prev ? { ...prev, warrantyClaim: draft } : null);
+    setBooking((curr) => {
+      const bookingId = curr?.id || `BK-${Date.now()}`;
+      const record: WarrantyClaimRecord = {
+        ...draft,
+        id: `WC-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`,
+        bookingId,
+        vin,
+        vehicleName,
+        status: "Pending",
+      };
+      setWarrantyClaims((prev) => [record, ...prev]);
+      return curr;
+    });
+    addNotification(
+      "warranty_submitted",
+      "Klaim Garansi Diajukan 🛡️",
+      `${draft.submittedByWorkshopName} mengajukan klaim garansi: ${draft.description.slice(0, 60)}...`,
+      "enterprise"
+    );
+    addNotification(
+      "warranty_submitted",
+      "Klaim Garansi Terkirim 🛡️",
+      `Klaim garansi Anda untuk ${vehicleName} sedang ditinjau enterprise.`,
+      "user"
+    );
+  }, [addNotification]);
+
+  const updateWarrantyClaimStatus = useCallback((id: string, status: WarrantyClaimStatus, opts?: { reimbursementIDR?: number; rejectionReason?: string }) => {
+    let target: WarrantyClaimRecord | undefined;
+    setWarrantyClaims((prev) => prev.map((c) => {
+      if (c.id !== id) return c;
+      target = c;
+      return { ...c, status, reimbursementIDR: opts?.reimbursementIDR ?? c.reimbursementIDR, rejectionReason: opts?.rejectionReason ?? c.rejectionReason };
+    }));
+    if (target) {
+      if (status === "Approved") {
+        addNotification(
+          "warranty_update",
+          "Klaim Garansi Disetujui ✅",
+          `Klaim untuk ${target.vehicleName} disetujui. Reimbursement: Rp ${(opts?.reimbursementIDR ?? target.estimatedAmountIDR).toLocaleString("id-ID")}.`,
+          "workshop"
+        );
+        addNotification(
+          "warranty_update",
+          "Klaim Garansi Anda Disetujui ✅",
+          `Garansi untuk ${target.vehicleName} disetujui enterprise.`,
+          "user"
+        );
+      } else if (status === "Rejected") {
+        addNotification(
+          "warranty_update",
+          "Klaim Garansi Ditolak ❌",
+          `Klaim untuk ${target.vehicleName} ditolak. Alasan: ${opts?.rejectionReason || "-"}. Anda dapat mengajukan ulang dengan bukti tambahan.`,
+          "workshop"
+        );
+      }
+    }
+  }, [addNotification]);
+
+  const resubmitWarrantyClaim = useCallback((id: string, updates: { description: string; evidencePhotos: string[] }) => {
+    setWarrantyClaims((prev) => prev.map((c) => c.id === id ? {
+      ...c,
+      status: "Pending",
+      description: updates.description,
+      evidencePhotos: updates.evidencePhotos,
+      resubmissionCount: (c.resubmissionCount ?? 0) + 1,
+      submittedAt: new Date().toISOString(),
+    } : c));
+    addNotification(
+      "warranty_submitted",
+      "Klaim Garansi Diajukan Ulang 🔁",
+      "Bengkel mengajukan ulang klaim garansi dengan bukti tambahan.",
+      "enterprise"
     );
   }, [addNotification]);
 
@@ -445,12 +593,17 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         rejectBooking,
         startService,
         sendInvoice,
+        attachWarrantyClaim,
         payInvoice,
+        signAnchoring,
         submitReview,
         reset,
         dataAccessActive,
         completedBookings,
         bookingNotifications,
+        warrantyClaims,
+        updateWarrantyClaimStatus,
+        resubmitWarrantyClaim,
         markNotificationRead,
         markAllNotificationsRead,
         deleteNotification,

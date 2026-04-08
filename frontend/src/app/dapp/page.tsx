@@ -22,9 +22,9 @@ const dashboardData = {
       { date: "2025-08-15", type: "CVT Fluid Replacement", mechanic: "Pak Hendra (★ 4.8)", mileage: "24,100 km", status: "Verified" },
     ],
     aiAlerts: [
-      { part: "CVT Belt", health: 42, risk: "High", prediction: "Replace within 45 days", color: "#F97316" },
-      { part: "Air Filter", health: 55, risk: "Medium", prediction: "Replace within 60 days", color: "#FACC15" },
-      { part: "Brake Fluid", health: 68, risk: "Medium", prediction: "Flush within 90 days", color: "#FACC15" },
+      { part: "CVT Belt", health: 42, risk: "High", prediction: "Replace within 45 days", color: "#5EEAD4" },
+      { part: "Air Filter", health: 55, risk: "Medium", prediction: "Replace within 60 days", color: "#FCD34D" },
+      { part: "Brake Fluid", health: 68, risk: "Medium", prediction: "Flush within 90 days", color: "#FCD34D" },
     ]
   },
   bmw_m4: {
@@ -33,7 +33,7 @@ const dashboardData = {
       { date: "2025-10-12", type: "Tire Replacement", mechanic: "Bintang Racing (★ 4.7)", mileage: "9,800 km", status: "Verified" },
     ],
     aiAlerts: [
-      { part: "Brake Pads (Rear)", health: 60, risk: "Medium", prediction: "Replace within 30 days", color: "#FACC15" },
+      { part: "Brake Pads (Rear)", health: 60, risk: "Medium", prediction: "Replace within 30 days", color: "#FCD34D" },
     ]
   },
   beat: {
@@ -41,8 +41,8 @@ const dashboardData = {
       { date: "2026-01-05", type: "CVT & Roller Check", mechanic: "Ahass Motor (★ 4.5)", mileage: "14,200 km", status: "Verified" },
     ],
     aiAlerts: [
-      { part: "V-Belt", health: 30, risk: "High", prediction: "Replace immediately", color: "#EF4444" },
-      { part: "Engine Oil", health: 45, risk: "High", prediction: "Replace within 10 days", color: "#F97316" },
+      { part: "V-Belt", health: 30, risk: "High", prediction: "Replace immediately", color: "#FCA5A5" },
+      { part: "Engine Oil", health: 45, risk: "High", prediction: "Replace within 10 days", color: "#5EEAD4" },
     ]
   },
   harley: {
@@ -50,7 +50,17 @@ const dashboardData = {
       { date: "2025-12-20", type: "Primary Chain Adj", mechanic: "Mabua Custom (★ 5.0)", mileage: "8,900 km", status: "Verified" },
     ],
     aiAlerts: [
-      { part: "Battery", health: 50, risk: "Medium", prediction: "Check voltage", color: "#FACC15" },
+      { part: "Battery", health: 50, risk: "Medium", prediction: "Check voltage", color: "#FCD34D" },
+    ]
+  },
+  supra: {
+    recentEvents: [
+      { date: "2026-03-15", type: "Turbo Inspection", mechanic: "JDM Garage Jakarta (★ 4.9)", mileage: "8,500 km", status: "Verified" },
+      { date: "2026-01-20", type: "Oil Change (Full Synthetic)", mechanic: "JDM Garage Jakarta (★ 4.9)", mileage: "7,200 km", status: "Verified" },
+    ],
+    aiAlerts: [
+      { part: "Radiator", health: 70, risk: "Medium", prediction: "Inspect coolant level within 30 days", color: "#FCD34D" },
+      { part: "Brake Disc (RR)", health: 70, risk: "Medium", prediction: "Monitor wear within 60 days", color: "#FCD34D" },
     ]
   }
 };
@@ -59,12 +69,12 @@ function HealthScoreRing({ score }: { score: number }) {
   const radius = 60;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
-  const color = score >= 90 ? "#22C55E" : score >= 70 ? "#A3E635" : score >= 50 ? "#FACC15" : score >= 30 ? "#F97316" : "#EF4444";
+  const color = score >= 90 ? "#86EFAC" : score >= 70 ? "#5EEAD4" : score >= 50 ? "#FCD34D" : score >= 30 ? "#5EEAD4" : "#FCA5A5";
 
   return (
     <div className="relative flex items-center justify-center">
       <svg width="160" height="160" className="-rotate-90">
-        <circle cx="80" cy="80" r={radius} fill="none" stroke="rgba(153,69,255,0.1)" strokeWidth="10" />
+        <circle cx="80" cy="80" r={radius} fill="none" stroke="rgba(94, 234, 212,0.1)" strokeWidth="10" />
         <motion.circle
           cx="80" cy="80" r={radius}
           fill="none" stroke={color} strokeWidth="10" strokeLinecap="round"
@@ -87,12 +97,21 @@ function HealthScoreRing({ score }: { score: number }) {
 
 
 import { useActiveVehicle, vehicleData } from "@/context/ActiveVehicleContext";
+import { useBooking } from "@/context/BookingContext";
+import { Shield } from "lucide-react";
 
 export default function DAppDashboard() {
   const ctx = useActiveVehicle();
+  const booking = useBooking();
   const currentKey = ctx?.activeVehicle || "avanza";
   const currentVehicleData = ctx?.currentVehicleData || vehicleData.avanza;
   const { recentEvents, aiAlerts } = dashboardData[currentKey] || dashboardData.avanza;
+
+  // Warranty data for active vehicle
+  const vehicleClaims = (booking?.warrantyClaims || []).filter(c => c.vin === currentVehicleData.vin);
+  const latestClaim = vehicleClaims[0];
+  const coverageSummary = `Basic warranty active — expires 2028-06-15`;
+  const drivetrainSummary = `Drivetrain — 62,000 km remaining`;
 
   return (
     <div>
@@ -117,7 +136,7 @@ export default function DAppDashboard() {
       </div>
 
       {/* Top cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-8 flex flex-col items-center">
           <HealthScoreRing score={currentVehicleData.health} />
           <p className="mt-3 text-sm font-semibold">Overall Health</p>
@@ -127,7 +146,7 @@ export default function DAppDashboard() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-8 flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(153,69,255,0.12)" }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(94, 234, 212,0.12)" }}>
                 <Calendar className="w-5 h-5" style={{ color: "var(--solana-purple)" }} />
               </div>
               <div>
@@ -152,7 +171,7 @@ export default function DAppDashboard() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-8 flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(153,69,255,0.12)" }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(94, 234, 212,0.12)" }}>
                 <Clock className="w-5 h-5" style={{ color: "var(--solana-purple)" }} />
               </div>
               <div>
@@ -166,18 +185,61 @@ export default function DAppDashboard() {
                 <span>Next Major Service Focus</span>
                 <span className="mono">40,000 km</span>
               </div>
-              <div className="w-full h-1.5 rounded-full relative" style={{ background: "rgba(153,69,255,0.15)" }}>
+              <div className="w-full h-1.5 rounded-full relative" style={{ background: "rgba(94, 234, 212,0.15)" }}>
                 <div className="h-1.5 rounded-full" style={{ width: "86%", background: "var(--solana-gradient)" }} />
                 <div className="absolute top-1/2 -mt-1 -right-1 w-2 h-2 rounded-full border border-black" style={{ background: "var(--solana-pink)" }} />
               </div>
             </div>
           </div>
-          <div className="mt-6 pt-3 border-t flex items-start gap-2" style={{ borderColor: "rgba(153,69,255,0.1)" }}>
+          <div className="mt-6 pt-3 border-t flex items-start gap-2" style={{ borderColor: "rgba(94, 234, 212,0.1)" }}>
              <Activity className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "var(--solana-green)" }} />
              <p className="text-[11px] leading-snug" style={{ color: "var(--solana-text-muted)" }}>
                <span style={{ color: "var(--solana-green)" }}>↑ 12% higher</span> usage this week. Avg: 45 km/day.
              </p>
           </div>
+        </motion.div>
+
+        {/* Warranty Status card */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-8 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(250,204,21,0.12)" }}>
+                <Shield className="w-5 h-5" style={{ color: "#FCD34D" }} />
+              </div>
+              <div>
+                <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Warranty Status</p>
+                <p className="font-semibold text-sm">Active Coverage</p>
+              </div>
+            </div>
+            <div className="space-y-2 mb-4">
+              <div className="flex items-start gap-2 text-xs" style={{ color: "var(--solana-text-muted)" }}>
+                <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: "#86EFAC" }} />
+                <span>{coverageSummary}</span>
+              </div>
+              <div className="flex items-start gap-2 text-xs" style={{ color: "var(--solana-text-muted)" }}>
+                <CheckCircle2 className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: "#86EFAC" }} />
+                <span>{drivetrainSummary}</span>
+              </div>
+            </div>
+            {latestClaim ? (
+              <div className="p-3 rounded-lg" style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: "var(--solana-text-muted)" }}>Latest Claim</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{
+                    background: latestClaim.status === "Approved" ? "rgba(34,197,94,0.15)" : latestClaim.status === "Pending" ? "rgba(250,204,21,0.15)" : "rgba(239,68,68,0.15)",
+                    color: latestClaim.status === "Approved" ? "#86EFAC" : latestClaim.status === "Pending" ? "#FCD34D" : "#FCA5A5",
+                  }}>{latestClaim.status}</span>
+                </div>
+                <p className="text-xs font-medium truncate">{latestClaim.description.slice(0, 50)}{latestClaim.description.length > 50 ? "…" : ""}</p>
+                <p className="text-[10px] mt-1" style={{ color: "var(--solana-text-muted)" }}>Submitted by {latestClaim.submittedByWorkshopName}</p>
+              </div>
+            ) : (
+              <p className="text-xs italic" style={{ color: "var(--solana-text-muted)" }}>No active warranty claims.</p>
+            )}
+          </div>
+          <Link href="/dapp/warranty" className="mt-4 text-xs flex items-center gap-1 transition-colors hover:text-white" style={{ color: "var(--solana-purple)" }}>
+            View all claims <ArrowUpRight className="w-3 h-3" />
+          </Link>
         </motion.div>
       </div>
 
@@ -202,7 +264,7 @@ export default function DAppDashboard() {
                 <span className="text-2xl font-bold mono" style={{ color: alert.color }}>{alert.health}</span>
               </div>
               <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>{alert.prediction}</p>
-              <div className="mt-3 w-full h-1.5 rounded-full" style={{ background: "rgba(153,69,255,0.1)" }}>
+              <div className="mt-3 w-full h-1.5 rounded-full" style={{ background: "rgba(94, 234, 212,0.1)" }}>
                 <div className="h-1.5 rounded-full" style={{ width: `${alert.health}%`, background: alert.color }} />
               </div>
             </motion.div>

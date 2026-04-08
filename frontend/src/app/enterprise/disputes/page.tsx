@@ -13,10 +13,10 @@ const typeLabels: Record<string, string> = {
 };
 
 const statusConfig: Record<string, { color: string; bg: string; icon: React.ReactNode }> = {
-  open: { color: "#FACC15", bg: "rgba(250,204,21,0.15)", icon: <AlertTriangle className="w-3.5 h-3.5" /> },
+  open: { color: "#FCD34D", bg: "rgba(250,204,21,0.15)", icon: <AlertTriangle className="w-3.5 h-3.5" /> },
   investigating: { color: "var(--solana-cyan)", bg: "rgba(0,194,255,0.15)", icon: <Clock className="w-3.5 h-3.5" /> },
-  resolved: { color: "#22C55E", bg: "rgba(34,197,94,0.15)", icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
-  escalated: { color: "#EF4444", bg: "rgba(239,68,68,0.15)", icon: <XCircle className="w-3.5 h-3.5" /> },
+  resolved: { color: "#86EFAC", bg: "rgba(34,197,94,0.15)", icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
+  escalated: { color: "#FCA5A5", bg: "rgba(239,68,68,0.15)", icon: <XCircle className="w-3.5 h-3.5" /> },
 };
 
 export default function EnterpriseDisputesPage() {
@@ -54,10 +54,10 @@ export default function EnterpriseDisputesPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
-          { label: "Open", value: openCount, color: "#FACC15", icon: AlertTriangle },
+          { label: "Open", value: openCount, color: "#FCD34D", icon: AlertTriangle },
           { label: "Investigating", value: investigatingCount, color: "var(--solana-cyan)", icon: Clock },
-          { label: "Resolved", value: resolvedCount, color: "#22C55E", icon: CheckCircle2 },
-          { label: "Escalated", value: escalatedCount, color: "#EF4444", icon: XCircle },
+          { label: "Resolved", value: resolvedCount, color: "#86EFAC", icon: CheckCircle2 },
+          { label: "Escalated", value: escalatedCount, color: "#FCA5A5", icon: XCircle },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card p-6 rounded-2xl">
             <s.icon className="w-6 h-6 mb-3" style={{ color: s.color }} />
@@ -71,7 +71,7 @@ export default function EnterpriseDisputesPage() {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <div className="flex bg-black/30 p-1 rounded-xl border border-white/5">
           {["all", "open", "investigating", "resolved", "escalated"].map(f => (
-            <button key={f} onClick={() => setFilter(f)} className="px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all" style={{ background: filter === f ? "rgba(153,69,255,0.2)" : "transparent", color: filter === f ? "#fff" : "var(--solana-text-muted)" }}>
+            <button key={f} onClick={() => setFilter(f)} className="px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all" style={{ background: filter === f ? "rgba(94, 234, 212,0.2)" : "transparent", color: filter === f ? "#fff" : "var(--solana-text-muted)" }}>
               {f}
             </button>
           ))}
@@ -83,7 +83,7 @@ export default function EnterpriseDisputesPage() {
       </div>
 
       {/* Table */}
-      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(153,69,255,0.2)" }}>
+      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-black/20 border-b border-white/5">
             <tr className="text-xs uppercase tracking-wider text-gray-400">
@@ -103,7 +103,7 @@ export default function EnterpriseDisputesPage() {
                 const sc = statusConfig[d.status] || statusConfig.open;
                 return (
                   <motion.tr key={d.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="hover:bg-white/5 transition-colors">
-                    <td className="py-4 px-6 mono text-xs text-purple-400">{d.id}</td>
+                    <td className="py-4 px-6 mono text-xs text-teal-400">{d.id}</td>
                     <td className="py-4 px-6 font-medium text-sm">{typeLabels[d.type] || d.type}</td>
                     <td className="py-4 px-6 mono text-xs text-gray-400">{d.userWallet.slice(0, 8)}...</td>
                     <td className="py-4 px-6 mono text-xs text-gray-400">{d.workshopName}</td>

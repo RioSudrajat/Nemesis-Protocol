@@ -49,7 +49,7 @@ export default function WorkshopVehicleProfile({ params }: { params: Promise<{ v
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
         <div className="page-header">
           <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
-            <Car className="w-7 h-7 text-purple-400" />
+            <Car className="w-7 h-7 text-teal-400" />
             Vehicle Profile
           </h1>
           <p className="text-sm mt-1 text-slate-400">Review past service logs to assist your diagnosis</p>
@@ -75,7 +75,7 @@ export default function WorkshopVehicleProfile({ params }: { params: Promise<{ v
               </div>
               <div>
                 <p className="text-xs text-slate-400 mb-1">Health Score</p>
-                <p className="font-semibold text-lime-400">{currVehicle.health} / 100</p>
+                <p className="font-semibold text-teal-400">{currVehicle.health} / 100</p>
               </div>
               <div>
                 <p className="text-xs text-slate-400 mb-1">License Plate</p>
@@ -89,7 +89,7 @@ export default function WorkshopVehicleProfile({ params }: { params: Promise<{ v
       <h3 className="text-xl font-bold mb-6">Service Timeline</h3>
       
       <div className="relative mt-8">
-        <div className="absolute left-6 top-0 bottom-0 w-[2px] hidden md:block bg-gradient-to-b from-purple-500 to-green-500/0" />
+        <div className="absolute left-6 top-0 bottom-0 w-[2px] hidden md:block bg-gradient-to-b from-teal-500 to-teal-500/0" />
 
         <div className="flex flex-col gap-6">
           {data.map((event) => (

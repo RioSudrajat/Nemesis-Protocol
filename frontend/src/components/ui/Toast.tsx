@@ -47,15 +47,15 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const iconMap = {
-    success: <CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: "#22C55E" }} />,
-    error: <AlertTriangle className="w-5 h-5 shrink-0" style={{ color: "#EF4444" }} />,
+    success: <CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: "#86EFAC" }} />,
+    error: <AlertTriangle className="w-5 h-5 shrink-0" style={{ color: "#FCA5A5" }} />,
     info: <Info className="w-5 h-5 shrink-0" style={{ color: "var(--solana-cyan)" }} />,
   };
 
   const borderColorMap = {
     success: "rgba(34,197,94,0.35)",
     error: "rgba(239,68,68,0.35)",
-    info: "rgba(0,209,255,0.35)",
+    info: "rgba(94, 234, 212,0.35)",
   };
 
   return (

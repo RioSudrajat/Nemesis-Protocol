@@ -6,11 +6,11 @@ import type { Group } from "three";
 import { useFrame } from "@react-three/fiber";
 
 function getHealthColor(health: number): string {
-  if (health >= 90) return "#22C55E";
-  if (health >= 70) return "#A3E635";
-  if (health >= 50) return "#FACC15";
-  if (health >= 30) return "#F97316";
-  return "#EF4444";
+  if (health >= 90) return "#86EFAC";
+  if (health >= 70) return "#5EEAD4";
+  if (health >= 50) return "#FCD34D";
+  if (health >= 30) return "#5EEAD4";
+  return "#FCA5A5";
 }
 
 const VIVID_BLACK = { color: "#0A0A0A", metalness: 0.5, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.1 };

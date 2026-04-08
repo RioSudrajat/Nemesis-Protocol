@@ -15,15 +15,15 @@ const initialNotifications = [
 const typeConfig: Record<string, { icon: React.ReactNode; color: string }> = {
   reward: { icon: <Coins className="w-5 h-5" />, color: "var(--solana-green)" },
   system: { icon: <CheckCircle2 className="w-5 h-5" />, color: "var(--solana-purple)" },
-  review: { icon: <Star className="w-5 h-5" />, color: "#FACC15" },
+  review: { icon: <Star className="w-5 h-5" />, color: "#FCD34D" },
   service: { icon: <FileText className="w-5 h-5" />, color: "var(--solana-cyan)" },
   default: { icon: <Shield className="w-5 h-5" />, color: "var(--solana-purple)" },
   // Booking notification types
-  booking_pending: { icon: <CalendarCheck className="w-5 h-5" />, color: "#FACC15" },
+  booking_pending: { icon: <CalendarCheck className="w-5 h-5" />, color: "#FCD34D" },
   booking_accepted: { icon: <CheckCircle2 className="w-5 h-5" />, color: "var(--solana-green)" },
-  booking_rejected: { icon: <AlertTriangle className="w-5 h-5" />, color: "#EF4444" },
+  booking_rejected: { icon: <AlertTriangle className="w-5 h-5" />, color: "#FCA5A5" },
   booking_service: { icon: <Wrench className="w-5 h-5" />, color: "var(--solana-cyan)" },
-  booking_invoice: { icon: <Receipt className="w-5 h-5" />, color: "#F97316" },
+  booking_invoice: { icon: <Receipt className="w-5 h-5" />, color: "#5EEAD4" },
   booking_paid: { icon: <CheckCircle2 className="w-5 h-5" />, color: "var(--solana-green)" },
   booking_completed: { icon: <Star className="w-5 h-5" />, color: "var(--solana-purple)" },
 };
@@ -85,7 +85,7 @@ export default function WorkshopNotificationsPage() {
             <p>Updates on services, bookings, rewards, and system alerts.</p>
           </div>
           {unreadCount > 0 && (
-            <button onClick={markAllRead} className="flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition-colors cursor-pointer hover:bg-white/5" style={{ background: "rgba(153,69,255,0.1)", color: "var(--solana-purple)" }}>
+            <button onClick={markAllRead} className="flex items-center gap-2 text-sm px-4 py-2 rounded-xl transition-colors cursor-pointer hover:bg-white/5" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-purple)" }}>
               <CheckCircle2 className="w-4 h-4" /> Mark all read
             </button>
           )}
@@ -102,7 +102,7 @@ export default function WorkshopNotificationsPage() {
           { key: "review", label: "Reviews" },
           { key: "system", label: "System" },
         ].map(f => (
-          <button key={f.key} onClick={() => setFilter(f.key)} className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer hover:bg-white/5" style={{ background: filter === f.key ? "rgba(153,69,255,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${filter === f.key ? "var(--solana-purple)" : "rgba(153,69,255,0.15)"}`, color: filter === f.key ? "var(--solana-purple)" : "var(--solana-text-muted)" }}>
+          <button key={f.key} onClick={() => setFilter(f.key)} className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer hover:bg-white/5" style={{ background: filter === f.key ? "rgba(94, 234, 212,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${filter === f.key ? "var(--solana-purple)" : "rgba(94, 234, 212,0.15)"}`, color: filter === f.key ? "var(--solana-purple)" : "var(--solana-text-muted)" }}>
             {f.label}
           </button>
         ))}

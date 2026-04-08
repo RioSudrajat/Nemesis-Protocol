@@ -75,7 +75,7 @@ function Navbar() {
       style={{
         background: (scrolled || mobileOpen) ? "rgba(14,14,26,0.85)" : "transparent",
         backdropFilter: (scrolled || mobileOpen) ? "blur(20px)" : "none",
-        borderBottom: (scrolled || mobileOpen) ? "1px solid rgba(153,69,255,0.1)" : "none",
+        borderBottom: (scrolled || mobileOpen) ? "1px solid rgba(94, 234, 212,0.1)" : "none",
       }}
     >
       <div className="container flex items-center justify-between">
@@ -111,7 +111,7 @@ function Navbar() {
                 style={{ color: "var(--solana-text-muted)" }}
               >
                 {item.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-purple-500 to-green-400 transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-teal-500 to-teal-400 transition-all duration-300 group-hover:w-full" />
               </Link>
             ) : (
               <a
@@ -121,7 +121,7 @@ function Navbar() {
                 style={{ color: "var(--solana-text-muted)" }}
               >
                 {item.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-purple-500 to-green-400 transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-teal-500 to-teal-400 transition-all duration-300 group-hover:w-full" />
               </a>
             )
           )}
@@ -145,7 +145,7 @@ function Navbar() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="md:hidden absolute top-full left-0 right-0 p-6"
-          style={{ background: "rgba(14,14,26,0.95)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(153,69,255,0.1)" }}
+          style={{ background: "rgba(14,14,26,0.95)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(94, 234, 212,0.1)" }}
         >
           <div className="flex flex-col gap-4">
             <a href="#features" className="text-sm" style={{ color: "var(--solana-text-muted)" }} onClick={() => setMobileOpen(false)}>Features</a>
@@ -169,39 +169,39 @@ const features = [
     icon: Shield,
     title: "Immutable Records",
     desc: "Every service event is anchored on Solana — tamper-proof and verifiable by anyone.",
-    color: "#9945FF",
-    bgColor: "rgba(153, 69, 255, 0.12)",
-    glowColor: "rgba(153, 69, 255, 0.15)",
+    color: "#5EEAD4",
+    bgColor: "rgba(94, 234, 212, 0.12)",
+    glowColor: "rgba(94, 234, 212, 0.15)",
   },
   {
     icon: Car,
     title: "3D Digital Twin",
     desc: "Interactive 3D vehicle model with component-level health scoring and real-time updates.",
-    color: "#14F195",
-    bgColor: "rgba(20, 241, 149, 0.12)",
-    glowColor: "rgba(20, 241, 149, 0.15)",
+    color: "#5EEAD4",
+    bgColor: "rgba(94, 234, 212, 0.12)",
+    glowColor: "rgba(94, 234, 212, 0.15)",
   },
   {
     icon: Brain,
     title: "AI Predictions",
     desc: "XAI engine forecasts part failures with SHAP-explained insights — before they happen.",
-    color: "#00D1FF",
-    bgColor: "rgba(0, 209, 255, 0.12)",
-    glowColor: "rgba(0, 209, 255, 0.15)",
+    color: "#2DD4BF",
+    bgColor: "rgba(94, 234, 212, 0.12)",
+    glowColor: "rgba(94, 234, 212, 0.15)",
   },
   {
     icon: Lock,
     title: "NFC + QR Verify",
     desc: "Dual-mode smart identity with anti-clone NFC cards and time-sensitive dynamic QR codes.",
-    color: "#F959FF",
-    bgColor: "rgba(249, 89, 255, 0.12)",
-    glowColor: "rgba(249, 89, 255, 0.15)",
+    color: "#5EEAD4",
+    bgColor: "rgba(94, 234, 212, 0.12)",
+    glowColor: "rgba(94, 234, 212, 0.15)",
   },
   {
     icon: Wrench,
     title: "Proof of Maintenance",
     desc: "Mechanics earn rewards for every verified service logged on-chain.",
-    color: "#FACC15",
+    color: "#FCD34D",
     bgColor: "rgba(250, 204, 21, 0.12)",
     glowColor: "rgba(250, 204, 21, 0.15)",
   },
@@ -222,21 +222,21 @@ const steps = [
     title: "Mint",
     desc: "OEMs mint a Compressed NFT passport for each vehicle at near-zero cost on Solana.",
     icon: Cpu,
-    borderColor: "rgba(153, 69, 255, 0.3)",
+    borderColor: "rgba(94, 234, 212, 0.3)",
   },
   {
     step: "02",
     title: "Track",
     desc: "Every service, part replacement, and diagnostic is logged immutably on-chain by verified workshops.",
     icon: Wrench,
-    borderColor: "rgba(0, 209, 255, 0.3)",
+    borderColor: "rgba(94, 234, 212, 0.3)",
   },
   {
     step: "03",
     title: "Predict",
     desc: "Our XAI engine analyzes the full vehicle history to forecast failures and recommend preventive action.",
     icon: Brain,
-    borderColor: "rgba(20, 241, 149, 0.3)",
+    borderColor: "rgba(94, 234, 212, 0.3)",
   },
 ];
 
@@ -276,9 +276,9 @@ export default function LandingPage() {
             <div
               className="inline-flex items-center gap-2 mb-8 px-5 py-2.5 rounded-full"
               style={{
-                background: "rgba(153,69,255,0.08)",
-                border: "1px solid rgba(153,69,255,0.2)",
-                boxShadow: "0 0 20px rgba(153,69,255,0.08)",
+                background: "rgba(94, 234, 212,0.08)",
+                border: "1px solid rgba(94, 234, 212,0.2)",
+                boxShadow: "0 0 20px rgba(94, 234, 212,0.08)",
               }}
             >
               <Zap className="w-4 h-4" style={{ color: "var(--solana-green)" }} />
@@ -293,9 +293,9 @@ export default function LandingPage() {
             className="text-5xl md:text-7xl lg:text-[88px] font-black leading-[1.05] tracking-tighter uppercase mb-8"
             style={{ textShadow: '0 0 40px rgba(255,255,255,0.1)' }}
           >
-            The <span className="gradient-text drop-shadow-[0_0_25px_rgba(139,92,246,0.5)]">Trustless</span>
+            The <span className="gradient-text drop-shadow-[0_0_25px_rgba(94, 234, 212,0.5)]">Trustless</span>
             <br />
-            Vehicle <span className="gradient-text-2 drop-shadow-[0_0_25px_rgba(20,241,149,0.5)]">Identity</span>
+            Vehicle <span className="gradient-text-2 drop-shadow-[0_0_25px_rgba(94, 234, 212,0.5)]">Identity</span>
           </motion.h1>
 
           <motion.p
@@ -325,8 +325,8 @@ export default function LandingPage() {
 
           {/* Hero glow line */}
           <div className="mt-20 h-[1px] w-full relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/4 h-[1px] bg-gradient-to-r from-transparent via-green-400 to-transparent blur-sm" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-500/50 to-transparent" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/4 h-[1px] bg-gradient-to-r from-transparent via-teal-400 to-transparent blur-sm" />
           </div>
         </div>
       </section>
@@ -380,7 +380,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========== HOW IT WORKS ========== */}
-      <section id="how-it-works" className="section" style={{ background: "linear-gradient(180deg, transparent, rgba(153,69,255,0.03), transparent)" }}>
+      <section id="how-it-works" className="section" style={{ background: "linear-gradient(180deg, transparent, rgba(94, 234, 212,0.03), transparent)" }}>
         <div className="container">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -406,7 +406,7 @@ export default function LandingPage() {
                   <div
                     className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-colors duration-300 group-hover:bg-white/5 group-hover:text-white"
                     style={{
-                      background: "rgba(153,69,255,0.08)",
+                      background: "rgba(94, 234, 212,0.08)",
                       border: `1px solid ${s.borderColor}`,
                       color: "var(--solana-text-muted)",
                     }}
@@ -426,11 +426,11 @@ export default function LandingPage() {
                   }}
                 >
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center relative transition-transform duration-500 group-hover:scale-110" style={{ background: "rgba(153,69,255,0.1)" }}>
-                    <s.icon className="w-10 h-10 drop-shadow-[0_0_8px_rgba(20,241,149,0.8)]" style={{ color: "var(--solana-green)" }} />
+                  <div className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center relative transition-transform duration-500 group-hover:scale-110" style={{ background: "rgba(94, 234, 212,0.1)" }}>
+                    <s.icon className="w-10 h-10 drop-shadow-[0_0_8px_rgba(94, 234, 212,0.8)]" style={{ color: "var(--solana-green)" }} />
                     <div className="absolute inset-0 rounded-full animate-pulse-glow" style={{ background: "var(--solana-gradient)", opacity: 0.15 }} />
                   </div>
-                  <h3 className="text-2xl font-bold mb-3 gradient-text group-hover:drop-shadow-[0_0_15px_rgba(153,69,255,0.4)] transition-all duration-300">{s.title}</h3>
+                  <h3 className="text-2xl font-bold mb-3 gradient-text group-hover:drop-shadow-[0_0_15px_rgba(94, 234, 212,0.4)] transition-all duration-300">{s.title}</h3>
                   <p className="text-sm leading-relaxed" style={{ color: "var(--solana-text-muted)" }}>{s.desc}</p>
                 </div>
 
@@ -450,7 +450,7 @@ export default function LandingPage() {
           <div className="glass-card gradient-border-animated p-10 md:p-16 relative overflow-hidden">
             {/* Background gradient */}
             <div className="absolute inset-0 opacity-10" style={{ background: "var(--solana-gradient)", mixBlendMode: "overlay" }} />
-            <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-0 md:divide-x md:divide-[rgba(153,69,255,0.2)] text-center">
+            <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-0 md:divide-x md:divide-[rgba(94, 234, 212,0.2)] text-center">
               {stats.map((s, i) => (
                 <motion.div
                   key={i}
@@ -460,7 +460,7 @@ export default function LandingPage() {
                   transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
                   className="flex flex-col items-center justify-center gap-3"
                 >
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-1" style={{ background: "rgba(153,69,255,0.1)" }}>
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-1" style={{ background: "rgba(94, 234, 212,0.1)" }}>
                     <s.icon className="w-6 h-6" style={{ color: "var(--solana-green)" }} />
                   </div>
                   <AnimatedCounter target={s.target} suffix={s.suffix} label={s.label} />
@@ -511,7 +511,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 className="text-3xl md:text-5xl lg:text-5xl font-black mb-6 uppercase tracking-tight"
               >
-                Ready to <span className="gradient-text drop-shadow-[0_0_20px_rgba(139,92,246,0.3)]">Secure</span> Your Vehicle?
+                Ready to <span className="gradient-text drop-shadow-[0_0_20px_rgba(94, 234, 212,0.3)]">Secure</span> Your Vehicle?
               </motion.h2>
               <p className="mb-8 text-lg max-w-2xl mx-auto text-center" style={{ color: "var(--solana-text-muted)" }}>
                 Join the future of transparent automotive ownership. Connect your wallet and explore your vehicle&apos;s digital passport.
@@ -533,7 +533,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========== FOOTER ========== */}
-      <footer className="border-t" style={{ borderColor: "rgba(153,69,255,0.1)", padding: "80px 0 40px" }}>
+      <footer className="border-t" style={{ borderColor: "rgba(94, 234, 212,0.1)", padding: "80px 0 40px" }}>
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             {/* Brand */}
@@ -567,7 +567,7 @@ export default function LandingPage() {
                     style={{ color: "var(--solana-text-muted)" }}
                   >
                     {link.label}
-                    <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-gradient-to-r from-purple-500 to-green-400 transition-all duration-300 group-hover:w-full" />
+                    <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-gradient-to-r from-teal-500 to-teal-400 transition-all duration-300 group-hover:w-full" />
                   </Link>
                 ))}
               </div>
@@ -585,7 +585,7 @@ export default function LandingPage() {
                     style={{ color: "var(--solana-text-muted)" }}
                   >
                     {label}
-                    <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-gradient-to-r from-purple-500 to-green-400 transition-all duration-300 group-hover:w-full" />
+                    <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-gradient-to-r from-teal-500 to-teal-400 transition-all duration-300 group-hover:w-full" />
                   </a>
                 ))}
               </div>
@@ -598,20 +598,20 @@ export default function LandingPage() {
                 {[
                   { icon: Twitter, hoverColor: "#1DA1F2" },
                   { icon: Github, hoverColor: "#fff" },
-                  { icon: Globe, hoverColor: "#14F195" },
-                  { icon: Users, hoverColor: "#9945FF" },
+                  { icon: Globe, hoverColor: "#5EEAD4" },
+                  { icon: Users, hoverColor: "#5EEAD4" },
                 ].map((social, i) => (
                   <a
                     key={i}
                     href="#"
                     className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 hover:-translate-y-1 group"
-                    style={{ background: "rgba(153,69,255,0.1)" }}
+                    style={{ background: "rgba(94, 234, 212,0.1)" }}
                     onMouseEnter={(e) => {
                       (e.currentTarget as HTMLElement).style.background = social.hoverColor + "20";
                       (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 20px ${social.hoverColor}30`;
                     }}
                     onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLElement).style.background = "rgba(153,69,255,0.1)";
+                      (e.currentTarget as HTMLElement).style.background = "rgba(94, 234, 212,0.1)";
                       (e.currentTarget as HTMLElement).style.boxShadow = "";
                     }}
                   >
@@ -631,7 +631,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="h-[1px] mb-6" style={{ background: "rgba(153,69,255,0.1)" }} />
+          <div className="h-[1px] mb-6" style={{ background: "rgba(94, 234, 212,0.1)" }} />
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>
               © 2026 NOC ID. All rights reserved. Built on Solana.

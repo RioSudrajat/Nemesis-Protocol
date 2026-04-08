@@ -43,7 +43,7 @@ export default function AdminDisputesPage() {
     <div>
       <div className="mb-8">
         <h1 className="flex items-center gap-3 font-bold text-2xl md:text-3xl">
-          <Scale className="w-7 h-7" style={{ color: "#F97316" }} />
+          <Scale className="w-7 h-7" style={{ color: "#5EEAD4" }} />
           Escalated Disputes
         </h1>
         <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Disputes escalated beyond enterprise resolution.</p>
@@ -51,10 +51,10 @@ export default function AdminDisputesPage() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Open", value: disputes.filter(d => d.status === "open").length, color: "#FACC15", icon: AlertTriangle },
+          { label: "Open", value: disputes.filter(d => d.status === "open").length, color: "#FCD34D", icon: AlertTriangle },
           { label: "Investigating", value: disputes.filter(d => d.status === "investigating").length, color: "var(--solana-cyan)", icon: Clock },
-          { label: "Resolved", value: disputes.filter(d => d.status === "resolved").length, color: "#22C55E", icon: CheckCircle2 },
-          { label: "Escalated", value: disputes.filter(d => d.status === "escalated").length, color: "#EF4444", icon: XCircle },
+          { label: "Resolved", value: disputes.filter(d => d.status === "resolved").length, color: "#86EFAC", icon: CheckCircle2 },
+          { label: "Escalated", value: disputes.filter(d => d.status === "escalated").length, color: "#FCA5A5", icon: XCircle },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass-card p-5 rounded-2xl">
             <s.icon className="w-5 h-5 mb-2" style={{ color: s.color }} />
@@ -67,7 +67,7 @@ export default function AdminDisputesPage() {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <div className="flex bg-black/30 p-1 rounded-xl border border-white/5">
           {["all", "open", "investigating", "resolved", "escalated"].map(f => (
-            <button key={f} onClick={() => setFilter(f)} className="px-3 py-2 rounded-lg text-xs font-medium capitalize transition-all" style={{ background: filter === f ? "rgba(249,115,22,0.2)" : "transparent", color: filter === f ? "#F97316" : "var(--solana-text-muted)" }}>{f}</button>
+            <button key={f} onClick={() => setFilter(f)} className="px-3 py-2 rounded-lg text-xs font-medium capitalize transition-all" style={{ background: filter === f ? "rgba(94, 234, 212,0.2)" : "transparent", color: filter === f ? "#5EEAD4" : "var(--solana-text-muted)" }}>{f}</button>
           ))}
         </div>
         <div className="relative w-full sm:w-64">
@@ -76,7 +76,7 @@ export default function AdminDisputesPage() {
         </div>
       </div>
 
-      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(249,115,22,0.2)" }}>
+      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-black/20 border-b border-white/5">
             <tr className="text-xs uppercase tracking-wider text-gray-400">
@@ -92,17 +92,17 @@ export default function AdminDisputesPage() {
           <tbody className="divide-y divide-white/5">
             {filtered.map(d => (
               <tr key={d.id} className="hover:bg-white/5 transition-colors">
-                <td className="py-4 px-6 mono text-xs" style={{ color: "#F97316" }}>{d.id}</td>
+                <td className="py-4 px-6 mono text-xs" style={{ color: "#5EEAD4" }}>{d.id}</td>
                 <td className="py-4 px-6">{typeLabels[d.type] || d.type}</td>
                 <td className="py-4 px-6 mono text-xs text-gray-400">{d.userWallet.slice(0, 8)}...</td>
                 <td className="py-4 px-6 text-gray-300">{d.workshopName}</td>
                 <td className="py-4 px-6 font-bold mono">Rp {d.amountIDR.toLocaleString("id-ID")}</td>
                 <td className="py-4 px-6">
-                  <span className="text-xs px-2 py-1 rounded-full capitalize" style={{ background: d.status === "resolved" ? "rgba(34,197,94,0.15)" : d.status === "open" ? "rgba(250,204,21,0.15)" : d.status === "escalated" ? "rgba(239,68,68,0.15)" : "rgba(0,194,255,0.15)", color: d.status === "resolved" ? "#22C55E" : d.status === "open" ? "#FACC15" : d.status === "escalated" ? "#EF4444" : "var(--solana-cyan)" }}>{d.status}</span>
+                  <span className="text-xs px-2 py-1 rounded-full capitalize" style={{ background: d.status === "resolved" ? "rgba(34,197,94,0.15)" : d.status === "open" ? "rgba(250,204,21,0.15)" : d.status === "escalated" ? "rgba(239,68,68,0.15)" : "rgba(0,194,255,0.15)", color: d.status === "resolved" ? "#86EFAC" : d.status === "open" ? "#FCD34D" : d.status === "escalated" ? "#FCA5A5" : "var(--solana-cyan)" }}>{d.status}</span>
                 </td>
                 <td className="py-4 px-6 text-right">
                   {d.status !== "resolved" && (
-                    <button onClick={() => handleResolve(d.id)} className="px-3 py-1 rounded text-xs bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors">Resolve</button>
+                    <button onClick={() => handleResolve(d.id)} className="px-3 py-1 rounded text-xs bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 transition-colors">Resolve</button>
                   )}
                 </td>
               </tr>

@@ -52,7 +52,7 @@ export default function WorkshopDirectoryPage() {
           { label: "Total Network", value: workshops.length, color: "var(--solana-purple)", icon: Wrench },
           { label: "Officially Verified", value: verifiedCount, color: "var(--solana-green)", icon: CheckCircle2 },
           { label: "OEM Certified", value: oemCount, color: "var(--solana-cyan)", icon: Shield },
-          { label: "Pending KYC", value: pendingCount, color: "#FACC15", icon: ShieldAlert },
+          { label: "Pending KYC", value: pendingCount, color: "#FCD34D", icon: ShieldAlert },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card p-6 rounded-2xl border border-white/5 flex flex-col items-center justify-center text-center">
             <s.icon className="w-6 h-6 mb-2" style={{ color: s.color }} />
@@ -66,7 +66,7 @@ export default function WorkshopDirectoryPage() {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <div className="flex bg-black/30 p-1 rounded-xl border border-white/5">
           {[{ id: "all", label: "All Network" }, { id: "verified", label: "Verified Only" }, { id: "oem", label: "OEM Certified" }, { id: "pending", label: "Pending KYC" }].map(f => (
-            <button key={f.id} onClick={() => setFilter(f.id)} className="px-4 py-2 rounded-lg text-sm font-medium transition-all" style={{ background: filter === f.id ? "rgba(153,69,255,0.2)" : "transparent", color: filter === f.id ? "#fff" : "var(--solana-text-muted)" }}>
+            <button key={f.id} onClick={() => setFilter(f.id)} className="px-4 py-2 rounded-lg text-sm font-medium transition-all" style={{ background: filter === f.id ? "rgba(94, 234, 212,0.2)" : "transparent", color: filter === f.id ? "#fff" : "var(--solana-text-muted)" }}>
               {f.label}
             </button>
           ))}
@@ -94,36 +94,36 @@ export default function WorkshopDirectoryPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 px-3 py-1 rounded-full border" style={{ background: "rgba(250,204,21,0.1)", borderColor: "rgba(250,204,21,0.25)" }}>
-                    <Star className="w-3.5 h-3.5 text-yellow-400" fill="#FACC15" />
+                    <Star className="w-3.5 h-3.5 text-yellow-400" fill="#FCD34D" />
                     <span className="text-sm font-bold text-yellow-400">{metric?.avgRating ? metric.avgRating.toFixed(1) : w.rating}</span>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-4">
                   {w.verified ? (
-                    <span className="badge badge-green flex items-center gap-1.5"><BadgeCheck className="w-3.5 h-3.5" /> Verified Signer</span>
+                    <span title="Workshop wallet passed KYC and is authorized to sign service log updates on the enterprise cNFT tree." className="badge badge-green flex items-center gap-1.5 cursor-help"><BadgeCheck className="w-3.5 h-3.5" /> Verified Signer</span>
                   ) : (
-                    <span className="badge flex items-center gap-1.5 bg-yellow-500/10 text-yellow-500 border-yellow-500/30"><Clock className="w-3.5 h-3.5" /> Pending Approval</span>
+                    <span title="Workshop has registered but hasn't completed wallet KYC. Service logs from this workshop queue for manual enterprise review before anchoring." className="badge flex items-center gap-1.5 bg-yellow-500/10 text-yellow-500 border-yellow-500/30 cursor-help"><Clock className="w-3.5 h-3.5" /> Pending KYC</span>
                   )}
-                  {w.oem && <span className="badge badge-purple flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" /> OEM Certified</span>}
-                  <span className="badge flex items-center gap-1" style={{ background: "rgba(20,20,40,0.5)", color: "var(--solana-text-muted)", border: "1px solid rgba(153,69,255,0.1)" }}>{w.specialization}</span>
+                  {w.oem && <span title="Workshop is an official OEM-partnered service center. Warranty claims from this workshop are eligible for fast-track review." className="badge badge-purple flex items-center gap-1.5 cursor-help"><Shield className="w-3.5 h-3.5" /> OEM Certified</span>}
+                  <span className="badge flex items-center gap-1" style={{ background: "rgba(20,20,40,0.5)", color: "var(--solana-text-muted)", border: "1px solid rgba(94, 234, 212,0.1)" }}>{w.specialization}</span>
                 </div>
 
                 {/* Live metrics from context */}
                 {metric && (
                   <div className="grid grid-cols-3 gap-3 mb-4 p-3 rounded-xl bg-black/20 border border-white/5">
                     <div className="text-center">
-                      <BarChart3 className="w-4 h-4 mx-auto mb-1 text-purple-400" />
+                      <BarChart3 className="w-4 h-4 mx-auto mb-1 text-teal-400" />
                       <p className="text-sm font-bold">{metric.servicesThisMonth}</p>
                       <p className="text-[10px] text-gray-500">Servis Bulan Ini</p>
                     </div>
                     <div className="text-center">
-                      <DollarSign className="w-4 h-4 mx-auto mb-1 text-green-400" />
-                      <p className="text-sm font-bold">Rp {(metric.revenueThisMonth / 1000).toFixed(0)}K</p>
+                      <DollarSign className="w-4 h-4 mx-auto mb-1 text-teal-400" />
+                      <p className="text-sm font-bold">Rp {metric.revenueThisMonth.toLocaleString('id-ID')}</p>
                       <p className="text-[10px] text-gray-500">Revenue Bulan Ini</p>
                     </div>
                     <div className="text-center">
-                      <Shield className="w-4 h-4 mx-auto mb-1 text-cyan-400" />
+                      <Shield className="w-4 h-4 mx-auto mb-1 text-teal-400" />
                       <p className="text-sm font-bold">{metric.oemPartsUsed + metric.aftermarketPartsUsed > 0 ? Math.round((metric.oemPartsUsed / (metric.oemPartsUsed + metric.aftermarketPartsUsed)) * 100) : 100}%</p>
                       <p className="text-[10px] text-gray-500">OEM Rate</p>
                     </div>
@@ -132,14 +132,14 @@ export default function WorkshopDirectoryPage() {
 
                 <div className="flex justify-between items-center pt-4 mt-auto border-t border-white/5">
                   <div className="flex flex-col">
-                    <span className="mono text-lg font-bold text-purple-400 leading-none">{metric?.totalServices || w.totalServices}</span>
+                    <span className="mono text-lg font-bold text-teal-400 leading-none">{metric?.totalServices || w.totalServices}</span>
                     <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider mt-1">Logs Signed</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <button className="flex items-center justify-center p-2.5 rounded-xl transition-colors hover:bg-white/10" style={{ background: "rgba(255,255,255,0.05)", color: "var(--solana-text-muted)" }}>
                       <Phone className="w-4 h-4" />
                     </button>
-                    <Link href={`/enterprise/workshops/${w.id}`} className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl font-medium transition-colors" style={{ background: "rgba(153,69,255,0.1)", color: "var(--solana-purple)" }}>
+                    <Link href={`/enterprise/workshops/${w.id}`} className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl font-medium transition-colors" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-purple)" }}>
                       <ExternalLink className="w-4 h-4" /> View Profile
                     </Link>
                   </div>

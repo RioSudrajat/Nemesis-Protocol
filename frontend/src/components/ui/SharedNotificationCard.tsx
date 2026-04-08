@@ -35,7 +35,7 @@ export function SharedNotificationCard({
       transition={{ delay: index * 0.04 }}
       className={`glass-card-static p-6 flex items-start gap-5 ${onClick ? "cursor-pointer hover:bg-white/5 transition-colors" : ""}`}
       style={{
-        borderLeft: !read ? `4px solid ${color}` : `1px solid rgba(153,69,255,0.15)`,
+        borderLeft: !read ? `4px solid ${color}` : `1px solid rgba(94, 234, 212,0.15)`,
         opacity: read ? 0.7 : 1
       }}
       onClick={() => onClick && onClick(id)}

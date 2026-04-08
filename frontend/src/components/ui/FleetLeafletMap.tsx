@@ -21,9 +21,9 @@ const regionCoordinates: Record<string, { lat: number; lng: number }> = {
 };
 
 function getHealthColor(health: number): string {
-  if (health >= 70) return "#22C55E";
-  if (health >= 50) return "#FACC15";
-  return "#EF4444";
+  if (health >= 70) return "#86EFAC";
+  if (health >= 50) return "#FCD34D";
+  return "#FCA5A5";
 }
 
 function createVehicleMarkerIcon(health: number) {
@@ -48,7 +48,7 @@ export default function FleetLeafletMap({ vehicles }: FleetLeafletMapProps) {
       <style>{`
         .leaflet-popup-content-wrapper {
           background: rgba(14,14,26,0.95) !important;
-          border: 1px solid rgba(153,69,255,0.3) !important;
+          border: 1px solid rgba(94, 234, 212,0.3) !important;
           border-radius: 12px !important;
           color: #fff !important;
           backdrop-filter: blur(10px);
@@ -56,7 +56,7 @@ export default function FleetLeafletMap({ vehicles }: FleetLeafletMapProps) {
         }
         .leaflet-popup-tip {
           background: rgba(14,14,26,0.95) !important;
-          border: 1px solid rgba(153,69,255,0.3) !important;
+          border: 1px solid rgba(94, 234, 212,0.3) !important;
           box-shadow: none !important;
         }
         .leaflet-popup-close-button {
@@ -72,14 +72,14 @@ export default function FleetLeafletMap({ vehicles }: FleetLeafletMapProps) {
           color: rgba(255,255,255,0.3) !important;
           font-size: 9px !important;
         }
-        .leaflet-control-attribution a { color: rgba(153,69,255,0.5) !important; }
+        .leaflet-control-attribution a { color: rgba(94, 234, 212,0.5) !important; }
         .leaflet-control-zoom a {
           background: rgba(14,14,26,0.9) !important;
           color: rgba(255,255,255,0.7) !important;
-          border-color: rgba(153,69,255,0.2) !important;
+          border-color: rgba(94, 234, 212,0.2) !important;
         }
         .leaflet-control-zoom a:hover {
-          background: rgba(153,69,255,0.2) !important;
+          background: rgba(94, 234, 212,0.2) !important;
           color: #fff !important;
         }
       `}</style>

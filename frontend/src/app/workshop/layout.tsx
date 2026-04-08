@@ -39,7 +39,7 @@ export default function WorkshopLayout({ children }: { children: React.ReactNode
 
   return (
     <div className="min-h-screen flex" style={{ background: "var(--solana-dark)" }}>
-      <aside className={`hidden md:flex flex-col min-h-screen p-5 border-r relative transition-all duration-300 ease-in-out shrink-0 ${isLeftCollapsed ? 'w-20 items-center' : 'w-64'}`} style={{ background: "var(--solana-dark-2)", borderColor: "rgba(153,69,255,0.4)", boxShadow: "2px 0 20px rgba(0,0,0,0.4)" }}>
+      <aside className={`hidden md:flex flex-col min-h-screen p-5 border-r relative transition-all duration-300 ease-in-out shrink-0 ${isLeftCollapsed ? 'w-20 items-center' : 'w-64'}`} style={{ background: "var(--solana-dark-2)", borderColor: "rgba(94, 234, 212,0.4)", boxShadow: "2px 0 20px rgba(0,0,0,0.4)" }}>
         <button 
           onClick={() => setIsLeftCollapsed(!isLeftCollapsed)}
           className="absolute -right-3 top-8 rounded-full p-1.5 text-white z-10 transition-transform hover:scale-110 shadow-lg cursor-pointer"
@@ -65,7 +65,7 @@ export default function WorkshopLayout({ children }: { children: React.ReactNode
             <p className="text-xs mono mt-1" style={{ color: "var(--solana-purple)" }}>★ 4.8 · Verified</p>
           </div>
         ) : (
-          <div className="w-10 h-10 rounded-full mb-6 flex items-center justify-center shrink-0 border" style={{ borderColor: "var(--solana-green)", background: "rgba(20,241,149,0.1)" }}>
+          <div className="w-10 h-10 rounded-full mb-6 flex items-center justify-center shrink-0 border" style={{ borderColor: "var(--solana-green)", background: "rgba(94, 234, 212,0.1)" }}>
             <Users className="w-4 h-4" style={{ color: "var(--solana-green)" }} />
           </div>
         )}
@@ -86,7 +86,7 @@ export default function WorkshopLayout({ children }: { children: React.ReactNode
       </aside>
 
       {/* Mobile header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4" style={{ background: "rgba(14,14,26,0.95)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(153,69,255,0.1)" }}>
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4" style={{ background: "rgba(14,14,26,0.95)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(94, 234, 212,0.1)" }}>
         <Link href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "var(--solana-gradient)" }}>
             <Shield className="w-4 h-4 text-white" />
@@ -95,7 +95,7 @@ export default function WorkshopLayout({ children }: { children: React.ReactNode
         </Link>
         <div className="flex items-center gap-2">
           {navItems.slice(0, 4).map((item) => (
-            <Link key={item.href} href={item.href} className="p-2 rounded-lg transition-colors" style={{ background: pathname === item.href ? "rgba(153,69,255,0.15)" : "transparent", color: pathname === item.href ? "var(--solana-green)" : "var(--solana-text-muted)" }}>
+            <Link key={item.href} href={item.href} className="p-2 rounded-lg transition-colors" style={{ background: pathname === item.href ? "rgba(94, 234, 212,0.15)" : "transparent", color: pathname === item.href ? "var(--solana-green)" : "var(--solana-text-muted)" }}>
               <item.icon className="w-5 h-5 cursor-pointer hover:text-white" />
             </Link>
           ))}

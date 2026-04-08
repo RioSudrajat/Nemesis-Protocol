@@ -25,7 +25,7 @@ export default function EnterpriseAnalyticsPage() {
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Live data from completed service records on-chain.</p>
         </div>
-        <button className="glow-btn-outline text-sm flex items-center gap-2 py-2 px-4 shadow-lg shadow-purple-500/10">
+        <button className="glow-btn-outline text-sm flex items-center gap-2 py-2 px-4 shadow-lg shadow-teal-500/10">
           <Download className="w-4 h-4" /> Export Report (PDF)
         </button>
       </div>
@@ -34,9 +34,9 @@ export default function EnterpriseAnalyticsPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         {[
           { icon: TrendingUp, label: "Avg Fleet Health", value: m?.avgFleetHealth.toString() || "0", change: `${m?.totalVehicles || 0} kendaraan`, color: "var(--solana-green)" },
-          { icon: DollarSign, label: "Avg Cost/Service", value: `Rp ${((m?.avgCostPerService || 0) / 1000).toFixed(0)}K`, change: `${m?.totalCompletedServices || 0} total servis`, color: "var(--solana-cyan)" },
+          { icon: DollarSign, label: "Avg Cost/Service", value: `Rp ${(m?.avgCostPerService || 0).toLocaleString('id-ID')}`, change: `${m?.totalCompletedServices || 0} total servis`, color: "var(--solana-cyan)" },
           { icon: Shield, label: "OEM Parts Rate", value: `${m?.oemRate || 100}%`, change: `${m?.totalOemParts || 0} OEM / ${m?.totalAftermarketParts || 0} aftermarket`, color: "var(--solana-purple)" },
-          { icon: Star, label: "Avg Rating", value: m?.avgRating.toFixed(1) || "0", change: `${m?.totalReviews || 0} review`, color: "#FACC15" },
+          { icon: Star, label: "Avg Rating", value: m?.avgRating.toFixed(1) || "0", change: `${m?.totalReviews || 0} review`, color: "#FCD34D" },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card p-6 rounded-2xl border" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
             <div className="flex justify-between items-start mb-3">
@@ -61,7 +61,7 @@ export default function EnterpriseAnalyticsPage() {
             <div className="flex flex-col gap-5">
               {partFrequency.slice(0, 6).map((f, i) => {
                 const pct = Math.round((f.count / maxPartCount) * 100);
-                const colors = ["#EF4444", "#F97316", "#FACC15", "var(--solana-pink)", "var(--solana-cyan)", "var(--solana-green)"];
+                const colors = ["#FCA5A5", "#5EEAD4", "#FCD34D", "var(--solana-pink)", "var(--solana-cyan)", "var(--solana-green)"];
                 return (
                   <div key={f.name} className="group">
                     <div className="flex justify-between text-sm mb-2">
@@ -88,7 +88,7 @@ export default function EnterpriseAnalyticsPage() {
         {/* Service Volume by Workshop */}
         <div className="glass-card-static p-8 rounded-2xl border border-white/5">
           <h3 className="text-base font-semibold mb-6 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-purple-400" /> Service Volume by Workshop
+            <BarChart3 className="w-5 h-5 text-teal-400" /> Service Volume by Workshop
           </h3>
           {wsMetrics.length > 0 ? (
             <div className="flex flex-col gap-5">
@@ -118,7 +118,7 @@ export default function EnterpriseAnalyticsPage() {
         {/* Part Origin Distribution */}
         <div className="glass-card-static p-8 rounded-2xl border border-white/5">
           <h3 className="text-base font-semibold mb-6 flex items-center gap-2">
-            <Package className="w-5 h-5 text-cyan-400" /> Part Origin Distribution
+            <Package className="w-5 h-5 text-teal-400" /> Part Origin Distribution
           </h3>
           <div className="flex items-center gap-8 justify-center py-4">
             <div className="relative w-40 h-40">
@@ -137,7 +137,7 @@ export default function EnterpriseAnalyticsPage() {
                 <span className="text-sm">OEM Parts: <strong>{m?.totalOemParts || 0}</strong></span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full" style={{ background: "#F97316" }} />
+                <div className="w-3 h-3 rounded-full" style={{ background: "#5EEAD4" }} />
                 <span className="text-sm">Aftermarket: <strong>{m?.totalAftermarketParts || 0}</strong></span>
               </div>
             </div>
@@ -150,7 +150,7 @@ export default function EnterpriseAnalyticsPage() {
           <div className="grid grid-cols-1 gap-5">
             {[
               { category: "OEM Parts Used", pct: m?.oemRate || 100, color: "var(--solana-purple)" },
-              { category: "Digital Records (On-Chain)", pct: m?.totalCompletedServices ? 100 : 0, color: "#FACC15" },
+              { category: "Digital Records (On-Chain)", pct: m?.totalCompletedServices ? 100 : 0, color: "#FCD34D" },
               { category: "Avg Customer Satisfaction", pct: Math.round(((m?.avgRating || 0) / 5) * 100), color: "var(--solana-green)" },
             ].map((c, i) => (
               <div key={i} className="flex items-center gap-4">

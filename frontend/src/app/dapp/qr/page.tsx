@@ -39,7 +39,7 @@ export default function QRPage() {
   return (
     <div>
       {hasActiveService && (
-        <Link href="/dapp/book/status" className="flex items-center gap-3 mb-6 p-4 rounded-xl transition-colors hover:bg-white/5" style={{ background: "rgba(20,241,149,0.08)", border: "1px solid rgba(20,241,149,0.2)" }}>
+        <Link href="/dapp/book/status" className="flex items-center gap-3 mb-6 p-4 rounded-xl transition-colors hover:bg-white/5" style={{ background: "rgba(94, 234, 212,0.08)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
           <Wrench className="w-5 h-5 shrink-0" style={{ color: "var(--solana-green)" }} />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold" style={{ color: "var(--solana-green)" }}>Servis Sedang Berjalan</p>
@@ -80,7 +80,7 @@ export default function QRPage() {
           <p className="text-xs mono mb-4" style={{ color: "var(--solana-text-muted)" }}>NOC ID #{currentVehicleData.vin.substring(currentVehicleData.vin.length - 5)} · {currentVehicleData.name}</p>
 
           {timeLimit && (
-            <div className="flex items-center gap-2 mb-4 px-4 py-2 rounded-xl" style={{ background: "rgba(20,241,149,0.08)", border: "1px solid rgba(20,241,149,0.2)" }}>
+            <div className="flex items-center gap-2 mb-4 px-4 py-2 rounded-xl" style={{ background: "rgba(94, 234, 212,0.08)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
               <Clock className="w-4 h-4" style={{ color: "var(--solana-green)" }} />
               <span className="text-xs font-semibold" style={{ color: "var(--solana-green)" }}>
                 {timeLeft > 0 ? `Expires in ${formatTime(timeLeft)}` : "Expired"}
@@ -125,7 +125,7 @@ export default function QRPage() {
           {/* Vehicle card */}
           <div className="glass-card-static p-8">
             <h3 className="text-base font-semibold mb-6">Vehicle Identity Card</h3>
-            <div className="p-5 rounded-xl" style={{ background: "linear-gradient(135deg, rgba(153,69,255,0.12) 0%, rgba(20,241,149,0.06) 100%)", border: "1px solid rgba(153,69,255,0.2)" }}>
+            <div className="p-5 rounded-xl" style={{ background: "linear-gradient(135deg, rgba(94, 234, 212,0.12) 0%, rgba(94, 234, 212,0.06) 100%)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <p className="text-lg font-bold">{currentVehicleData.name}</p>
@@ -142,7 +142,7 @@ export default function QRPage() {
                 </div>
                 <div>
                   <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Health</p>
-                  <p className="font-semibold text-sm" style={{ color: "#A3E635" }}>{currentVehicleData.health}</p>
+                  <p className="font-semibold text-sm" style={{ color: "#5EEAD4" }}>{currentVehicleData.health}</p>
                 </div>
                 <div>
                   <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Services</p>
@@ -176,7 +176,7 @@ export default function QRPage() {
               exit={{ scale: 0.9 }}
               className="flex flex-col items-center"
             >
-              <div className="w-80 h-80 sm:w-96 sm:h-96 rounded-3xl flex items-center justify-center relative shadow-2xl" style={{ background: "white", padding: 24, boxShadow: "0 0 50px rgba(153,69,255,0.2)" }}>
+              <div className="w-80 h-80 sm:w-96 sm:h-96 rounded-3xl flex items-center justify-center relative shadow-2xl" style={{ background: "white", padding: 24, boxShadow: "0 0 50px rgba(94, 234, 212,0.2)" }}>
                 <div className="w-full h-full" style={{ background: `repeating-conic-gradient(#0E0E1A 0% 25%, transparent 0% 50%) 50% / 24px 24px`, borderRadius: 12 }} />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-20 h-20 rounded-2xl flex items-center justify-center" style={{ background: "var(--solana-gradient)" }}>
@@ -188,7 +188,7 @@ export default function QRPage() {
               <p className="text-lg mono mt-8 font-bold text-white tracking-widest">NOC ID #00001</p>
               
               {timeLimit && (
-                <div className="mt-4 px-6 py-3 rounded-2xl bg-black/50 border border-green-500/30 text-green-400 font-mono text-xl">
+                <div className="mt-4 px-6 py-3 rounded-2xl bg-black/50 border border-teal-500/30 text-teal-400 font-mono text-xl">
                   {timeLeft > 0 ? formatTime(timeLeft) : "EXPIRED"}
                 </div>
               )}

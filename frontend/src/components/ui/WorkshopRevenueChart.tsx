@@ -26,10 +26,10 @@ export function WorkshopRevenueChart() {
               animate={{ height: `${heightPct}%` }}
               transition={{ delay: i * 0.1, type: "spring", stiffness: 50 }}
               className="w-full rounded-t-sm transition-all"
-              style={{ background: "linear-gradient(to top, rgba(20,241,149,0.2), rgba(20,241,149,1))" }}
+              style={{ background: "linear-gradient(to top, rgba(94, 234, 212,0.2), rgba(94, 234, 212,1))" }}
             />
             <span className="text-[10px]" style={{ color: "var(--solana-text-muted)" }}>{item.day}</span>
-            <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs font-bold px-2 py-1 rounded z-20" style={{ background: "#111116", color: "var(--solana-green)", border: "1px solid rgba(20,241,149,0.3)" }}>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap text-xs font-bold px-2 py-1 rounded z-20" style={{ background: "#111116", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.3)" }}>
               {item.value} NOC
             </div>
           </div>

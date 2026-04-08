@@ -33,9 +33,9 @@ export default function AdminDashboard() {
           { icon: Car, label: "Registered Vehicles", value: m?.totalVehicles || 0, color: "var(--solana-purple)" },
           { icon: Wrench, label: "Active Workshops", value: totalWorkshops, color: "var(--solana-green)" },
           { icon: Users, label: "Total Users", value: totalUsers, color: "var(--solana-cyan)" },
-          { icon: Receipt, label: "On-Chain TXs", value: m?.totalCompletedServices || 0, color: "#FACC15" },
-          { icon: TrendingUp, label: "Platform Revenue", value: `Rp ${((m?.totalRevenue || 0) / 1000).toFixed(0)}K`, color: "#F97316" },
-          { icon: Scale, label: "Active Disputes", value: activeDisputes, color: "#EF4444" },
+          { icon: Receipt, label: "On-Chain TXs", value: m?.totalCompletedServices || 0, color: "#FCD34D" },
+          { icon: TrendingUp, label: "Platform Revenue", value: `Rp ${((m?.totalRevenue || 0) / 1000).toFixed(0)}K`, color: "#5EEAD4" },
+          { icon: Scale, label: "Active Disputes", value: activeDisputes, color: "#FCA5A5" },
         ].map((stat, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass-card p-5 rounded-2xl">
             <stat.icon className="w-5 h-5 mb-2" style={{ color: stat.color }} />
@@ -62,7 +62,7 @@ export default function AdminDashboard() {
                   const segments = [
                     { pct: userPct, color: "var(--solana-cyan)" },
                     { pct: wsPct, color: "var(--solana-green)" },
-                    { pct: entPct, color: "#F97316" },
+                    { pct: entPct, color: "#5EEAD4" },
                   ];
                   return segments.map((seg, i) => {
                     const el = <circle key={i} cx="18" cy="18" r="15.9155" fill="none" stroke={seg.color} strokeWidth="3" strokeDasharray={`${seg.pct} ${100 - seg.pct}`} strokeDashoffset={-offset} />;
@@ -86,7 +86,7 @@ export default function AdminDashboard() {
                 <span className="text-sm">Workshops: <strong>{totalWorkshops}</strong></span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full" style={{ background: "#F97316" }} />
+                <div className="w-3 h-3 rounded-full" style={{ background: "#5EEAD4" }} />
                 <span className="text-sm">Enterprises: <strong>{totalEnterprises}</strong></span>
               </div>
             </div>
@@ -99,11 +99,11 @@ export default function AdminDashboard() {
           <div className="flex flex-col gap-3 max-h-64 overflow-y-auto">
             {auditLogs.length > 0 ? auditLogs.slice(0, 10).map((log) => (
               <div key={log.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(249,115,22,0.15)" }}>
-                  {log.action.includes("role") ? <Users className="w-4 h-4 text-orange-400" /> :
-                   log.action.includes("kyc") ? <Shield className="w-4 h-4 text-green-400" /> :
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(94, 234, 212,0.15)" }}>
+                  {log.action.includes("role") ? <Users className="w-4 h-4 text-teal-400" /> :
+                   log.action.includes("kyc") ? <Shield className="w-4 h-4 text-teal-400" /> :
                    log.action.includes("dispute") ? <Scale className="w-4 h-4 text-red-400" /> :
-                   <Activity className="w-4 h-4 text-cyan-400" />}
+                   <Activity className="w-4 h-4 text-teal-400" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{log.action.replace(/_/g, " ")}</p>
@@ -124,13 +124,13 @@ export default function AdminDashboard() {
       {/* Quick Links */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { href: "/admin/roles", label: "Manage Roles", icon: Users, desc: "Wallet whitelist & RBAC", color: "#F97316" },
+          { href: "/admin/roles", label: "Manage Roles", icon: Users, desc: "Wallet whitelist & RBAC", color: "#5EEAD4" },
           { href: "/admin/workshops", label: "KYC Queue", icon: Wrench, desc: "Pending workshop approvals", color: "var(--solana-green)" },
-          { href: "/admin/disputes", label: "Disputes", icon: Scale, desc: `${activeDisputes} active cases`, color: "#EF4444" },
+          { href: "/admin/disputes", label: "Disputes", icon: Scale, desc: `${activeDisputes} active cases`, color: "#FCA5A5" },
           { href: "/admin/audit", label: "Audit Logs", icon: FileText, desc: `${auditLogs.length} entries`, color: "var(--solana-cyan)" },
         ].map((link, i) => (
           <Link key={link.href} href={link.href}>
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.05 }} className="glass-card-static p-5 rounded-2xl border border-white/5 hover:border-orange-500/30 transition-colors cursor-pointer group">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.05 }} className="glass-card-static p-5 rounded-2xl border border-white/5 hover:border-teal-500/30 transition-colors cursor-pointer group">
               <link.icon className="w-6 h-6 mb-3 group-hover:scale-110 transition-transform" style={{ color: link.color }} />
               <p className="font-semibold text-sm mb-1">{link.label}</p>
               <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>{link.desc}</p>

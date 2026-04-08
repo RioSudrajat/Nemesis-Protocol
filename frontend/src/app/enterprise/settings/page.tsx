@@ -57,14 +57,14 @@ export default function SettingsPage() {
           {/* API Keys */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card-static p-6 rounded-2xl">
             <h2 className="text-lg font-semibold flex items-center gap-2 mb-4">
-              <Key className="w-5 h-5 text-purple-400" /> API Keys
+              <Key className="w-5 h-5 text-teal-400" /> API Keys
             </h2>
             <p className="text-sm mb-6" style={{ color: "var(--solana-text-muted)" }}>Use these keys to authenticate your existing ERP/SAP systems with the NOC ID protocol.</p>
             <div className="space-y-4">
-              <div className="p-4 rounded-xl border" style={{ borderColor: "rgba(153,69,255,0.2)", background: "rgba(0,0,0,0.2)" }}>
+              <div className="p-4 rounded-xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)", background: "rgba(0,0,0,0.2)" }}>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-semibold">Production Key</span>
-                  <span className="text-xs px-2 py-1 rounded bg-green-500/20 text-green-400">Active</span>
+                  <span className="text-xs px-2 py-1 rounded bg-teal-500/20 text-teal-400">Active</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <input type={apiKeyVisible ? "text" : "password"} readOnly value="pk_live_51MxxxxxNxOcKxxxTz..." className="flex-1 bg-transparent border-none text-sm mono focus:outline-none" style={{ color: "var(--solana-text-muted)" }} />
@@ -77,7 +77,7 @@ export default function SettingsPage() {
                 </div>
               </div>
             </div>
-            <button className="mt-4 text-sm font-medium flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors">
+            <button className="mt-4 text-sm font-medium flex items-center gap-2 text-teal-400 hover:text-teal-300 transition-colors">
               <RefreshCw className="w-4 h-4" /> Roll API Key
             </button>
           </motion.div>
@@ -85,7 +85,7 @@ export default function SettingsPage() {
           {/* Webhooks */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card-static p-6 rounded-2xl">
             <h2 className="text-lg font-semibold flex items-center gap-2 mb-4">
-              <Server className="w-5 h-5 text-cyan-400" /> Webhooks
+              <Server className="w-5 h-5 text-teal-400" /> Webhooks
             </h2>
             <p className="text-sm mb-4" style={{ color: "var(--solana-text-muted)" }}>Configure endpoints to receive real-time updates when vehicles in your fleet get serviced.</p>
             <div className="flex flex-col gap-3">
@@ -93,6 +93,30 @@ export default function SettingsPage() {
               <div className="flex gap-2">
                 <input type="url" placeholder="https://api.yourcompany.com/noc-webhooks" className="input-field flex-1" defaultValue="https://api.astra.com/v1/noc-webhooks" />
                 <button className="glow-btn-outline px-4">Save</button>
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--solana-text-muted)" }}>Events (8)</p>
+              <div className="flex flex-col gap-1.5">
+                {[
+                  { id: "service.log.anchored", desc: "Service log successfully anchored on-chain" },
+                  { id: "service.log.failed", desc: "Service log anchoring failed (retry required)" },
+                  { id: "warranty.claim.submitted", desc: "New warranty claim submitted by a workshop" },
+                  { id: "warranty.claim.approved", desc: "Warranty claim approved by enterprise" },
+                  { id: "warranty.claim.rejected", desc: "Warranty claim rejected by enterprise" },
+                  { id: "vehicle.transferred", desc: "Vehicle ownership transferred to new wallet" },
+                  { id: "workshop.kyc.updated", desc: "Workshop KYC status changed" },
+                  { id: "recall.notice.broadcast", desc: "Recall notice broadcast to affected VINs" },
+                ].map(ev => (
+                  <label key={ev.id} className="flex items-center justify-between gap-3 p-2.5 rounded-lg hover:bg-white/5 cursor-pointer">
+                    <div className="flex-1 min-w-0">
+                      <p className="mono text-xs text-teal-400 truncate">{ev.id}</p>
+                      <p className="text-[11px] truncate" style={{ color: "var(--solana-text-muted)" }}>{ev.desc}</p>
+                    </div>
+                    <input type="checkbox" defaultChecked className="accent-teal-500 w-4 h-4 shrink-0" />
+                  </label>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -117,8 +141,8 @@ export default function SettingsPage() {
                     <p className="text-sm font-medium">{item.label}</p>
                     <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>{item.desc}</p>
                   </div>
-                  <button onClick={() => toggleNotif(item.key)} className={`w-12 h-7 rounded-full transition-colors relative ${notifPrefs[item.key] ? "bg-green-500/30" : "bg-white/10"}`}>
-                    <div className={`w-5 h-5 rounded-full transition-all absolute top-1 ${notifPrefs[item.key] ? "left-6 bg-green-400" : "left-1 bg-gray-500"}`} />
+                  <button onClick={() => toggleNotif(item.key)} className={`w-12 h-7 rounded-full transition-colors relative ${notifPrefs[item.key] ? "bg-teal-500/30" : "bg-white/10"}`}>
+                    <div className={`w-5 h-5 rounded-full transition-all absolute top-1 ${notifPrefs[item.key] ? "left-6 bg-teal-400" : "left-1 bg-gray-500"}`} />
                   </button>
                 </div>
               ))}
@@ -128,7 +152,7 @@ export default function SettingsPage() {
           {/* Fee Configuration */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card-static p-6 rounded-2xl">
             <h2 className="text-lg font-semibold flex items-center gap-2 mb-4">
-              <DollarSign className="w-5 h-5 text-green-400" /> Fee Configuration
+              <DollarSign className="w-5 h-5 text-teal-400" /> Fee Configuration
             </h2>
             <div className="flex flex-col gap-4">
               <div>
@@ -140,8 +164,8 @@ export default function SettingsPage() {
                   <p className="text-sm font-medium">Gas Fee Subsidy</p>
                   <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Enterprise subsidizes Solana gas fees for users</p>
                 </div>
-                <button onClick={() => setFeeConfig(prev => ({ ...prev, gasSubsidy: !prev.gasSubsidy }))} className={`w-12 h-7 rounded-full transition-colors relative ${feeConfig.gasSubsidy ? "bg-green-500/30" : "bg-white/10"}`}>
-                  <div className={`w-5 h-5 rounded-full transition-all absolute top-1 ${feeConfig.gasSubsidy ? "left-6 bg-green-400" : "left-1 bg-gray-500"}`} />
+                <button onClick={() => setFeeConfig(prev => ({ ...prev, gasSubsidy: !prev.gasSubsidy }))} className={`w-12 h-7 rounded-full transition-colors relative ${feeConfig.gasSubsidy ? "bg-teal-500/30" : "bg-white/10"}`}>
+                  <div className={`w-5 h-5 rounded-full transition-all absolute top-1 ${feeConfig.gasSubsidy ? "left-6 bg-teal-400" : "left-1 bg-gray-500"}`} />
                 </button>
               </div>
             </div>
@@ -152,7 +176,7 @@ export default function SettingsPage() {
         <div className="flex flex-col gap-6">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card-static p-6 rounded-2xl">
             <h3 className="font-semibold mb-4 text-center">Enterprise Profile</h3>
-            <div className="w-20 h-20 rounded-2xl mx-auto mb-4 flex items-center justify-center bg-purple-500/20 border border-purple-500/50 shadow-lg shadow-purple-500/20">
+            <div className="w-20 h-20 rounded-2xl mx-auto mb-4 flex items-center justify-center bg-teal-500/20 border border-teal-500/50 shadow-lg shadow-teal-500/20">
               <span className="text-3xl font-bold text-white">AM</span>
             </div>
             <h4 className="text-center font-bold text-lg">PT Astra Manufacturing</h4>
@@ -160,7 +184,7 @@ export default function SettingsPage() {
             <div className="space-y-3 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
               <div className="flex justify-between text-sm">
                 <span style={{ color: "var(--solana-text-muted)" }}>Role</span>
-                <span className="flex items-center gap-1 font-medium text-green-400"><ShieldCheck className="w-4 h-4" /> Genesis Minter</span>
+                <span className="flex items-center gap-1 font-medium text-teal-400"><ShieldCheck className="w-4 h-4" /> Genesis Minter</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span style={{ color: "var(--solana-text-muted)" }}>Plan</span>
@@ -176,22 +200,22 @@ export default function SettingsPage() {
           {/* Team Members */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card-static p-6 rounded-2xl">
             <h3 className="font-semibold mb-4 flex items-center gap-2">
-              <Users className="w-4 h-4 text-purple-400" /> Team Members
+              <Users className="w-4 h-4 text-teal-400" /> Team Members
             </h3>
             <div className="flex flex-col gap-3">
               {teamMembers.map((member, i) => (
                 <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-black/20 border border-white/5">
                   <div>
-                    <span className="mono text-xs text-purple-400">{member.wallet}</span>
+                    <span className="mono text-xs text-teal-400">{member.wallet}</span>
                     <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>{member.role}</p>
                   </div>
-                  <span className="text-xs px-2 py-1 rounded" style={{ background: member.status === "Active" ? "rgba(34,197,94,0.15)" : "rgba(250,204,21,0.15)", color: member.status === "Active" ? "#22C55E" : "#FACC15" }}>
+                  <span className="text-xs px-2 py-1 rounded" style={{ background: member.status === "Active" ? "rgba(34,197,94,0.15)" : "rgba(250,204,21,0.15)", color: member.status === "Active" ? "#86EFAC" : "#FCD34D" }}>
                     {member.status}
                   </span>
                 </div>
               ))}
             </div>
-            <button className="mt-3 text-sm font-medium text-purple-400 hover:text-purple-300 transition-colors w-full text-center">
+            <button className="mt-3 text-sm font-medium text-teal-400 hover:text-teal-300 transition-colors w-full text-center">
               + Add Team Member
             </button>
           </motion.div>

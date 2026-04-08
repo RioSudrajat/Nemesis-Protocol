@@ -6,11 +6,11 @@ import { Car, Search, Filter, Shield, Download, MoreHorizontal } from "lucide-re
 import { useEnterprise } from "@/context/EnterpriseContext";
 
 function getHealthColor(health: number) {
-  if (health >= 90) return "#22C55E";
-  if (health >= 70) return "#A3E635";
-  if (health >= 50) return "#FACC15";
-  if (health >= 30) return "#F97316";
-  return "#EF4444";
+  if (health >= 90) return "#86EFAC";
+  if (health >= 70) return "#5EEAD4";
+  if (health >= 50) return "#FCD34D";
+  if (health >= 30) return "#5EEAD4";
+  return "#FCA5A5";
 }
 
 function getHealthStatus(health: number) {
@@ -46,12 +46,12 @@ export default function AdminVehiclesPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="flex items-center gap-3 font-bold text-2xl md:text-3xl">
-            <Car className="w-7 h-7" style={{ color: "#F97316" }} />
+            <Car className="w-7 h-7" style={{ color: "#5EEAD4" }} />
             Vehicle Registry
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Master vehicle registry across all enterprises.</p>
         </div>
-        <button className="text-sm flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: "rgba(249,115,22,0.1)", color: "#F97316", border: "1px solid rgba(249,115,22,0.3)" }}>
+        <button className="text-sm flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: "rgba(94, 234, 212,0.1)", color: "#5EEAD4", border: "1px solid rgba(94, 234, 212,0.3)" }}>
           <Download className="w-4 h-4" /> Export Fleet Data
         </button>
       </div>
@@ -59,10 +59,10 @@ export default function AdminVehiclesPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Total Vehicles", value: vehicles.length, color: "#F97316" },
-          { label: "Healthy (≥70)", value: vehicles.filter(v => v.health >= 70).length, color: "#22C55E" },
-          { label: "Warning (50-69)", value: vehicles.filter(v => v.health >= 50 && v.health < 70).length, color: "#FACC15" },
-          { label: "Critical (<50)", value: vehicles.filter(v => v.health < 50).length, color: "#EF4444" },
+          { label: "Total Vehicles", value: vehicles.length, color: "#5EEAD4" },
+          { label: "Healthy (≥70)", value: vehicles.filter(v => v.health >= 70).length, color: "#86EFAC" },
+          { label: "Warning (50-69)", value: vehicles.filter(v => v.health >= 50 && v.health < 70).length, color: "#FCD34D" },
+          { label: "Critical (<50)", value: vehicles.filter(v => v.health < 50).length, color: "#FCA5A5" },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass-card p-5 rounded-2xl">
             <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
@@ -92,7 +92,7 @@ export default function AdminVehiclesPage() {
       </div>
 
       {/* Table */}
-      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(249,115,22,0.2)" }}>
+      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-black/20 border-b border-white/5">
             <tr className="text-xs uppercase tracking-wider text-gray-400">
@@ -108,7 +108,7 @@ export default function AdminVehiclesPage() {
           <tbody className="divide-y divide-white/5">
             {filtered.map((v, i) => (
               <tr key={i} className="hover:bg-white/5 transition-colors">
-                <td className="py-4 px-6 mono text-xs" style={{ color: "#F97316" }}>{v.vin}</td>
+                <td className="py-4 px-6 mono text-xs" style={{ color: "#5EEAD4" }}>{v.vin}</td>
                 <td className="py-4 px-6 font-medium">{v.name}</td>
                 <td className="py-4 px-6 mono text-xs text-gray-400">{v.owner.slice(0, 8)}...</td>
                 <td className="py-4 px-6 text-gray-400">{v.region}</td>

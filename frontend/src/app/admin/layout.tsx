@@ -26,31 +26,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen flex" style={{ background: "var(--solana-dark)" }}>
-      <aside className={`hidden md:flex flex-col min-h-screen p-5 border-r relative transition-all duration-300 ease-in-out shrink-0 ${isLeftCollapsed ? 'w-20 items-center' : 'w-64'}`} style={{ background: "var(--solana-dark-2)", borderColor: "rgba(249,115,22,0.4)", boxShadow: "2px 0 20px rgba(0,0,0,0.4)" }}>
+      <aside className={`hidden md:flex flex-col min-h-screen p-5 border-r relative transition-all duration-300 ease-in-out shrink-0 ${isLeftCollapsed ? 'w-20 items-center' : 'w-64'}`} style={{ background: "var(--solana-dark-2)", borderColor: "rgba(94, 234, 212,0.4)", boxShadow: "2px 0 20px rgba(0,0,0,0.4)" }}>
         <button
           onClick={() => setIsLeftCollapsed(!isLeftCollapsed)}
           className="absolute -right-3 top-8 rounded-full p-1.5 text-white z-10 transition-transform hover:scale-110 shadow-lg cursor-pointer"
-          style={{ background: "#F97316" }}
+          style={{ background: "#5EEAD4" }}
         >
           {isLeftCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
 
         <Link href="/" className={`flex items-center gap-3 mb-8 ${isLeftCollapsed ? 'justify-center' : ''}`}>
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg, #F97316, #EF4444)" }}>
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: "linear-gradient(135deg, #5EEAD4, #FCA5A5)" }}>
             <Shield className="w-5 h-5 text-white" />
           </div>
-          {!isLeftCollapsed && <span className="font-bold text-lg whitespace-nowrap overflow-hidden"><span style={{ color: "#F97316" }}>NOC</span> Admin</span>}
+          {!isLeftCollapsed && <span className="font-bold text-lg whitespace-nowrap overflow-hidden"><span style={{ color: "#5EEAD4" }}>NOC</span> Admin</span>}
         </Link>
 
         {!isLeftCollapsed ? (
-          <div className="p-4 mb-6 rounded-xl border" style={{ background: "rgba(249,115,22,0.05)", borderColor: "rgba(249,115,22,0.2)" }}>
+          <div className="p-4 mb-6 rounded-xl border" style={{ background: "rgba(94, 234, 212,0.05)", borderColor: "rgba(94, 234, 212,0.2)" }}>
             <p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Platform Admin</p>
             <p className="font-semibold text-sm">NOC ID Superadmin</p>
-            <p className="text-xs mono mt-1" style={{ color: "#F97316" }}>9kPt...xQ2r</p>
+            <p className="text-xs mono mt-1" style={{ color: "#5EEAD4" }}>9kPt...xQ2r</p>
           </div>
         ) : (
-          <div className="w-10 h-10 rounded-full mb-6 flex items-center justify-center shrink-0 border" style={{ borderColor: "rgba(249,115,22,0.5)", background: "rgba(249,115,22,0.1)" }}>
-            <Shield className="w-4 h-4" style={{ color: "#F97316" }} />
+          <div className="w-10 h-10 rounded-full mb-6 flex items-center justify-center shrink-0 border" style={{ borderColor: "rgba(94, 234, 212,0.5)", background: "rgba(94, 234, 212,0.1)" }}>
+            <Shield className="w-4 h-4" style={{ color: "#5EEAD4" }} />
           </div>
         )}
 
@@ -58,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {navItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
             return (
-              <Link key={item.href} href={item.href} className={`flex items-center p-3 rounded-xl transition-colors ${isActive ? "bg-orange-500/10 text-orange-400" : "text-gray-400 hover:bg-white/5 hover:text-gray-200"} ${isLeftCollapsed ? 'justify-center' : 'gap-3'}`}>
+              <Link key={item.href} href={item.href} className={`flex items-center p-3 rounded-xl transition-colors ${isActive ? "bg-teal-500/10 text-teal-400" : "text-gray-400 hover:bg-white/5 hover:text-gray-200"} ${isLeftCollapsed ? 'justify-center' : 'gap-3'}`}>
                 <item.icon className="w-5 h-5 shrink-0" />
                 {!isLeftCollapsed && <span className="whitespace-nowrap text-sm">{item.label}</span>}
               </Link>
@@ -72,14 +72,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4" style={{ background: "rgba(14,14,26,0.95)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(249,115,22,0.1)" }}>
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4" style={{ background: "rgba(14,14,26,0.95)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(94, 234, 212,0.1)" }}>
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #F97316, #EF4444)" }}><Shield className="w-4 h-4 text-white" /></div>
-          <span className="font-bold text-sm"><span style={{ color: "#F97316" }}>NOC</span> Admin</span>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #5EEAD4, #FCA5A5)" }}><Shield className="w-4 h-4 text-white" /></div>
+          <span className="font-bold text-sm"><span style={{ color: "#5EEAD4" }}>NOC</span> Admin</span>
         </Link>
         <div className="flex items-center gap-2">
           {navItems.slice(0, 3).map((item) => (
-            <Link key={item.href} href={item.href} className="p-2 rounded-lg" style={{ background: pathname === item.href ? "rgba(249,115,22,0.15)" : "transparent", color: pathname === item.href ? "#F97316" : "var(--solana-text-muted)" }}>
+            <Link key={item.href} href={item.href} className="p-2 rounded-lg" style={{ background: pathname === item.href ? "rgba(94, 234, 212,0.15)" : "transparent", color: pathname === item.href ? "#5EEAD4" : "var(--solana-text-muted)" }}>
               <item.icon className="w-5 h-5" />
             </Link>
           ))}

@@ -5,7 +5,8 @@ export const vehicleData = {
   avanza: { name: "Toyota Avanza 2025", vin: "MHKA1BA1JFK000001", health: 87, nextService: "In 15 days", owner: "Pak Budi", licensePlate: "B 1234 CD", mileage: "34,521" },
   bmw_m4: { name: "BMW M4 G82 2025", vin: "WBA43AZ0X0CH00001", health: 95, nextService: "In 45 days", owner: "Andi Wijaya", licensePlate: "B 4 M", mileage: "12,400" },
   beat: { name: "Honda Beat 2024", vin: "MH1JFZ110K000042", health: 92, nextService: "In 60 days", owner: "Siti Nur", licensePlate: "D 5678 EF", mileage: "14,200" },
-  harley: { name: "Harley-Davidson Sportster S", vin: "HD1ME23145K998212", health: 98, nextService: "In 120 days", owner: "John Doe", licensePlate: "B 8888 HD", mileage: "8,900" }
+  harley: { name: "Harley-Davidson Sportster S", vin: "HD1ME23145K998212", health: 98, nextService: "In 120 days", owner: "John Doe", licensePlate: "B 8888 HD", mileage: "8,900" },
+  supra: { name: "Toyota Supra Veilside", vin: "JT2BF28K6420S0001", health: 94, nextService: "In 30 days", owner: "Ryo Takahashi", licensePlate: "B 80 PRA", mileage: "8,500" }
 };
 
 export type VehicleKey = keyof typeof vehicleData;

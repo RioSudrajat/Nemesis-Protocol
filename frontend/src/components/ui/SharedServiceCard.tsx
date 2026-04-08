@@ -47,11 +47,11 @@ interface SharedServiceCardProps {
 }
 
 function getHealthColor(health: number) {
-  if (health >= 90) return "#22C55E";
-  if (health >= 70) return "#A3E635";
-  if (health >= 50) return "#FACC15";
-  if (health >= 30) return "#F97316";
-  return "#EF4444";
+  if (health >= 90) return "#86EFAC";
+  if (health >= 70) return "#5EEAD4";
+  if (health >= 50) return "#FCD34D";
+  if (health >= 30) return "#5EEAD4";
+  return "#FCA5A5";
 }
 
 export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCancelInvoice }: SharedServiceCardProps) {
@@ -64,8 +64,8 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
   const isRejected = event.status === "REJECTED" || event.status === "CANCELLED";
 
   const getBorderColor = () => {
-    if (isPending) return "#FACC15";
-    if (isRejected) return "#EF4444";
+    if (isPending) return "#FCD34D";
+    if (isRejected) return "#FCA5A5";
     return "var(--solana-purple)";
   };
 
@@ -91,7 +91,7 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
               border: `2px solid ${getBorderColor()}` 
             }}
           >
-            <StatusIcon className="w-5 h-5" style={{ color: isPending ? "#FACC15" : isRejected ? "#EF4444" : "var(--solana-green)" }} />
+            <StatusIcon className="w-5 h-5" style={{ color: isPending ? "#FCD34D" : isRejected ? "#FCA5A5" : "var(--solana-green)" }} />
           </div>
         </div>
 
@@ -122,7 +122,7 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
             <span className="mono font-bold" style={{ color: getHealthColor(event.healthBefore) }}>{event.healthBefore}</span>
             <span style={{ color: "var(--solana-text-muted)" }}>→</span>
             <span className="mono font-bold" style={{ color: getHealthColor(event.healthAfter) }}>{event.healthAfter}</span>
-            <div className="flex-1 h-1 rounded-full" style={{ background: "rgba(153,69,255,0.1)" }}>
+            <div className="flex-1 h-1 rounded-full" style={{ background: "rgba(94, 234, 212,0.1)" }}>
               <div className="h-1 rounded-full transition-all" style={{ width: `${event.healthAfter}%`, background: getHealthColor(event.healthAfter) }} />
             </div>
           </div>
@@ -134,7 +134,7 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
                 <div className="flex flex-wrap gap-2">
                   {event.parts.slice(0, 2).map((p, j) => (
                     <span key={j} className="text-xs px-2 py-1 rounded-md flex items-center gap-1" style={{ background: "rgba(20,20,40,0.5)", color: "var(--solana-text-muted)" }}>
-                      {p.isOem && <CheckCircle2 className="w-3 h-3 text-green-400" />}
+                      {p.isOem && <CheckCircle2 className="w-3 h-3 text-teal-400" />}
                       {p.name}
                     </span>
                   ))}
@@ -146,7 +146,7 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
             </div>
             
             <div className="flex items-center gap-4 shrink-0">
-              <span className="text-sm font-semibold whitespace-nowrap" style={{ color: isPending ? "#FACC15" : isRejected ? "#EF4444" : "var(--solana-green)" }}>
+              <span className="text-sm font-semibold whitespace-nowrap" style={{ color: isPending ? "#FCD34D" : isRejected ? "#FCA5A5" : "var(--solana-green)" }}>
                 {event.costStr}
               </span>
               
@@ -162,7 +162,7 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
                       </button>
                       <button 
                         onClick={(e) => onPayNow(event.id, e)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-medium text-sm shadow-lg shadow-yellow-500/20 hover:scale-105 transition-transform"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-500 to-teal-500 text-white font-medium text-sm shadow-lg shadow-yellow-500/20 hover:scale-105 transition-transform"
                       >
                         <CreditCard className="w-4 h-4" /> Pay Now
                       </button>
@@ -178,8 +178,8 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
                   )}
                 </div>
               ) : isAnchored ? (
-                <a href={`https://explorer.solana.com/tx/${event.txSig}?cluster=devnet`} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} className="flex items-center gap-1 text-xs mono hover:brightness-150 transition-colors bg-purple-500/10 px-3 py-2 rounded-lg" style={{ color: "var(--solana-purple)" }}>
-                  <CheckCircle2 className="w-3 h-3 text-green-400" />
+                <a href={`https://explorer.solana.com/tx/${event.txSig}?cluster=devnet`} target="_blank" rel="noreferrer" onClick={e => e.stopPropagation()} className="flex items-center gap-1 text-xs mono hover:brightness-150 transition-colors bg-teal-500/10 px-3 py-2 rounded-lg" style={{ color: "var(--solana-purple)" }}>
+                  <CheckCircle2 className="w-3 h-3 text-teal-400" />
                   tx: {event.txSig}
                   <ExternalLink className="w-3 h-3" />
                 </a>
@@ -215,7 +215,7 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
 
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 rounded-lg bg-slate-800"><FileText className="w-6 h-6 text-purple-400" /></div>
+                  <div className="p-2 rounded-lg bg-slate-800"><FileText className="w-6 h-6 text-teal-400" /></div>
                   <h2 className="text-2xl font-bold text-white">Service Details</h2>
                 </div>
                 <p className="text-sm text-slate-400">{event.type} • {event.date}</p>
@@ -231,7 +231,7 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
                   <div className="p-4 rounded-xl bg-slate-800/50">
                     <p className="text-xs text-slate-400 mb-1">Status</p>
                     {isAnchored ? (
-                      <p className="font-semibold text-green-400 flex flex-wrap items-center gap-1.5"><CheckCircle className="w-4 h-4"/> Anchored to Solana</p>
+                      <p className="font-semibold text-teal-400 flex flex-wrap items-center gap-1.5"><CheckCircle className="w-4 h-4"/> Anchored to Solana</p>
                     ) : isPending ? (
                       <p className="font-semibold text-yellow-400 flex flex-wrap items-center gap-1.5"><AlertCircle className="w-4 h-4"/> Pending Payment</p>
                     ) : (
@@ -284,14 +284,14 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
                               </td>
                               <td className="py-2">
                                 {p.isOem ? (
-                                  <span className="flex items-center gap-1 text-green-400 text-xs"><CheckCircle2 className="w-3.5 h-3.5" /> OEM</span>
+                                  <span className="flex items-center gap-1 text-teal-400 text-xs"><CheckCircle2 className="w-3.5 h-3.5" /> OEM</span>
                                 ) : (
-                                  <span className="text-xs text-orange-400">Aftermarket</span>
+                                  <span className="text-xs text-teal-400">Aftermarket</span>
                                 )}
                               </td>
                               <td className="py-2 text-xs">
                                 {p.isOem ? (
-                                  <a href={`https://explorer.solana.com/address/NocPart_${p.partNumber}_mock`} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline flex items-center gap-1">{p.manufacturer} <ExternalLink className="w-3 h-3" /></a>
+                                  <a href={`https://explorer.solana.com/address/NocPart_${p.partNumber}_mock`} target="_blank" rel="noopener noreferrer" className="text-teal-400 hover:underline flex items-center gap-1">{p.manufacturer} <ExternalLink className="w-3 h-3" /></a>
                                 ) : (
                                   <span className="text-slate-400">{p.manufacturer}</span>
                                 )}

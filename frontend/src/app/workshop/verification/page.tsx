@@ -37,7 +37,7 @@ export default function WorkshopVerificationPage() {
         {/* Scanner / Input area */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-8 flex flex-col justify-between">
           <div>
-            <div className="w-full aspect-video rounded-xl mb-6 flex flex-col items-center justify-center border-2 border-dashed relative overflow-hidden" style={{ borderColor: "rgba(153,69,255,0.3)", background: "rgba(14,14,26,0.5)" }}>
+            <div className="w-full aspect-video rounded-xl mb-6 flex flex-col items-center justify-center border-2 border-dashed relative overflow-hidden" style={{ borderColor: "rgba(94, 234, 212,0.3)", background: "rgba(14,14,26,0.5)" }}>
               {status === "scanning" ? (
                 <>
                   <div className="w-full h-1 bg-gradient-to-r from-transparent via-[var(--solana-cyan)] to-transparent absolute top-0 animate-scan" style={{ boxShadow: "0 0 15px var(--solana-cyan)" }} />
@@ -54,9 +54,9 @@ export default function WorkshopVerificationPage() {
             </div>
 
             <div className="flex items-center gap-4 mb-4">
-              <div className="h-px w-full" style={{ background: "rgba(153,69,255,0.2)" }} />
+              <div className="h-px w-full" style={{ background: "rgba(94, 234, 212,0.2)" }} />
               <span className="text-xs shrink-0" style={{ color: "var(--solana-text-muted)" }}>OR ENTER MANUALLY</span>
-              <div className="h-px w-full" style={{ background: "rgba(153,69,255,0.2)" }} />
+              <div className="h-px w-full" style={{ background: "rgba(94, 234, 212,0.2)" }} />
             </div>
 
             <form onSubmit={handleVerify} className="flex gap-3">
@@ -68,7 +68,7 @@ export default function WorkshopVerificationPage() {
                   value={serialNumber}
                   onChange={(e) => setSerialNumber(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border text-sm font-mono focus:outline-none focus:border-[var(--solana-purple)] transition-colors"
-                  style={{ borderColor: "rgba(153,69,255,0.2)", color: "white" }}
+                  style={{ borderColor: "rgba(94, 234, 212,0.2)", color: "white" }}
                 />
               </div>
               <button 
@@ -131,7 +131,7 @@ export default function WorkshopVerificationPage() {
 
               <div className="p-4 rounded-xl flex items-start gap-3" style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)" }}>
                 <Info className="w-5 h-5 shrink-0" style={{ color: "var(--solana-green)" }} />
-                <p className="text-xs leading-relaxed text-green-100">This part is authentic and has not been logged in any other vehicle instance. Safe to install.</p>
+                <p className="text-xs leading-relaxed text-teal-100">This part is authentic and has not been logged in any other vehicle instance. Safe to install.</p>
               </div>
             </div>
           )}
@@ -139,15 +139,15 @@ export default function WorkshopVerificationPage() {
           {status === "fake" && (
             <div className="glass-card p-8 flex-1 border-2" style={{ borderColor: "rgba(239,68,68,0.5)" }}>
               <div className="flex items-center gap-3 mb-6">
-                <XCircle className="w-8 h-8" style={{ color: "#EF4444" }} />
+                <XCircle className="w-8 h-8" style={{ color: "#FCA5A5" }} />
                 <div>
-                  <h3 className="text-xl font-bold" style={{ color: "#EF4444" }}>Counterfeit Warning</h3>
+                  <h3 className="text-xl font-bold" style={{ color: "#FCA5A5" }}>Counterfeit Warning</h3>
                   <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Verification Failed</p>
                 </div>
               </div>
               
               <div className="p-4 rounded-xl flex items-start gap-3 mb-6" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)" }}>
-                <AlertTriangle className="w-5 h-5 shrink-0" style={{ color: "#EF4444" }} />
+                <AlertTriangle className="w-5 h-5 shrink-0" style={{ color: "#FCA5A5" }} />
                 <p className="text-xs leading-relaxed text-red-200">The serial number <strong>{serialNumber.toUpperCase()}</strong> does not exist on the NOC ID registry. DO NOT INSTALL this part. Installing counterfeit parts voids warranties and lowers the vehicle's health score.</p>
               </div>
 
@@ -158,11 +158,11 @@ export default function WorkshopVerificationPage() {
           )}
 
           {status === "warning" && (
-            <div className="glass-card p-8 flex-1 border-2" style={{ borderColor: "rgba(249,115,22,0.5)" }}>
+            <div className="glass-card p-8 flex-1 border-2" style={{ borderColor: "rgba(94, 234, 212,0.5)" }}>
               <div className="flex items-center gap-3 mb-6">
-                <AlertTriangle className="w-8 h-8" style={{ color: "#F97316" }} />
+                <AlertTriangle className="w-8 h-8" style={{ color: "#5EEAD4" }} />
                 <div>
-                  <h3 className="text-xl font-bold" style={{ color: "#F97316" }}>Recalled Part</h3>
+                  <h3 className="text-xl font-bold" style={{ color: "#5EEAD4" }}>Recalled Part</h3>
                   <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Authentic but unsafe</p>
                 </div>
               </div>
@@ -178,9 +178,9 @@ export default function WorkshopVerificationPage() {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl flex items-start gap-3" style={{ background: "rgba(249,115,22,0.15)", border: "1px solid rgba(249,115,22,0.3)" }}>
-                <Info className="w-5 h-5 shrink-0" style={{ color: "#F97316" }} />
-                <p className="text-xs leading-relaxed text-orange-200">This part is authentic but falls under OEM Recall Notice #RCL-2025-04. Return this part to the manufacturer distributor.</p>
+              <div className="p-4 rounded-xl flex items-start gap-3" style={{ background: "rgba(94, 234, 212,0.15)", border: "1px solid rgba(94, 234, 212,0.3)" }}>
+                <Info className="w-5 h-5 shrink-0" style={{ color: "#5EEAD4" }} />
+                <p className="text-xs leading-relaxed text-teal-200">This part is authentic but falls under OEM Recall Notice #RCL-2025-04. Return this part to the manufacturer distributor.</p>
               </div>
             </div>
           )}

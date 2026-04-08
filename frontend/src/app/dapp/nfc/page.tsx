@@ -24,7 +24,7 @@ export default function NFCPage() {
   return (
     <div>
       {hasActiveService && (
-        <Link href="/dapp/book/status" className="flex items-center gap-3 mb-6 p-4 rounded-xl transition-colors hover:bg-white/5" style={{ background: "rgba(20,241,149,0.08)", border: "1px solid rgba(20,241,149,0.2)" }}>
+        <Link href="/dapp/book/status" className="flex items-center gap-3 mb-6 p-4 rounded-xl transition-colors hover:bg-white/5" style={{ background: "rgba(94, 234, 212,0.08)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
           <Wrench className="w-5 h-5 shrink-0" style={{ color: "var(--solana-green)" }} />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold" style={{ color: "var(--solana-green)" }}>Servis Sedang Berjalan</p>
@@ -46,8 +46,8 @@ export default function NFCPage() {
         <div className="flex flex-col gap-6">
           <div className="relative w-full max-w-md mx-auto aspect-[1.586/1] rounded-2xl p-6 flex flex-col justify-between shadow-2xl overflow-hidden transition-all duration-300" 
             style={{ 
-              background: isActive ? "linear-gradient(135deg, rgba(153,69,255,0.7) 0%, rgba(20,241,149,0.3) 100%)" : "rgba(30,30,50,0.8)",
-              border: `1px solid ${isActive ? "rgba(153,69,255,0.5)" : "rgba(255,255,255,0.1)"}`,
+              background: isActive ? "linear-gradient(135deg, rgba(94, 234, 212,0.7) 0%, rgba(94, 234, 212,0.3) 100%)" : "rgba(30,30,50,0.8)",
+              border: `1px solid ${isActive ? "rgba(94, 234, 212,0.5)" : "rgba(255,255,255,0.1)"}`,
               filter: isActive ? "none" : "grayscale(100%)"
             }}
           >
@@ -67,7 +67,7 @@ export default function NFCPage() {
               <p className="text-white font-bold text-xl mb-4 tracking-wide">{currentVehicleData.name}</p>
               <div className="flex justify-between items-end">
                 <p className="text-white/80 mono text-sm tracking-widest">NFC-{currentVehicleData.vin.substring(currentVehicleData.vin.length - 8, currentVehicleData.vin.length - 4)}-{currentVehicleData.vin.substring(currentVehicleData.vin.length - 4)}</p>
-                <div className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: isActive ? "rgba(20,241,149,0.2)" : "rgba(255,0,0,0.2)", color: isActive ? "#14F195" : "#EF4444" }}>
+                <div className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: isActive ? "rgba(94, 234, 212,0.2)" : "rgba(255,0,0,0.2)", color: isActive ? "#5EEAD4" : "#FCA5A5" }}>
                   {isActive ? "ACTIVE" : "FROZEN"}
                 </div>
               </div>
@@ -78,7 +78,7 @@ export default function NFCPage() {
             <button 
               onClick={() => setIsActive(!isActive)}
               className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all cursor-pointer"
-              style={{ background: isActive ? "rgba(239,68,68,0.1)" : "rgba(20,241,149,0.1)", color: isActive ? "#EF4444" : "#14F195", border: `1px solid ${isActive ? "rgba(239,68,68,0.3)" : "rgba(20,241,149,0.3)"}` }}
+              style={{ background: isActive ? "rgba(239,68,68,0.1)" : "rgba(94, 234, 212,0.1)", color: isActive ? "#FCA5A5" : "#5EEAD4", border: `1px solid ${isActive ? "rgba(239,68,68,0.3)" : "rgba(94, 234, 212,0.3)"}` }}
             >
               <Power className="w-4 h-4" /> {isActive ? "Freeze Card" : "Unfreeze Card"}
             </button>
@@ -127,7 +127,7 @@ export default function NFCPage() {
                     <p className="text-sm font-medium">{scan.location}</p>
                     <p className="text-xs mono mt-1" style={{ color: "var(--solana-text-muted)" }}>{scan.date}</p>
                   </div>
-                  <span className="text-xs px-2 py-1 rounded-md" style={{ background: "rgba(20,241,149,0.1)", color: "var(--solana-green)" }}>
+                  <span className="text-xs px-2 py-1 rounded-md" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-green)" }}>
                     {scan.auth}
                   </span>
                 </div>

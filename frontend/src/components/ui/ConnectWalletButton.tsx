@@ -8,7 +8,7 @@ const accentMap: Record<PortalVariant, { dot: string; border?: string }> = {
   dapp: { dot: "var(--solana-green)" },
   workshop: { dot: "var(--solana-purple)", border: "var(--solana-purple)" },
   enterprise: { dot: "var(--solana-purple)" },
-  admin: { dot: "#F97316", border: "rgba(249,115,22,0.5)" },
+  admin: { dot: "#5EEAD4", border: "rgba(94, 234, 212,0.5)" },
 };
 
 export function ConnectWalletButton({ variant = "dapp" }: { variant?: PortalVariant }) {

@@ -16,11 +16,11 @@ const FleetLeafletMap = dynamic(() => import("@/components/ui/FleetLeafletMap"),
 )});
 
 function getHealthColor(health: number) {
-  if (health >= 90) return "#22C55E";
-  if (health >= 70) return "#A3E635";
-  if (health >= 50) return "#FACC15";
-  if (health >= 30) return "#F97316";
-  return "#EF4444";
+  if (health >= 90) return "#86EFAC";
+  if (health >= 70) return "#5EEAD4";
+  if (health >= 50) return "#FCD34D";
+  if (health >= 30) return "#5EEAD4";
+  return "#FCA5A5";
 }
 
 function getHealthStatus(health: number) {
@@ -49,7 +49,7 @@ export default function FleetPage() {
       else existing.critical++;
       regionMap[v.region] = existing;
     }
-    const colors = ["var(--solana-purple)", "var(--solana-green)", "var(--solana-cyan)", "#FACC15", "#F97316", "var(--solana-pink)"];
+    const colors = ["var(--solana-purple)", "var(--solana-green)", "var(--solana-cyan)", "#FCD34D", "#5EEAD4", "var(--solana-pink)"];
     return Object.entries(regionMap)
       .map(([name, data], i) => ({ name, vehicles: data.healthy + data.warning + data.critical, ...data, color: colors[i % colors.length] }))
       .sort((a, b) => b.vehicles - a.vehicles);
@@ -93,9 +93,9 @@ export default function FleetPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         {[
           { icon: Car, label: "Total Vehicles", value: totalVehicles.toLocaleString(), color: "var(--solana-purple)" },
-          { icon: CheckCircle2, label: "Healthy", value: healthyCount.toLocaleString(), color: "#22C55E" },
-          { icon: AlertTriangle, label: "Warnings", value: warningCount.toLocaleString(), color: "#FACC15" },
-          { icon: Shield, label: "Critical", value: criticalCount.toLocaleString(), color: "#EF4444" },
+          { icon: CheckCircle2, label: "Healthy", value: healthyCount.toLocaleString(), color: "#86EFAC" },
+          { icon: AlertTriangle, label: "Warnings", value: warningCount.toLocaleString(), color: "#FCD34D" },
+          { icon: Shield, label: "Critical", value: criticalCount.toLocaleString(), color: "#FCA5A5" },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card p-6 rounded-2xl">
             <s.icon className="w-6 h-6 mb-3" style={{ color: s.color }} />
@@ -107,7 +107,7 @@ export default function FleetPage() {
 
       {/* Region breakdown & Map */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
-        <div className="glass-card-static p-6 rounded-2xl col-span-1 border" style={{ borderColor: "rgba(153,69,255,0.2)" }}>
+        <div className="glass-card-static p-6 rounded-2xl col-span-1 border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
           <h3 className="text-base font-semibold mb-6">Regional Distribution</h3>
           <div className="flex flex-col gap-6">
             {regions.map((r, i) => (
@@ -115,9 +115,9 @@ export default function FleetPage() {
                 <MapPin className="w-4 h-4 shrink-0 transition-transform group-hover:scale-125" style={{ color: r.color }} />
                 <span className="text-sm w-20">{r.name}</span>
                 <div className="flex-1 h-3 rounded-full overflow-hidden flex" style={{ background: "rgba(20,20,40,0.5)" }}>
-                  <motion.div initial={{ width: 0 }} animate={{ width: `${(r.healthy / Math.max(r.vehicles, 1)) * 100}%` }} transition={{ duration: 0.6, delay: i * 0.08 }} className="h-full" style={{ background: "#22C55E", opacity: 0.8 }} />
-                  <motion.div initial={{ width: 0 }} animate={{ width: `${(r.warning / Math.max(r.vehicles, 1)) * 100}%` }} transition={{ duration: 0.6, delay: i * 0.08 + 0.1 }} className="h-full" style={{ background: "#FACC15", opacity: 0.8 }} />
-                  <motion.div initial={{ width: 0 }} animate={{ width: `${(r.critical / Math.max(r.vehicles, 1)) * 100}%` }} transition={{ duration: 0.6, delay: i * 0.08 + 0.2 }} className="h-full" style={{ background: "#EF4444", opacity: 0.8 }} />
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${(r.healthy / Math.max(r.vehicles, 1)) * 100}%` }} transition={{ duration: 0.6, delay: i * 0.08 }} className="h-full" style={{ background: "#86EFAC", opacity: 0.8 }} />
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${(r.warning / Math.max(r.vehicles, 1)) * 100}%` }} transition={{ duration: 0.6, delay: i * 0.08 + 0.1 }} className="h-full" style={{ background: "#FCD34D", opacity: 0.8 }} />
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${(r.critical / Math.max(r.vehicles, 1)) * 100}%` }} transition={{ duration: 0.6, delay: i * 0.08 + 0.2 }} className="h-full" style={{ background: "#FCA5A5", opacity: 0.8 }} />
                 </div>
                 <span className="text-xs font-semibold mono w-12 text-right">{r.vehicles}</span>
               </div>
@@ -129,7 +129,7 @@ export default function FleetPage() {
         </div>
 
         {/* Live Leaflet Map */}
-        <div className="glass-card-static rounded-2xl col-span-1 lg:col-span-2 relative overflow-hidden border" style={{ borderColor: "rgba(153,69,255,0.1)", minHeight: 400 }}>
+        <div className="glass-card-static rounded-2xl col-span-1 lg:col-span-2 relative overflow-hidden border" style={{ borderColor: "rgba(94, 234, 212,0.1)", minHeight: 400 }}>
           <FleetLeafletMap vehicles={vehicles} />
         </div>
       </div>
@@ -161,7 +161,7 @@ export default function FleetPage() {
       </div>
 
       {/* Vehicle list */}
-      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(153,69,255,0.2)" }}>
+      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-black/20 border-b border-white/5">
             <tr className="text-xs uppercase tracking-wider text-gray-400">

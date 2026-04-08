@@ -81,19 +81,19 @@ const predictionsData: Record<string, any[]> = {
 
 function getStatusColor(status: string) {
   switch (status) {
-    case "Excellent": return "#22C55E";
-    case "Good": return "#A3E635";
-    case "Warning": return "#FACC15";
-    case "Critical": return "#F97316";
-    case "Danger": return "#EF4444";
+    case "Excellent": return "#86EFAC";
+    case "Good": return "#5EEAD4";
+    case "Warning": return "#FCD34D";
+    case "Critical": return "#5EEAD4";
+    case "Danger": return "#FCA5A5";
     default: return "#94A3B8";
   }
 }
 
 function getRiskLabel(prob: number): { label: string; color: string } {
-  if (prob >= 0.6) return { label: `Risiko Tinggi (${(prob * 100).toFixed(0)}%)`, color: "#EF4444" };
-  if (prob >= 0.3) return { label: `Risiko Sedang (${(prob * 100).toFixed(0)}%)`, color: "#FACC15" };
-  return { label: `Risiko Rendah (${(prob * 100).toFixed(0)}%)`, color: "#22C55E" };
+  if (prob >= 0.6) return { label: `Risiko Tinggi (${(prob * 100).toFixed(0)}%)`, color: "#FCA5A5" };
+  if (prob >= 0.3) return { label: `Risiko Sedang (${(prob * 100).toFixed(0)}%)`, color: "#FCD34D" };
+  return { label: `Risiko Rendah (${(prob * 100).toFixed(0)}%)`, color: "#86EFAC" };
 }
 
 function FactorsChart({ factors, showAdvanced }: { factors: { feature: string; impact: number; direction: string }[]; showAdvanced: boolean }) {
@@ -110,12 +110,12 @@ function FactorsChart({ factors, showAdvanced }: { factors: { feature: string; i
                 animate={{ width: `${(Math.abs(f.impact) / maxImpact) * 100}%` }}
                 transition={{ duration: 0.8, delay: i * 0.1 }}
                 className="h-full rounded-md"
-                style={{ background: f.direction === "up" ? "rgba(249,115,22,0.6)" : "rgba(34,197,94,0.6)" }}
+                style={{ background: f.direction === "up" ? "rgba(94, 234, 212,0.6)" : "rgba(34,197,94,0.6)" }}
               />
             </div>
           </div>
           {showAdvanced && (
-            <span className="text-xs mono w-14 text-right font-semibold" style={{ color: f.direction === "up" ? "#F97316" : "#22C55E" }}>
+            <span className="text-xs mono w-14 text-right font-semibold" style={{ color: f.direction === "up" ? "#5EEAD4" : "#86EFAC" }}>
               {f.direction === "up" ? "+" : ""}{f.impact.toFixed(2)}
             </span>
           )}
@@ -141,7 +141,7 @@ export default function InsightsPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
-              <Brain className="w-8 h-8 text-purple-400" />
+              <Brain className="w-8 h-8 text-teal-400" />
               AI Predictive Insights
             </h1>
             <div className="mt-2 flex items-center gap-2">
@@ -157,8 +157,8 @@ export default function InsightsPage() {
             onClick={() => setAdvancedView(!advancedView)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm transition-all shrink-0"
             style={{
-              background: advancedView ? "rgba(153,69,255,0.15)" : "rgba(20,20,40,0.7)",
-              border: `1px solid ${advancedView ? "var(--solana-purple)" : "rgba(153,69,255,0.2)"}`,
+              background: advancedView ? "rgba(94, 234, 212,0.15)" : "rgba(20,20,40,0.7)",
+              border: `1px solid ${advancedView ? "var(--solana-purple)" : "rgba(94, 234, 212,0.2)"}`,
               color: advancedView ? "var(--solana-purple)" : "var(--solana-text-muted)",
             }}
           >
@@ -171,15 +171,15 @@ export default function InsightsPage() {
       {/* Summary bar */}
       <div className="glass-card-static p-6 mb-10 flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8">
         <div className="flex items-center gap-3">
-          <AlertTriangle className="w-6 h-6" style={{ color: "#F97316" }} />
+          <AlertTriangle className="w-6 h-6" style={{ color: "#5EEAD4" }} />
           <span className="text-base font-semibold">1 Critical</span>
         </div>
         <div className="flex items-center gap-3">
-          <Info className="w-6 h-6" style={{ color: "#FACC15" }} />
+          <Info className="w-6 h-6" style={{ color: "#FCD34D" }} />
           <span className="text-base font-semibold">2 Warnings</span>
         </div>
         <div className="flex items-center gap-3">
-          <CheckCircle2 className="w-6 h-6" style={{ color: "#22C55E" }} />
+          <CheckCircle2 className="w-6 h-6" style={{ color: "#86EFAC" }} />
           <span className="text-base font-semibold">2 Excellent</span>
         </div>
         <div className="flex-1" />
@@ -237,7 +237,7 @@ export default function InsightsPage() {
                 </div>
 
                 {/* Recommendation */}
-                <div className="flex items-start gap-4 p-5 rounded-xl" style={{ background: "rgba(153,69,255,0.05)", border: "1px solid rgba(153,69,255,0.15)" }}>
+                <div className="flex items-start gap-4 p-5 rounded-xl" style={{ background: "rgba(94, 234, 212,0.05)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
                   <ChevronRight className="w-6 h-6 mt-0.5 shrink-0" style={{ color: "var(--solana-green)" }} />
                   <p className="text-base" style={{ color: "var(--solana-text-muted)" }}>{pred.recommendation}</p>
                 </div>

@@ -40,7 +40,7 @@ export function GlobalCopilotSidebar() {
   return (
     <aside
       className={`hidden md:flex flex-col min-h-screen border-l relative transition-all duration-300 ease-in-out shrink-0 z-40 ${isCollapsed ? 'w-16 items-center cursor-pointer hover:bg-white/5' : 'w-80 sm:w-96'}`}
-      style={{ background: "var(--solana-dark-2)", borderColor: "rgba(153,69,255,0.4)", boxShadow: "-2px 0 20px rgba(0,0,0,0.4)" }}
+      style={{ background: "var(--solana-dark-2)", borderColor: "rgba(94, 234, 212,0.4)", boxShadow: "-2px 0 20px rgba(0,0,0,0.4)" }}
       onClick={() => { if (isCollapsed) setIsCollapsed(false) }}
     >
       <button 
@@ -65,7 +65,7 @@ export function GlobalCopilotSidebar() {
       ) : (
         <div className="flex flex-col h-full w-full">
           {/* Header */}
-          <div className="p-6 border-b flex items-center gap-3" style={{ borderColor: "rgba(153,69,255,0.1)" }}>
+          <div className="p-6 border-b flex items-center gap-3" style={{ borderColor: "rgba(94, 234, 212,0.1)" }}>
             <div className="w-10 h-10 rounded-xl flex items-center justify-center glow-btn shrink-0">
               <Bot className="w-6 h-6 text-white" />
             </div>
@@ -79,13 +79,13 @@ export function GlobalCopilotSidebar() {
           <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "user" ? "bg-purple-600/20 text-purple-400" : "bg-green-500/20 text-green-400"}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "user" ? "bg-teal-600/20 text-teal-400" : "bg-teal-500/20 text-teal-400"}`}>
                   {msg.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                 </div>
                 <div 
                   className={`p-3 rounded-2xl text-sm max-w-[85%] ${
                     msg.role === "user" 
-                      ? "rounded-tr-sm bg-purple-600/20 border border-purple-500/30" 
+                      ? "rounded-tr-sm bg-teal-600/20 border border-teal-500/30" 
                       : "rounded-tl-sm bg-black/40 border border-white/10"
                   }`}
                 >
@@ -97,7 +97,7 @@ export function GlobalCopilotSidebar() {
           </div>
 
           {/* Input Area */}
-          <div className="p-4 border-t" style={{ borderColor: "rgba(153,69,255,0.1)" }}>
+          <div className="p-4 border-t" style={{ borderColor: "rgba(94, 234, 212,0.1)" }}>
             <div className="relative flex items-center">
               <input 
                 type="text" 
@@ -105,7 +105,7 @@ export function GlobalCopilotSidebar() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 placeholder="Ask Copilot..."
-                className="w-full border outline-none rounded-xl py-3 pl-4 pr-12 text-sm transition-all focus:border-purple-500"
+                className="w-full border outline-none rounded-xl py-3 pl-4 pr-12 text-sm transition-all focus:border-teal-500"
                 style={{ background: "rgba(20,20,40,0.5)", borderColor: "rgba(255,255,255,0.1)" }}
               />
               <button 

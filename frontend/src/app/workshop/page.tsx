@@ -15,12 +15,12 @@ function ReputationScoreRing({ score }: { score: number }) {
   const circumference = 2 * Math.PI * radius;
   const maxScore = 5.0;
   const offset = circumference - (score / maxScore) * circumference;
-  const color = score >= 4.5 ? "#22C55E" : score >= 4.0 ? "#A3E635" : score >= 3.0 ? "#FACC15" : score >= 2.0 ? "#F97316" : "#EF4444";
+  const color = score >= 4.5 ? "#86EFAC" : score >= 4.0 ? "#5EEAD4" : score >= 3.0 ? "#FCD34D" : score >= 2.0 ? "#5EEAD4" : "#FCA5A5";
 
   return (
     <div className="relative flex items-center justify-center">
       <svg width="160" height="160" className="-rotate-90">
-        <circle cx="80" cy="80" r={radius} fill="none" stroke="rgba(153,69,255,0.1)" strokeWidth="10" />
+        <circle cx="80" cy="80" r={radius} fill="none" stroke="rgba(94, 234, 212,0.1)" strokeWidth="10" />
         <motion.circle
           cx="80" cy="80" r={radius}
           fill="none" stroke={color} strokeWidth="10" strokeLinecap="round"
@@ -57,7 +57,7 @@ export default function WorkshopDashboard() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(153,69,255,0.12)" }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(94, 234, 212,0.12)" }}>
                  <Wrench className="w-5 h-5" style={{ color: "var(--solana-purple)" }} />
               </div>
               <div>
@@ -71,12 +71,12 @@ export default function WorkshopDashboard() {
                 <span>Completion Rate</span>
                 <span className="mono">98.7%</span>
               </div>
-              <div className="w-full h-1.5 rounded-full relative" style={{ background: "rgba(153,69,255,0.15)" }}>
+              <div className="w-full h-1.5 rounded-full relative" style={{ background: "rgba(94, 234, 212,0.15)" }}>
                 <div className="h-1.5 rounded-full" style={{ width: "98.7%", background: "var(--solana-gradient)" }} />
               </div>
             </div>
           </div>
-          <div className="mt-6 pt-3 border-t flex items-start gap-2" style={{ borderColor: "rgba(153,69,255,0.1)" }}>
+          <div className="mt-6 pt-3 border-t flex items-start gap-2" style={{ borderColor: "rgba(94, 234, 212,0.1)" }}>
              <TrendingUp className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: "var(--solana-green)" }} />
              <p className="text-[11px] leading-snug" style={{ color: "var(--solana-text-muted)" }}>
                <span style={{ color: "var(--solana-green)" }}>+12% higher</span> services compared to last month.
@@ -89,7 +89,7 @@ export default function WorkshopDashboard() {
       {/* Quick actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
         <Link href="/workshop/scan" className="glass-card p-6 flex flex-col items-center gap-4 group cursor-pointer text-center">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center transition-transform group-hover:scale-110" style={{ background: "rgba(153,69,255,0.12)" }}>
+          <div className="w-14 h-14 rounded-full flex items-center justify-center transition-transform group-hover:scale-110" style={{ background: "rgba(94, 234, 212,0.12)" }}>
             <Scan className="w-6 h-6" style={{ color: "var(--solana-purple)" }} />
           </div>
           <div>
@@ -107,7 +107,7 @@ export default function WorkshopDashboard() {
           </div>
         </Link>
         <Link href="/workshop/verification" className="glass-card p-6 flex flex-col items-center gap-4 group cursor-pointer text-center">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center transition-transform group-hover:scale-110" style={{ background: "rgba(249,89,255,0.12)" }}>
+          <div className="w-14 h-14 rounded-full flex items-center justify-center transition-transform group-hover:scale-110" style={{ background: "rgba(94, 234, 212,0.12)" }}>
             <ShieldCheck className="w-6 h-6" style={{ color: "var(--solana-pink)" }} />
           </div>
           <div>
@@ -116,7 +116,7 @@ export default function WorkshopDashboard() {
           </div>
         </Link>
         <Link href="/workshop/maintenance" className="glass-card p-6 flex flex-col items-center gap-4 group cursor-pointer text-center">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center transition-transform group-hover:scale-110" style={{ background: "rgba(20,241,149,0.12)" }}>
+          <div className="w-14 h-14 rounded-full flex items-center justify-center transition-transform group-hover:scale-110" style={{ background: "rgba(94, 234, 212,0.12)" }}>
             <FileText className="w-6 h-6" style={{ color: "var(--solana-green)" }} />
           </div>
           <div>

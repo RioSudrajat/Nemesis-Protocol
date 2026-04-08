@@ -12,14 +12,14 @@ interface LeafletMapProps {
 }
 
 function createMarkerIcon(verified: boolean) {
-  const color = verified ? "#14F195" : "#FACC15";
+  const color = verified ? "#5EEAD4" : "#FCD34D";
   return L.divIcon({
     className: "custom-workshop-marker",
     html: `<div style="
       width: 16px; height: 16px; border-radius: 50%;
       background: ${color};
-      border: 2px solid ${verified ? "rgba(20,241,149,0.5)" : "rgba(250,204,21,0.5)"};
-      box-shadow: 0 0 12px ${verified ? "rgba(20,241,149,0.5)" : "rgba(250,204,21,0.5)"}, 0 0 24px ${verified ? "rgba(20,241,149,0.2)" : "rgba(250,204,21,0.2)"};
+      border: 2px solid ${verified ? "rgba(94, 234, 212,0.5)" : "rgba(250,204,21,0.5)"};
+      box-shadow: 0 0 12px ${verified ? "rgba(94, 234, 212,0.5)" : "rgba(250,204,21,0.5)"}, 0 0 24px ${verified ? "rgba(94, 234, 212,0.2)" : "rgba(250,204,21,0.2)"};
     "></div>`,
     iconSize: [16, 16],
     iconAnchor: [8, 8],
@@ -33,7 +33,7 @@ export default function LeafletMap({ workshops }: LeafletMapProps) {
       <style>{`
         .leaflet-popup-content-wrapper {
           background: rgba(14,14,26,0.95) !important;
-          border: 1px solid rgba(153,69,255,0.3) !important;
+          border: 1px solid rgba(94, 234, 212,0.3) !important;
           border-radius: 12px !important;
           color: #fff !important;
           backdrop-filter: blur(10px);
@@ -41,7 +41,7 @@ export default function LeafletMap({ workshops }: LeafletMapProps) {
         }
         .leaflet-popup-tip {
           background: rgba(14,14,26,0.95) !important;
-          border: 1px solid rgba(153,69,255,0.3) !important;
+          border: 1px solid rgba(94, 234, 212,0.3) !important;
           box-shadow: none !important;
         }
         .leaflet-popup-close-button {
@@ -67,15 +67,15 @@ export default function LeafletMap({ workshops }: LeafletMapProps) {
           font-size: 9px !important;
         }
         .leaflet-control-attribution a {
-          color: rgba(153,69,255,0.5) !important;
+          color: rgba(94, 234, 212,0.5) !important;
         }
         .leaflet-control-zoom a {
           background: rgba(14,14,26,0.9) !important;
           color: rgba(255,255,255,0.7) !important;
-          border-color: rgba(153,69,255,0.2) !important;
+          border-color: rgba(94, 234, 212,0.2) !important;
         }
         .leaflet-control-zoom a:hover {
-          background: rgba(153,69,255,0.2) !important;
+          background: rgba(94, 234, 212,0.2) !important;
           color: #fff !important;
         }
       `}</style>
@@ -99,8 +99,8 @@ export default function LeafletMap({ workshops }: LeafletMapProps) {
               <div style={{ minWidth: 180 }}>
                 <p style={{ fontWeight: 600, fontSize: 13, marginBottom: 4 }}>{ws.name}</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 6 }}>
-                  <Star style={{ width: 12, height: 12, color: "#FACC15", fill: "#FACC15" }} />
-                  <span style={{ fontSize: 12, color: "#FACC15", fontWeight: 600 }}>{ws.rating}</span>
+                  <Star style={{ width: 12, height: 12, color: "#FCD34D", fill: "#FCD34D" }} />
+                  <span style={{ fontSize: 12, color: "#FCD34D", fontWeight: 600 }}>{ws.rating}</span>
                   <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>({ws.totalReviews} review)</span>
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 8 }}>
@@ -114,9 +114,9 @@ export default function LeafletMap({ workshops }: LeafletMapProps) {
                         display: "inline-flex",
                         alignItems: "center",
                         gap: 3,
-                        background: badge === "Pending KYC" ? "rgba(250,204,21,0.15)" : "rgba(20,241,149,0.15)",
-                        color: badge === "Pending KYC" ? "#FACC15" : "#14F195",
-                        border: `1px solid ${badge === "Pending KYC" ? "rgba(250,204,21,0.25)" : "rgba(20,241,149,0.25)"}`,
+                        background: badge === "Pending KYC" ? "rgba(250,204,21,0.15)" : "rgba(94, 234, 212,0.15)",
+                        color: badge === "Pending KYC" ? "#FCD34D" : "#5EEAD4",
+                        border: `1px solid ${badge === "Pending KYC" ? "rgba(250,204,21,0.25)" : "rgba(94, 234, 212,0.25)"}`,
                       }}
                     >
                       {badge.includes("Verified") && <CheckCircle2 style={{ width: 9, height: 9 }} />}
@@ -135,7 +135,7 @@ export default function LeafletMap({ workshops }: LeafletMapProps) {
                     fontWeight: 600,
                     padding: "6px 12px",
                     borderRadius: 8,
-                    background: "linear-gradient(135deg, #9945FF, #14F195)",
+                    background: "linear-gradient(135deg, #5EEAD4, #5EEAD4)",
                     color: "#fff",
                     textDecoration: "none",
                   }}

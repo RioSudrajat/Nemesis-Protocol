@@ -18,7 +18,7 @@ export default function TransferPage() {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="page-header text-center flex flex-col items-center">
-        <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style={{ background: "rgba(153,69,255,0.1)" }}>
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style={{ background: "rgba(94, 234, 212,0.1)" }}>
           <ArrowRightLeft className="w-8 h-8" style={{ color: "var(--solana-purple)" }} />
         </div>
         <h1 className="text-3xl font-bold mb-2">Vehicle Transfer</h1>
@@ -37,7 +37,7 @@ export default function TransferPage() {
           </div>
           <div className="text-right">
             <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>NOC ID</p>
-            <p className="font-bold mono text-purple-400">#{currentVehicleData.vin.substring(currentVehicleData.vin.length - 5)}</p>
+            <p className="font-bold mono text-teal-400">#{currentVehicleData.vin.substring(currentVehicleData.vin.length - 5)}</p>
           </div>
         </div>
 
@@ -50,7 +50,7 @@ export default function TransferPage() {
           <input 
             type="text" 
             placeholder="e.g., 7NX..." 
-            className="w-full bg-black/50 border outline-none rounded-xl py-4 px-4 text-sm font-mono transition-colors focus:border-purple-500"
+            className="w-full bg-black/50 border outline-none rounded-xl py-4 px-4 text-sm font-mono transition-colors focus:border-teal-500"
             style={{ borderColor: "rgba(255,255,255,0.1)" }}
           />
         </div>

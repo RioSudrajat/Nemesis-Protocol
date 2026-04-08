@@ -7,17 +7,17 @@ import { useAdmin, type PlatformRole } from "@/context/AdminContext";
 import { useToast } from "@/components/ui/Toast";
 
 const roleColors: Record<PlatformRole, string> = {
-  superadmin: "#EF4444",
-  admin: "#F97316",
+  superadmin: "#FCA5A5",
+  admin: "#5EEAD4",
   enterprise: "var(--solana-purple)",
   workshop: "var(--solana-green)",
   user: "var(--solana-cyan)",
 };
 
 const statusColors: Record<string, { color: string; bg: string }> = {
-  active: { color: "#22C55E", bg: "rgba(34,197,94,0.15)" },
-  suspended: { color: "#EF4444", bg: "rgba(239,68,68,0.15)" },
-  pending: { color: "#FACC15", bg: "rgba(250,204,21,0.15)" },
+  active: { color: "#86EFAC", bg: "rgba(34,197,94,0.15)" },
+  suspended: { color: "#FCA5A5", bg: "rgba(239,68,68,0.15)" },
+  pending: { color: "#FCD34D", bg: "rgba(250,204,21,0.15)" },
 };
 
 export default function AdminRolesPage() {
@@ -70,12 +70,12 @@ export default function AdminRolesPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="flex items-center gap-3 font-bold text-2xl md:text-3xl">
-            <Users className="w-7 h-7" style={{ color: "#F97316" }} />
+            <Users className="w-7 h-7" style={{ color: "#5EEAD4" }} />
             Users & Roles
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Wallet-based Role & Access Management</p>
         </div>
-        <button onClick={() => setShowAddModal(true)} className="text-sm flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-colors" style={{ background: "rgba(249,115,22,0.15)", color: "#F97316", border: "1px solid rgba(249,115,22,0.3)" }}>
+        <button onClick={() => setShowAddModal(true)} className="text-sm flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-colors" style={{ background: "rgba(94, 234, 212,0.15)", color: "#5EEAD4", border: "1px solid rgba(94, 234, 212,0.3)" }}>
           <Plus className="w-4 h-4" /> Add Wallet
         </button>
       </div>
@@ -95,7 +95,7 @@ export default function AdminRolesPage() {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <div className="flex bg-black/30 p-1 rounded-xl border border-white/5 overflow-x-auto">
           {["all", "superadmin", "admin", "enterprise", "workshop", "user"].map(f => (
-            <button key={f} onClick={() => setFilter(f)} className="px-3 py-2 rounded-lg text-xs font-medium capitalize transition-all whitespace-nowrap" style={{ background: filter === f ? "rgba(249,115,22,0.2)" : "transparent", color: filter === f ? "#F97316" : "var(--solana-text-muted)" }}>
+            <button key={f} onClick={() => setFilter(f)} className="px-3 py-2 rounded-lg text-xs font-medium capitalize transition-all whitespace-nowrap" style={{ background: filter === f ? "rgba(94, 234, 212,0.2)" : "transparent", color: filter === f ? "#5EEAD4" : "var(--solana-text-muted)" }}>
               {f}
             </button>
           ))}
@@ -107,7 +107,7 @@ export default function AdminRolesPage() {
       </div>
 
       {/* Table */}
-      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(249,115,22,0.2)" }}>
+      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-black/20 border-b border-white/5">
             <tr className="text-xs uppercase tracking-wider text-gray-400">
@@ -125,7 +125,7 @@ export default function AdminRolesPage() {
                 const sc = statusColors[w.status] || statusColors.active;
                 return (
                   <motion.tr key={w.wallet} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="hover:bg-white/5 transition-colors">
-                    <td className="py-4 px-6 mono text-xs" style={{ color: "#F97316" }}>{w.wallet}</td>
+                    <td className="py-4 px-6 mono text-xs" style={{ color: "#5EEAD4" }}>{w.wallet}</td>
                     <td className="py-4 px-6">
                       <select value={w.role} onChange={e => handleRoleChange(w.wallet, e.target.value as PlatformRole)} className="bg-transparent text-xs px-2 py-1 rounded-lg font-semibold capitalize cursor-pointer" style={{ color: roleColors[w.role], border: `1px solid ${roleColors[w.role]}40` }}>
                         {(["user", "workshop", "enterprise", "admin", "superadmin"] as PlatformRole[]).map(r => (
@@ -143,7 +143,7 @@ export default function AdminRolesPage() {
                         {w.status === "active" ? (
                           <button onClick={() => handleSuspend(w.wallet)} className="px-2 py-1 rounded text-xs bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors">Suspend</button>
                         ) : (
-                          <button onClick={() => handleActivate(w.wallet)} className="px-2 py-1 rounded text-xs bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors">Activate</button>
+                          <button onClick={() => handleActivate(w.wallet)} className="px-2 py-1 rounded text-xs bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 transition-colors">Activate</button>
                         )}
                         <button onClick={() => handleRemove(w.wallet)} className="px-2 py-1 rounded text-xs bg-white/5 text-gray-400 hover:bg-white/10 transition-colors">Remove</button>
                       </div>
@@ -185,7 +185,7 @@ export default function AdminRolesPage() {
                   <label className="text-xs font-semibold uppercase tracking-wider block mb-2" style={{ color: "var(--solana-text-muted)" }}>Entity Name (optional)</label>
                   <input type="text" value={newEntity} onChange={e => setNewEntity(e.target.value)} placeholder="e.g. PT Astra Manufacturing" className="input-field w-full text-sm" />
                 </div>
-                <button onClick={handleAdd} className="mt-2 w-full py-3 rounded-xl font-semibold text-sm text-white transition-colors" style={{ background: "#F97316" }}>
+                <button onClick={handleAdd} className="mt-2 w-full py-3 rounded-xl font-semibold text-sm text-white transition-colors" style={{ background: "#5EEAD4" }}>
                   Add to Whitelist
                 </button>
               </div>

@@ -21,7 +21,7 @@ export default function AdminAnalyticsPage() {
     <div>
       <div className="mb-8">
         <h1 className="flex items-center gap-3 font-bold text-2xl md:text-3xl">
-          <BarChart3 className="w-7 h-7" style={{ color: "#F97316" }} />
+          <BarChart3 className="w-7 h-7" style={{ color: "#5EEAD4" }} />
           Platform Analytics
         </h1>
         <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Cross-entity analytics and platform health metrics.</p>
@@ -31,8 +31,8 @@ export default function AdminAnalyticsPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
           { icon: DollarSign, label: "Platform Revenue", value: `Rp ${((m?.totalRevenue || 0) / 1_000_000).toFixed(1)}M`, color: "var(--solana-green)" },
-          { icon: Car, label: "Vehicles Minted", value: m?.totalVehicles || 0, color: "#F97316" },
-          { icon: Star, label: "Avg Workshop Rating", value: m?.avgRating ? m.avgRating.toFixed(1) : "—", color: "#FACC15" },
+          { icon: Car, label: "Vehicles Minted", value: m?.totalVehicles || 0, color: "#5EEAD4" },
+          { icon: Star, label: "Avg Workshop Rating", value: m?.avgRating ? m.avgRating.toFixed(1) : "—", color: "#FCD34D" },
           { icon: Shield, label: "OEM Parts Rate", value: `${m?.oemRate || 100}%`, color: "var(--solana-purple)" },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass-card p-5 rounded-2xl">
@@ -46,7 +46,7 @@ export default function AdminAnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Growth */}
         <div className="glass-card-static p-6 rounded-2xl border border-white/5">
-          <h3 className="text-base font-semibold mb-4 flex items-center gap-2"><TrendingUp className="w-5 h-5 text-green-400" /> Growth Metrics</h3>
+          <h3 className="text-base font-semibold mb-4 flex items-center gap-2"><TrendingUp className="w-5 h-5 text-teal-400" /> Growth Metrics</h3>
           <div className="grid grid-cols-2 gap-4">
             {[
               { label: "Total Vehicles", value: m?.totalVehicles || 0, icon: Car },
@@ -55,7 +55,7 @@ export default function AdminAnalyticsPage() {
               { label: "Completed Services", value: m?.totalCompletedServices || 0, icon: BarChart3 },
             ].map((item, i) => (
               <div key={i} className="p-4 rounded-xl bg-black/20 border border-white/5 text-center">
-                <item.icon className="w-5 h-5 mx-auto mb-2 text-orange-400" />
+                <item.icon className="w-5 h-5 mx-auto mb-2 text-teal-400" />
                 <p className="text-xl font-bold">{item.value}</p>
                 <p className="text-[10px]" style={{ color: "var(--solana-text-muted)" }}>{item.label}</p>
               </div>
@@ -65,7 +65,7 @@ export default function AdminAnalyticsPage() {
 
         {/* Workshop Performance */}
         <div className="glass-card-static p-6 rounded-2xl border border-white/5">
-          <h3 className="text-base font-semibold mb-4 flex items-center gap-2"><Wrench className="w-5 h-5 text-purple-400" /> Workshop Performance</h3>
+          <h3 className="text-base font-semibold mb-4 flex items-center gap-2"><Wrench className="w-5 h-5 text-teal-400" /> Workshop Performance</h3>
           {wsMetrics.length > 0 ? (
             <div className="flex flex-col gap-4">
               {wsMetrics.sort((a, b) => b.totalServices - a.totalServices).slice(0, 6).map((ws, i) => {
@@ -75,13 +75,13 @@ export default function AdminAnalyticsPage() {
                     <div className="flex justify-between text-sm mb-1">
                       <span className="font-medium truncate max-w-[180px]">{ws.workshopName}</span>
                       <div className="flex items-center gap-2">
-                        <Star className="w-3 h-3 text-yellow-400" fill="#FACC15" />
+                        <Star className="w-3 h-3 text-yellow-400" fill="#FCD34D" />
                         <span className="text-xs text-yellow-400">{ws.avgRating.toFixed(1)}</span>
                         <span className="text-xs text-gray-400">{ws.totalServices} servis</span>
                       </div>
                     </div>
                     <div className="w-full h-2 rounded-full bg-black/30">
-                      <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8, delay: i * 0.1 }} className="h-full rounded-full" style={{ background: "linear-gradient(90deg, #F97316, #FACC15)" }} />
+                      <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8, delay: i * 0.1 }} className="h-full rounded-full" style={{ background: "linear-gradient(90deg, #5EEAD4, #FCD34D)" }} />
                     </div>
                   </div>
                 );
@@ -97,7 +97,7 @@ export default function AdminAnalyticsPage() {
 
         {/* Part Distribution */}
         <div className="glass-card-static p-6 rounded-2xl border border-white/5">
-          <h3 className="text-base font-semibold mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-cyan-400" /> Part Origin Distribution</h3>
+          <h3 className="text-base font-semibold mb-4 flex items-center gap-2"><Shield className="w-5 h-5 text-teal-400" /> Part Origin Distribution</h3>
           <div className="flex items-center gap-8 justify-center py-4">
             <div className="relative w-32 h-32">
               <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
@@ -110,8 +110,8 @@ export default function AdminAnalyticsPage() {
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-green-400" /><span className="text-sm">OEM: {m?.totalOemParts || 0}</span></div>
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-orange-400" /><span className="text-sm">Aftermarket: {m?.totalAftermarketParts || 0}</span></div>
+              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-teal-400" /><span className="text-sm">OEM: {m?.totalOemParts || 0}</span></div>
+              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-teal-400" /><span className="text-sm">Aftermarket: {m?.totalAftermarketParts || 0}</span></div>
             </div>
           </div>
         </div>
@@ -123,7 +123,7 @@ export default function AdminAnalyticsPage() {
             {[
               { label: "Avg Fleet Health", value: m?.avgFleetHealth || 0, max: 100, color: "var(--solana-green)" },
               { label: "OEM Compliance", value: m?.oemRate || 100, max: 100, color: "var(--solana-purple)" },
-              { label: "Avg Rating (out of 5)", value: (m?.avgRating || 0) * 20, max: 100, color: "#FACC15", display: m?.avgRating ? m.avgRating.toFixed(1) : "—" },
+              { label: "Avg Rating (out of 5)", value: (m?.avgRating || 0) * 20, max: 100, color: "#FCD34D", display: m?.avgRating ? m.avgRating.toFixed(1) : "—" },
             ].map((item, i) => (
               <div key={i}>
                 <div className="flex justify-between text-sm mb-1">

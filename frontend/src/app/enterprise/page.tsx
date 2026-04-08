@@ -40,8 +40,8 @@ export default function EnterpriseDashboard() {
         {[
           { icon: Car, label: "Vehicles Registered", value: m?.totalVehicles.toLocaleString() || "0", change: `${m?.totalVehicles || 0} total`, color: "var(--solana-purple)" },
           { icon: Activity, label: "Active Sessions", value: m?.activeServiceSessions.toString() || "0", change: m?.activeServiceSessions ? "Sedang berlangsung" : "Tidak ada aktif", color: "var(--solana-green)" },
-          { icon: DollarSign, label: "Monthly Revenue", value: `Rp ${((m?.revenueThisMonth || 0) / 1000).toFixed(0)}K`, change: `${m?.completedThisMonth || 0} servis bulan ini`, color: "var(--solana-cyan)" },
-          { icon: Shield, label: "Avg Fleet Health", value: m?.avgFleetHealth.toString() || "0", change: `${m?.totalVehicles || 0} kendaraan`, color: (m?.avgFleetHealth || 0) >= 70 ? "#22C55E" : "#F97316" },
+          { icon: DollarSign, label: "Monthly Revenue", value: `Rp ${(m?.revenueThisMonth || 0).toLocaleString('id-ID')}`, change: `${m?.completedThisMonth || 0} servis bulan ini`, color: "var(--solana-cyan)" },
+          { icon: Shield, label: "Avg Fleet Health", value: m?.avgFleetHealth.toString() || "0", change: `${m?.totalVehicles || 0} kendaraan`, color: (m?.avgFleetHealth || 0) >= 70 ? "#86EFAC" : "#5EEAD4" },
         ].map((stat, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="glass-card p-6">
             <div className="flex items-center gap-3 mb-3">
@@ -75,7 +75,7 @@ export default function EnterpriseDashboard() {
               return (
                 <div key={i} className="flex items-center gap-4">
                   <span className="text-sm w-24">{item.model}</span>
-                  <div className="flex-1 h-3 rounded-full" style={{ background: "rgba(153,69,255,0.1)" }}>
+                  <div className="flex-1 h-3 rounded-full" style={{ background: "rgba(94, 234, 212,0.1)" }}>
                     <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1, delay: i * 0.1 }} className="h-3 rounded-full" style={{ background: "linear-gradient(90deg, var(--solana-purple), var(--solana-green))" }} />
                   </div>
                   <span className="text-sm mono w-16 text-right" style={{ color: "var(--solana-text-muted)" }}>{item.count} ({pct}%)</span>
@@ -97,7 +97,7 @@ export default function EnterpriseDashboard() {
                   return (
                     <div key={type} className="flex items-center gap-4">
                       <span className="text-sm w-36 truncate">{type}</span>
-                      <div className="flex-1 h-3 rounded-full" style={{ background: "rgba(153,69,255,0.1)" }}>
+                      <div className="flex-1 h-3 rounded-full" style={{ background: "rgba(94, 234, 212,0.1)" }}>
                         <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1, delay: i * 0.1 }} className="h-3 rounded-full" style={{ background: "var(--solana-cyan)" }} />
                       </div>
                       <span className="text-sm mono w-12 text-right" style={{ color: "var(--solana-text-muted)" }}>{count}</span>
@@ -123,10 +123,10 @@ export default function EnterpriseDashboard() {
             <div className="flex flex-col gap-3 max-h-80 overflow-y-auto">
               {recentActivity.map((n) => (
                 <div key={n.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(153,69,255,0.15)" }}>
-                    {n.type.includes("completed") ? <CheckCircle2 className="w-4 h-4 text-green-400" /> :
-                     n.type.includes("paid") ? <DollarSign className="w-4 h-4 text-cyan-400" /> :
-                     n.type.includes("invoice") ? <BarChart3 className="w-4 h-4 text-purple-400" /> :
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(94, 234, 212,0.15)" }}>
+                    {n.type.includes("completed") ? <CheckCircle2 className="w-4 h-4 text-teal-400" /> :
+                     n.type.includes("paid") ? <DollarSign className="w-4 h-4 text-teal-400" /> :
+                     n.type.includes("invoice") ? <BarChart3 className="w-4 h-4 text-teal-400" /> :
                      <Clock className="w-4 h-4 text-yellow-400" />}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -159,20 +159,20 @@ export default function EnterpriseDashboard() {
                 const wsMetric = topWorkshops.find(w => w.workshopId === ws.id);
                 return (
                   <div key={ws.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ws.verified ? "rgba(20,241,149,0.1)" : "rgba(250,204,21,0.1)" }}>
-                      <Wrench className="w-5 h-5" style={{ color: ws.verified ? "var(--solana-green)" : "#FACC15" }} />
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: ws.verified ? "rgba(94, 234, 212,0.1)" : "rgba(250,204,21,0.1)" }}>
+                      <Wrench className="w-5 h-5" style={{ color: ws.verified ? "var(--solana-green)" : "#FCD34D" }} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{ws.name}</p>
                       <div className="flex items-center gap-2 text-xs" style={{ color: "var(--solana-text-muted)" }}>
                         <span>{ws.location}</span>
-                        {ws.verified && <CheckCircle2 className="w-3 h-3 text-green-400" />}
-                        {ws.oem && <Shield className="w-3 h-3 text-purple-400" />}
+                        {ws.verified && <CheckCircle2 className="w-3 h-3 text-teal-400" />}
+                        {ws.oem && <Shield className="w-3 h-3 text-teal-400" />}
                       </div>
                     </div>
                     <div className="text-right shrink-0">
                       <div className="flex items-center gap-1">
-                        <Star className="w-3 h-3 text-yellow-400" fill="#FACC15" />
+                        <Star className="w-3 h-3 text-yellow-400" fill="#FCD34D" />
                         <span className="text-sm font-bold text-yellow-400">{wsMetric?.avgRating ? wsMetric.avgRating.toFixed(1) : ws.rating}</span>
                       </div>
                       <span className="text-xs" style={{ color: "var(--solana-text-muted)" }}>{wsMetric?.totalServices || ws.totalServices} servis</span>
@@ -208,13 +208,13 @@ export default function EnterpriseDashboard() {
                   <td className="font-medium">{v.name}</td>
                   <td style={{ color: "var(--solana-text-muted)" }}>{v.region}</td>
                   <td>
-                    <span className="mono font-bold" style={{ color: v.health >= 80 ? "#22C55E" : v.health >= 60 ? "#FACC15" : "#F97316" }}>{v.health}</span>
+                    <span className="mono font-bold" style={{ color: v.health >= 80 ? "#86EFAC" : v.health >= 60 ? "#FCD34D" : "#5EEAD4" }}>{v.health}</span>
                   </td>
                   <td>
                     {v.health >= 70 ? (
                       <span className="flex items-center gap-1 text-xs" style={{ color: "var(--solana-green)" }}><CheckCircle2 className="w-4 h-4" /> Active</span>
                     ) : (
-                      <span className="flex items-center gap-1 text-xs" style={{ color: "#F97316" }}><AlertTriangle className="w-4 h-4" /> Warning</span>
+                      <span className="flex items-center gap-1 text-xs" style={{ color: "#5EEAD4" }}><AlertTriangle className="w-4 h-4" /> Warning</span>
                     )}
                   </td>
                 </tr>

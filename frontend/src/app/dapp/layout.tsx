@@ -54,7 +54,7 @@ function DAppSidebarAndContent({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside
         className={`hidden md:flex flex-col min-h-screen p-5 border-r relative transition-all duration-300 ease-in-out shrink-0 ${isLeftCollapsed ? 'w-20 items-center' : 'w-64'}`}
-        style={{ background: "var(--solana-dark-2)", borderColor: "rgba(153,69,255,0.4)", boxShadow: "2px 0 20px rgba(0,0,0,0.4)", zIndex: 40 }}
+        style={{ background: "var(--solana-dark-2)", borderColor: "rgba(94, 234, 212,0.4)", boxShadow: "2px 0 20px rgba(0,0,0,0.4)", zIndex: 40 }}
       >
         <button 
           onClick={() => setIsLeftCollapsed(!isLeftCollapsed)}
@@ -82,7 +82,7 @@ function DAppSidebarAndContent({ children }: { children: React.ReactNode }) {
             <div 
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="glass-card overflow-hidden cursor-pointer hover:bg-white/5 transition-colors" 
-              style={{ border: "1px solid rgba(153,69,255,0.2)" }}
+              style={{ border: "1px solid rgba(94, 234, 212,0.2)" }}
             >
               <div className="p-4 flex items-center justify-between">
                 <div>
@@ -107,7 +107,7 @@ function DAppSidebarAndContent({ children }: { children: React.ReactNode }) {
                           key={key}
                           onClick={() => { setActiveVehicle(key); setDropdownOpen(false); }}
                           className={`px-3 py-2.5 rounded-lg text-sm font-medium flex items-center justify-between cursor-pointer transition-colors ${
-                            isActive ? 'bg-purple-500/10 text-purple-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                            isActive ? 'bg-teal-500/10 text-teal-400' : 'text-slate-400 hover:bg-white/5 hover:text-white'
                           }`}
                         >
                           <div className="truncate max-w-[150px]">
@@ -123,8 +123,8 @@ function DAppSidebarAndContent({ children }: { children: React.ReactNode }) {
             )}
           </div>
         ) : (
-          <div className="w-10 h-10 rounded-full mb-6 flex items-center justify-center shrink-0 border" style={{ borderColor: "rgba(153,69,255,0.5)", background: "rgba(153,69,255,0.1)" }}>
-            <Car className="w-4 h-4 text-purple-400" />
+          <div className="w-10 h-10 rounded-full mb-6 flex items-center justify-center shrink-0 border" style={{ borderColor: "rgba(94, 234, 212,0.5)", background: "rgba(94, 234, 212,0.1)" }}>
+            <Car className="w-4 h-4 text-teal-400" />
           </div>
         )}
 
@@ -150,7 +150,7 @@ function DAppSidebarAndContent({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Mobile header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between p-4" style={{ background: "rgba(14,14,26,0.95)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(153,69,255,0.1)" }}>
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 flex items-center justify-between p-4" style={{ background: "rgba(14,14,26,0.95)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(94, 234, 212,0.1)" }}>
         <Link href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "var(--solana-gradient)" }}>
             <Shield className="w-4 h-4 text-white" />
@@ -163,7 +163,7 @@ function DAppSidebarAndContent({ children }: { children: React.ReactNode }) {
               key={item.href}
               href={item.href}
               className={`p-2 rounded-lg transition-colors ${pathname === item.href ? "text-white" : ""}`}
-              style={{ background: pathname === item.href ? "rgba(153,69,255,0.15)" : "transparent", color: pathname === item.href ? "var(--solana-green)" : "var(--solana-text-muted)" }}
+              style={{ background: pathname === item.href ? "rgba(94, 234, 212,0.15)" : "transparent", color: pathname === item.href ? "var(--solana-green)" : "var(--solana-text-muted)" }}
             >
               <item.icon className="w-5 h-5" />
             </Link>

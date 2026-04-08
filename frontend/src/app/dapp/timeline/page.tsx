@@ -140,11 +140,11 @@ export default function TimelinePage() {
           </div>
         </div>
         <div className="flex gap-3">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: "rgba(20,20,40,0.5)", border: "1px solid rgba(153,69,255,0.2)" }}>
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: "rgba(20,20,40,0.5)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
             <Search className="w-4 h-4" style={{ color: "var(--solana-text-muted)" }} />
             <input type="text" placeholder="Search events..." className="bg-transparent outline-none text-sm" style={{ color: "var(--solana-text)" }} />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm" style={{ background: "rgba(153,69,255,0.1)", border: "1px solid rgba(153,69,255,0.2)", color: "var(--solana-text-muted)" }}>
+          <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm" style={{ background: "rgba(94, 234, 212,0.1)", border: "1px solid rgba(94, 234, 212,0.2)", color: "var(--solana-text-muted)" }}>
             <Filter className="w-4 h-4" /> Filter
           </button>
         </div>

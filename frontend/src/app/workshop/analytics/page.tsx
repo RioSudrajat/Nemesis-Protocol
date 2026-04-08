@@ -14,8 +14,8 @@ const serviceBreakdown = [
   { name: "Oil Change", count: 128, pct: 32, color: "var(--solana-green)" },
   { name: "Brake Service", count: 86, pct: 22, color: "var(--solana-purple)" },
   { name: "Full Inspection", count: 64, pct: 16, color: "var(--solana-cyan)" },
-  { name: "CVT Service", count: 48, pct: 12, color: "#FACC15" },
-  { name: "Tire Service", count: 40, pct: 10, color: "#F97316" },
+  { name: "CVT Service", count: 48, pct: 12, color: "#FCD34D" },
+  { name: "Tire Service", count: 40, pct: 10, color: "#5EEAD4" },
   { name: "Others", count: 32, pct: 8, color: "var(--solana-text-muted)" },
 ];
 
@@ -44,7 +44,7 @@ export default function WorkshopAnalyticsPage() {
           { icon: DollarSign, label: "Revenue (Mar)", value: "Rp 6.8M", change: "+12%", color: "var(--solana-green)" },
           { icon: Wrench, label: "Total Services", value: "398", change: "+8%", color: "var(--solana-purple)" },
           { icon: Users, label: "Unique Customers", value: "156", change: "+15%", color: "var(--solana-cyan)" },
-          { icon: Clock, label: "Avg Service Time", value: "2.4h", change: "-10%", color: "#FACC15" },
+          { icon: Clock, label: "Avg Service Time", value: "2.4h", change: "-10%", color: "#FCD34D" },
         ].map((card, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card p-6 md:p-8">
             <card.icon className="w-5 h-5 mb-3" style={{ color: card.color }} />
@@ -97,7 +97,7 @@ export default function WorkshopAnalyticsPage() {
               <React.Fragment key={`row-${ri}`}>
                 <div className="text-xs flex items-center" style={{ color: "var(--solana-text-muted)" }}>{timeSlots[ri]}</div>
                 {row.map((val, ci) => (
-                  <div key={`${ri}-${ci}`} className="h-10 rounded-lg" style={{ background: `rgba(153,69,255,${val * 0.5 + 0.05})` }} title={`${(val * 100).toFixed(0)}% busy`} />
+                  <div key={`${ri}-${ci}`} className="h-10 rounded-lg" style={{ background: `rgba(94, 234, 212,${val * 0.5 + 0.05})` }} title={`${(val * 100).toFixed(0)}% busy`} />
                 ))}
               </React.Fragment>
             ))}

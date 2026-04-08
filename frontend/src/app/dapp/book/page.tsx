@@ -64,14 +64,14 @@ export default function BookServicePage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 text-sm outline-none transition-colors"
-            style={{ border: "1px solid rgba(153,69,255,0.15)", color: "var(--solana-text)" }}
+            style={{ border: "1px solid rgba(94, 234, 212,0.15)", color: "var(--solana-text)" }}
           />
         </div>
         <select
           value={activeCity}
           onChange={(e) => setActiveCity(e.target.value)}
           className="px-4 py-3 rounded-xl bg-white/5 text-sm outline-none cursor-pointer"
-          style={{ border: "1px solid rgba(153,69,255,0.15)", color: "var(--solana-text)" }}
+          style={{ border: "1px solid rgba(94, 234, 212,0.15)", color: "var(--solana-text)" }}
         >
           {cities.map((c) => (
             <option key={c} value={c} style={{ background: "var(--solana-dark-2)" }}>{c}</option>
@@ -87,9 +87,9 @@ export default function BookServicePage() {
             onClick={() => setActiveFilter(f)}
             className="px-4 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer"
             style={{
-              background: activeFilter === f ? "rgba(153,69,255,0.15)" : "rgba(255,255,255,0.03)",
+              background: activeFilter === f ? "rgba(94, 234, 212,0.15)" : "rgba(255,255,255,0.03)",
               color: activeFilter === f ? "var(--solana-purple)" : "var(--solana-text-muted)",
-              border: `1px solid ${activeFilter === f ? "rgba(153,69,255,0.3)" : "rgba(255,255,255,0.06)"}`,
+              border: `1px solid ${activeFilter === f ? "rgba(94, 234, 212,0.3)" : "rgba(255,255,255,0.06)"}`,
             }}
           >
             {f}
@@ -124,7 +124,7 @@ function WorkshopCard({ workshop: ws, index }: { workshop: Workshop; index: numb
       <div>
         <div className="flex justify-between items-start mb-3">
           <h3 className="font-semibold text-sm">{ws.name}</h3>
-          <div className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#FACC15" }}>
+          <div className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#FCD34D" }}>
             <Star className="w-3.5 h-3.5 fill-current" />
             {ws.rating}
           </div>
@@ -141,9 +141,9 @@ function WorkshopCard({ workshop: ws, index }: { workshop: Workshop; index: numb
               key={badge}
               className="text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1"
               style={{
-                background: badge === "Pending KYC" ? "rgba(250,204,21,0.1)" : "rgba(20,241,149,0.1)",
-                color: badge === "Pending KYC" ? "#FACC15" : "var(--solana-green)",
-                border: `1px solid ${badge === "Pending KYC" ? "rgba(250,204,21,0.2)" : "rgba(20,241,149,0.2)"}`,
+                background: badge === "Pending KYC" ? "rgba(250,204,21,0.1)" : "rgba(94, 234, 212,0.1)",
+                color: badge === "Pending KYC" ? "#FCD34D" : "var(--solana-green)",
+                border: `1px solid ${badge === "Pending KYC" ? "rgba(250,204,21,0.2)" : "rgba(94, 234, 212,0.2)"}`,
               }}
             >
               {badge === "Pending KYC" ? null : <CheckCircle2 className="w-2.5 h-2.5" />}

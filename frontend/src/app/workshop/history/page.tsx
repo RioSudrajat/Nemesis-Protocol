@@ -72,7 +72,7 @@ export default function WorkshopGlobalHistory() {
     <div className="max-w-4xl mx-auto">
       <div className="page-header mb-8">
         <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
-          <FileText className="w-7 h-7 text-purple-400" />
+          <FileText className="w-7 h-7 text-teal-400" />
           Global Service Ledger
         </h1>
         <p className="text-sm mt-1 text-slate-400">Track all service invoices, payments, and blockchain anchoring statuses</p>
@@ -88,9 +88,9 @@ export default function WorkshopGlobalHistory() {
             <span className="text-xs text-yellow-500/80 mb-1">Pending</span>
             <span className="text-2xl font-bold text-yellow-400">{data.filter(d => d.status === "PENDING_PAYMENT").length}</span>
           </div>
-          <div className="glass-card-static px-6 py-4 rounded-xl flex flex-col border border-green-500/20 shrink-0">
-            <span className="text-xs text-green-500/80 mb-1">Anchored</span>
-            <span className="text-2xl font-bold text-green-400">{data.filter(d => d.status === "ANCHORED").length}</span>
+          <div className="glass-card-static px-6 py-4 rounded-xl flex flex-col border border-teal-500/20 shrink-0">
+            <span className="text-xs text-teal-500/80 mb-1">Anchored</span>
+            <span className="text-2xl font-bold text-teal-400">{data.filter(d => d.status === "ANCHORED").length}</span>
           </div>
         </div>
 
@@ -101,7 +101,7 @@ export default function WorkshopGlobalHistory() {
       </div>
 
       <div className="relative mt-8">
-        <div className="absolute left-6 top-0 bottom-0 w-[2px] hidden md:block bg-gradient-to-b from-purple-500 to-green-500/0" />
+        <div className="absolute left-6 top-0 bottom-0 w-[2px] hidden md:block bg-gradient-to-b from-teal-500 to-teal-500/0" />
 
         <div className="flex flex-col gap-6">
           {data.map((event) => (

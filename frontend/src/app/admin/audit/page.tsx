@@ -6,14 +6,14 @@ import { FileText, Search, Filter, Download, Users, Shield, Scale, Settings } fr
 import { useAdmin } from "@/context/AdminContext";
 
 const actionIcons: Record<string, React.ReactNode> = {
-  role_change: <Users className="w-4 h-4 text-orange-400" />,
-  kyc_approval: <Shield className="w-4 h-4 text-green-400" />,
+  role_change: <Users className="w-4 h-4 text-teal-400" />,
+  kyc_approval: <Shield className="w-4 h-4 text-teal-400" />,
   kyc_revoke: <Shield className="w-4 h-4 text-red-400" />,
-  dispute_resolution: <Scale className="w-4 h-4 text-cyan-400" />,
-  config_change: <Settings className="w-4 h-4 text-purple-400" />,
+  dispute_resolution: <Scale className="w-4 h-4 text-teal-400" />,
+  config_change: <Settings className="w-4 h-4 text-teal-400" />,
   wallet_whitelist: <Users className="w-4 h-4 text-yellow-400" />,
   wallet_suspend: <Users className="w-4 h-4 text-red-400" />,
-  wallet_activate: <Users className="w-4 h-4 text-green-400" />,
+  wallet_activate: <Users className="w-4 h-4 text-teal-400" />,
   wallet_remove: <Users className="w-4 h-4 text-red-400" />,
 };
 
@@ -39,12 +39,12 @@ export default function AdminAuditPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="flex items-center gap-3 font-bold text-2xl md:text-3xl">
-            <FileText className="w-7 h-7" style={{ color: "#F97316" }} />
+            <FileText className="w-7 h-7" style={{ color: "#5EEAD4" }} />
             Audit Logs
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Complete audit trail of all admin actions — {auditLogs.length} entries.</p>
         </div>
-        <button className="text-sm flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: "rgba(249,115,22,0.1)", color: "#F97316", border: "1px solid rgba(249,115,22,0.3)" }}>
+        <button className="text-sm flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: "rgba(94, 234, 212,0.1)", color: "#5EEAD4", border: "1px solid rgba(94, 234, 212,0.3)" }}>
           <Download className="w-4 h-4" /> Export JSON
         </button>
       </div>
@@ -65,7 +65,7 @@ export default function AdminAuditPage() {
       </div>
 
       {/* Log Table */}
-      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(249,115,22,0.2)" }}>
+      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-black/20 border-b border-white/5">
             <tr className="text-xs uppercase tracking-wider text-gray-400">
@@ -80,7 +80,7 @@ export default function AdminAuditPage() {
             {filtered.map((log) => (
               <motion.tr key={log.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="hover:bg-white/5 transition-colors">
                 <td className="py-4 px-6 mono text-xs text-gray-400">{log.timestamp.replace("T", " ").slice(0, 19)}</td>
-                <td className="py-4 px-6 mono text-xs" style={{ color: "#F97316" }}>{log.adminWallet.slice(0, 8)}...</td>
+                <td className="py-4 px-6 mono text-xs" style={{ color: "#5EEAD4" }}>{log.adminWallet.slice(0, 8)}...</td>
                 <td className="py-4 px-6">
                   <span className="inline-flex items-center gap-1.5 text-sm">
                     {actionIcons[log.action] || <FileText className="w-4 h-4 text-gray-400" />}

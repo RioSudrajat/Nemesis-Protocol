@@ -11,10 +11,10 @@ interface ChartData {
 }
 
 const defaultData: ChartData[] = [
-  { id: "e-wallet", label: "E-Wallet", value: 45, color: "#9945FF" }, // solana-purple
-  { id: "bank", label: "Bank Transfer", value: 30, color: "#14F195" }, // solana-green
-  { id: "investment", label: "Staking", value: 15, color: "#00D1FF" }, // solana-cyan
-  { id: "other", label: "Others", value: 10, color: "#F959FF" },       // solana-pink
+  { id: "e-wallet", label: "E-Wallet", value: 45, color: "#5EEAD4" },
+  { id: "bank", label: "Bank Transfer", value: 30, color: "#2DD4BF" },
+  { id: "investment", label: "Staking", value: 15, color: "#14B8A6" },
+  { id: "other", label: "Others", value: 10, color: "#0F766E" },
 ];
 
 export function InteractiveDonutChart({ data = defaultData }: { data?: ChartData[] }) {

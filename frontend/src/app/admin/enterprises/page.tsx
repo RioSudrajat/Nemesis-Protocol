@@ -28,7 +28,7 @@ export default function AdminEnterprisesPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="flex items-center gap-3 font-bold text-2xl md:text-3xl">
-            <Building2 className="w-7 h-7" style={{ color: "#F97316" }} />
+            <Building2 className="w-7 h-7" style={{ color: "#5EEAD4" }} />
             Enterprises
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Manage enterprise accounts and access tiers.</p>
@@ -38,10 +38,10 @@ export default function AdminEnterprisesPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Total Enterprises", value: enterprises.length, color: "#F97316", icon: Building2 },
-          { label: "Active", value: activeCount, color: "#22C55E", icon: CheckCircle2 },
-          { label: "Suspended", value: suspendedCount, color: "#EF4444", icon: XCircle },
-          { label: "Pending", value: pendingCount, color: "#FACC15", icon: ShieldAlert },
+          { label: "Total Enterprises", value: enterprises.length, color: "#5EEAD4", icon: Building2 },
+          { label: "Active", value: activeCount, color: "#86EFAC", icon: CheckCircle2 },
+          { label: "Suspended", value: suspendedCount, color: "#FCA5A5", icon: XCircle },
+          { label: "Pending", value: pendingCount, color: "#FCD34D", icon: ShieldAlert },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card p-5 rounded-2xl">
             <s.icon className="w-5 h-5 mb-2" style={{ color: s.color }} />
@@ -60,7 +60,7 @@ export default function AdminEnterprisesPage() {
       </div>
 
       {/* Table */}
-      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(249,115,22,0.2)" }}>
+      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-black/20 border-b border-white/5">
             <tr className="text-xs uppercase tracking-wider text-gray-400">
@@ -76,9 +76,9 @@ export default function AdminEnterprisesPage() {
             {filtered.map(e => (
               <tr key={e.wallet} className="hover:bg-white/5 transition-colors">
                 <td className="py-4 px-6 font-semibold">{e.entityName || "Unnamed"}</td>
-                <td className="py-4 px-6 mono text-xs" style={{ color: "#F97316" }}>{e.wallet}</td>
+                <td className="py-4 px-6 mono text-xs" style={{ color: "#5EEAD4" }}>{e.wallet}</td>
                 <td className="py-4 px-6">
-                  <span className="text-xs px-2.5 py-1 rounded-full font-semibold capitalize" style={{ background: e.status === "active" ? "rgba(34,197,94,0.15)" : e.status === "suspended" ? "rgba(239,68,68,0.15)" : "rgba(250,204,21,0.15)", color: e.status === "active" ? "#22C55E" : e.status === "suspended" ? "#EF4444" : "#FACC15" }}>
+                  <span className="text-xs px-2.5 py-1 rounded-full font-semibold capitalize" style={{ background: e.status === "active" ? "rgba(34,197,94,0.15)" : e.status === "suspended" ? "rgba(239,68,68,0.15)" : "rgba(250,204,21,0.15)", color: e.status === "active" ? "#86EFAC" : e.status === "suspended" ? "#FCA5A5" : "#FCD34D" }}>
                     {e.status}
                   </span>
                 </td>
@@ -89,7 +89,7 @@ export default function AdminEnterprisesPage() {
                     {e.status === "active" ? (
                       <button onClick={() => { admin?.suspendWallet(e.wallet); showToast("error", "Suspended", `${e.entityName} suspended.`); }} className="px-2 py-1 rounded text-xs bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors">Suspend</button>
                     ) : (
-                      <button onClick={() => { admin?.activateWallet(e.wallet); showToast("success", "Activated", `${e.entityName} activated.`); }} className="px-2 py-1 rounded text-xs bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors">Activate</button>
+                      <button onClick={() => { admin?.activateWallet(e.wallet); showToast("success", "Activated", `${e.entityName} activated.`); }} className="px-2 py-1 rounded text-xs bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 transition-colors">Activate</button>
                     )}
                   </div>
                 </td>

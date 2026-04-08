@@ -50,7 +50,7 @@ export default function AdminWorkshopsPage() {
     <div>
       <div className="mb-8">
         <h1 className="flex items-center gap-3 font-bold text-2xl md:text-3xl">
-          <Wrench className="w-7 h-7" style={{ color: "#F97316" }} />
+          <Wrench className="w-7 h-7" style={{ color: "#5EEAD4" }} />
           Workshop Management
         </h1>
         <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Master directory — all workshops across enterprises with KYC workflow.</p>
@@ -59,10 +59,10 @@ export default function AdminWorkshopsPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Total Workshops", value: workshops.length, color: "#F97316", icon: Wrench },
-          { label: "Verified", value: verifiedCount, color: "#22C55E", icon: CheckCircle2 },
+          { label: "Total Workshops", value: workshops.length, color: "#5EEAD4", icon: Wrench },
+          { label: "Verified", value: verifiedCount, color: "#86EFAC", icon: CheckCircle2 },
           { label: "OEM Certified", value: oemCount, color: "var(--solana-cyan)", icon: Shield },
-          { label: "Pending KYC", value: pendingCount, color: "#FACC15", icon: ShieldAlert },
+          { label: "Pending KYC", value: pendingCount, color: "#FCD34D", icon: ShieldAlert },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass-card p-5 rounded-2xl">
             <s.icon className="w-5 h-5 mb-2" style={{ color: s.color }} />
@@ -91,7 +91,7 @@ export default function AdminWorkshopsPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => handleApproveKYC(w.name)} className="px-4 py-2 rounded-lg text-xs font-bold bg-green-500/15 text-green-400 hover:bg-green-500/25 transition-colors">Approve</button>
+                  <button onClick={() => handleApproveKYC(w.name)} className="px-4 py-2 rounded-lg text-xs font-bold bg-teal-500/15 text-teal-400 hover:bg-teal-500/25 transition-colors">Approve</button>
                   <button onClick={() => handleRejectKYC(w.name)} className="px-4 py-2 rounded-lg text-xs font-bold bg-red-500/15 text-red-400 hover:bg-red-500/25 transition-colors">Reject</button>
                 </div>
               </div>
@@ -104,7 +104,7 @@ export default function AdminWorkshopsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <div className="flex bg-black/30 p-1 rounded-xl border border-white/5">
           {[{ id: "all", label: "All" }, { id: "verified", label: "Verified" }, { id: "oem", label: "OEM" }, { id: "pending", label: "Pending" }].map(f => (
-            <button key={f.id} onClick={() => setFilter(f.id)} className="px-4 py-2 rounded-lg text-xs font-medium transition-all" style={{ background: filter === f.id ? "rgba(249,115,22,0.2)" : "transparent", color: filter === f.id ? "#F97316" : "var(--solana-text-muted)" }}>
+            <button key={f.id} onClick={() => setFilter(f.id)} className="px-4 py-2 rounded-lg text-xs font-medium transition-all" style={{ background: filter === f.id ? "rgba(94, 234, 212,0.2)" : "transparent", color: filter === f.id ? "#5EEAD4" : "var(--solana-text-muted)" }}>
               {f.label}
             </button>
           ))}
@@ -116,7 +116,7 @@ export default function AdminWorkshopsPage() {
       </div>
 
       {/* Table */}
-      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(249,115,22,0.2)" }}>
+      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-black/20 border-b border-white/5">
             <tr className="text-xs uppercase tracking-wider text-gray-400">
@@ -139,20 +139,20 @@ export default function AdminWorkshopsPage() {
                     <td className="py-4 px-6 text-gray-400">{w.city}</td>
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-1">
-                        <Star className="w-3 h-3 text-yellow-400" fill="#FACC15" />
+                        <Star className="w-3 h-3 text-yellow-400" fill="#FCD34D" />
                         <span className="font-bold text-yellow-400">{metric?.avgRating ? metric.avgRating.toFixed(1) : w.rating}</span>
                       </div>
                     </td>
                     <td className="py-4 px-6 mono">{metric?.totalServices || w.totalServices}</td>
                     <td className="py-4 px-6">
-                      {w.verified ? <CheckCircle2 className="w-4 h-4 text-green-400" /> : <Clock className="w-4 h-4 text-yellow-400" />}
+                      {w.verified ? <CheckCircle2 className="w-4 h-4 text-teal-400" /> : <Clock className="w-4 h-4 text-yellow-400" />}
                     </td>
                     <td className="py-4 px-6">
-                      {w.oem ? <Shield className="w-4 h-4 text-purple-400" /> : <span className="text-gray-500 text-xs">—</span>}
+                      {w.oem ? <Shield className="w-4 h-4 text-teal-400" /> : <span className="text-gray-500 text-xs">—</span>}
                     </td>
                     <td className="py-4 px-6">
                       {w.verified ? (
-                        <span className="text-xs px-2 py-1 rounded-full bg-green-500/15 text-green-400 flex items-center gap-1 w-fit"><BadgeCheck className="w-3 h-3" /> Approved</span>
+                        <span className="text-xs px-2 py-1 rounded-full bg-teal-500/15 text-teal-400 flex items-center gap-1 w-fit"><BadgeCheck className="w-3 h-3" /> Approved</span>
                       ) : (
                         <span className="text-xs px-2 py-1 rounded-full bg-yellow-500/15 text-yellow-400 flex items-center gap-1 w-fit"><Clock className="w-3 h-3" /> Pending</span>
                       )}

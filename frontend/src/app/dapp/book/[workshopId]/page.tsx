@@ -18,11 +18,11 @@ function RatingRing({ score }: { score: number }) {
   const radius = 50;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 5) * circumference;
-  const color = score >= 4.5 ? "#22C55E" : score >= 4.0 ? "#A3E635" : score >= 3.0 ? "#FACC15" : "#F97316";
+  const color = score >= 4.5 ? "#86EFAC" : score >= 4.0 ? "#5EEAD4" : score >= 3.0 ? "#FCD34D" : "#5EEAD4";
   return (
     <div className="relative flex items-center justify-center">
       <svg width="130" height="130" className="-rotate-90">
-        <circle cx="65" cy="65" r={radius} fill="none" stroke="rgba(153,69,255,0.1)" strokeWidth="8" />
+        <circle cx="65" cy="65" r={radius} fill="none" stroke="rgba(94, 234, 212,0.1)" strokeWidth="8" />
         <motion.circle
           cx="65" cy="65" r={radius} fill="none" stroke={color} strokeWidth="8" strokeLinecap="round"
           strokeDasharray={circumference}
@@ -118,9 +118,9 @@ export default function WorkshopProfilePage() {
                   {ws.badges.map((badge) => (
                     <span key={badge} className="text-[10px] px-2.5 py-1 rounded-full flex items-center gap-1"
                       style={{
-                        background: badge === "Pending KYC" ? "rgba(250,204,21,0.1)" : "rgba(20,241,149,0.1)",
-                        color: badge === "Pending KYC" ? "#FACC15" : "var(--solana-green)",
-                        border: `1px solid ${badge === "Pending KYC" ? "rgba(250,204,21,0.2)" : "rgba(20,241,149,0.2)"}`,
+                        background: badge === "Pending KYC" ? "rgba(250,204,21,0.1)" : "rgba(94, 234, 212,0.1)",
+                        color: badge === "Pending KYC" ? "#FCD34D" : "var(--solana-green)",
+                        border: `1px solid ${badge === "Pending KYC" ? "rgba(250,204,21,0.2)" : "rgba(94, 234, 212,0.2)"}`,
                       }}
                     >
                       {badge.includes("Verified") && <CheckCircle2 className="w-3 h-3" />}
@@ -147,7 +147,7 @@ export default function WorkshopProfilePage() {
             </div>
 
             {/* Info rows */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-4 border-t" style={{ borderColor: "rgba(153,69,255,0.1)" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-4 border-t" style={{ borderColor: "rgba(94, 234, 212,0.1)" }}>
               <div className="flex items-center gap-2 text-xs">
                 <Phone className="w-3.5 h-3.5" style={{ color: "var(--solana-purple)" }} />
                 <span style={{ color: "var(--solana-text-muted)" }}>{ws.phone}</span>
@@ -170,7 +170,7 @@ export default function WorkshopProfilePage() {
               {Object.entries(ws.serviceBreakdown).map(([service, count]) => (
                 <div key={service} className="flex items-center gap-3">
                   <span className="text-xs w-32 shrink-0" style={{ color: "var(--solana-text-muted)" }}>{service}</span>
-                  <div className="flex-1 h-2 rounded-full relative" style={{ background: "rgba(153,69,255,0.1)" }}>
+                  <div className="flex-1 h-2 rounded-full relative" style={{ background: "rgba(94, 234, 212,0.1)" }}>
                     <motion.div
                       className="h-2 rounded-full"
                       style={{ background: "var(--solana-gradient)" }}
@@ -190,7 +190,7 @@ export default function WorkshopProfilePage() {
             <h2 className="font-semibold mb-4 text-sm">Review Pelanggan ({ws.totalReviews})</h2>
             <div className="space-y-4">
               {ws.reviews.map((review, i) => (
-                <div key={i} className="p-4 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(153,69,255,0.08)" }}>
+                <div key={i} className="p-4 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(94, 234, 212,0.08)" }}>
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <p className="text-sm font-medium">{review.name}</p>
@@ -201,18 +201,18 @@ export default function WorkshopProfilePage() {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-0.5">
                         {Array.from({ length: 5 }).map((_, j) => (
-                          <Star key={j} className="w-3 h-3" style={{ color: j < review.rating ? "#FACC15" : "rgba(153,69,255,0.15)", fill: j < review.rating ? "#FACC15" : "none" }} />
+                          <Star key={j} className="w-3 h-3" style={{ color: j < review.rating ? "#FCD34D" : "rgba(94, 234, 212,0.15)", fill: j < review.rating ? "#FCD34D" : "none" }} />
                         ))}
                       </div>
                       {review.onChainVerified && (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded-full flex items-center gap-0.5" style={{ background: "rgba(20,241,149,0.1)", color: "var(--solana-green)", border: "1px solid rgba(20,241,149,0.2)" }}>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded-full flex items-center gap-0.5" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
                           <CheckCircle2 className="w-2.5 h-2.5" /> On-Chain
                         </span>
                       )}
                     </div>
                   </div>
                   <p className="text-xs leading-relaxed" style={{ color: "var(--solana-text-muted)" }}>{review.comment}</p>
-                  <p className="text-[10px] mt-2 mono" style={{ color: "rgba(153,69,255,0.4)" }}>{review.date}</p>
+                  <p className="text-[10px] mt-2 mono" style={{ color: "rgba(94, 234, 212,0.4)" }}>{review.date}</p>
                 </div>
               ))}
             </div>
@@ -234,7 +234,7 @@ export default function WorkshopProfilePage() {
                 value={vehicleKey}
                 onChange={(e) => setVehicleKey(e.target.value as VehicleKey)}
                 className="w-full px-3 py-2.5 rounded-xl bg-white/5 text-sm outline-none cursor-pointer"
-                style={{ border: "1px solid rgba(153,69,255,0.15)", color: "var(--solana-text)" }}
+                style={{ border: "1px solid rgba(94, 234, 212,0.15)", color: "var(--solana-text)" }}
               >
                 {(Object.keys(vehicleData) as VehicleKey[]).map((k) => (
                   <option key={k} value={k} style={{ background: "var(--solana-dark-2)" }}>
@@ -253,7 +253,7 @@ export default function WorkshopProfilePage() {
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-xl bg-white/5 text-sm outline-none"
-                style={{ border: "1px solid rgba(153,69,255,0.15)", color: "var(--solana-text)", colorScheme: "dark" }}
+                style={{ border: "1px solid rgba(94, 234, 212,0.15)", color: "var(--solana-text)", colorScheme: "dark" }}
               />
             </div>
 
@@ -267,9 +267,9 @@ export default function WorkshopProfilePage() {
                     onClick={() => setSelectedTime(t)}
                     className="px-2 py-2 rounded-lg text-xs font-medium transition-colors cursor-pointer"
                     style={{
-                      background: selectedTime === t ? "rgba(153,69,255,0.15)" : "rgba(255,255,255,0.03)",
+                      background: selectedTime === t ? "rgba(94, 234, 212,0.15)" : "rgba(255,255,255,0.03)",
                       color: selectedTime === t ? "var(--solana-purple)" : "var(--solana-text-muted)",
-                      border: `1px solid ${selectedTime === t ? "rgba(153,69,255,0.3)" : "rgba(255,255,255,0.06)"}`,
+                      border: `1px solid ${selectedTime === t ? "rgba(94, 234, 212,0.3)" : "rgba(255,255,255,0.06)"}`,
                     }}
                   >
                     {t}
@@ -287,7 +287,7 @@ export default function WorkshopProfilePage() {
                 placeholder="Deskripsikan keluhan kendaraan Anda..."
                 rows={3}
                 className="w-full px-3 py-2.5 rounded-xl bg-white/5 text-sm outline-none resize-none"
-                style={{ border: "1px solid rgba(153,69,255,0.15)", color: "var(--solana-text)" }}
+                style={{ border: "1px solid rgba(94, 234, 212,0.15)", color: "var(--solana-text)" }}
               />
             </div>
 
@@ -299,7 +299,7 @@ export default function WorkshopProfilePage() {
               </p>
 
               {/* Share History */}
-              <div className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${shareHistory ? "rgba(20,241,149,0.2)" : "rgba(153,69,255,0.1)"}` }}>
+              <div className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${shareHistory ? "rgba(94, 234, 212,0.2)" : "rgba(94, 234, 212,0.1)"}` }}>
                 <div className="flex items-center justify-between">
                   <div className="text-xs" style={{ color: shareHistory ? "var(--solana-green)" : "var(--solana-text-muted)" }}>
                     <p className="font-medium">Riwayat Kendaraan</p>
@@ -308,7 +308,7 @@ export default function WorkshopProfilePage() {
                   <button
                     onClick={() => setShareHistory(!shareHistory)}
                     className="w-10 h-5 rounded-full relative transition-colors cursor-pointer shrink-0"
-                    style={{ background: shareHistory ? "var(--solana-green)" : "rgba(153,69,255,0.2)" }}
+                    style={{ background: shareHistory ? "var(--solana-green)" : "rgba(94, 234, 212,0.2)" }}
                   >
                     <div className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform" style={{ left: shareHistory ? "22px" : "2px" }} />
                   </button>
@@ -316,7 +316,7 @@ export default function WorkshopProfilePage() {
               </div>
 
               {/* Share 3D Twin */}
-              <div className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${shareDigitalTwin ? "rgba(20,241,149,0.2)" : "rgba(153,69,255,0.1)"}` }}>
+              <div className="rounded-xl p-3" style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${shareDigitalTwin ? "rgba(94, 234, 212,0.2)" : "rgba(94, 234, 212,0.1)"}` }}>
                 <div className="flex items-center justify-between">
                   <div className="text-xs" style={{ color: shareDigitalTwin ? "var(--solana-green)" : "var(--solana-text-muted)" }}>
                     <p className="font-medium">3D Digital Twin</p>
@@ -325,7 +325,7 @@ export default function WorkshopProfilePage() {
                   <button
                     onClick={() => setShareDigitalTwin(!shareDigitalTwin)}
                     className="w-10 h-5 rounded-full relative transition-colors cursor-pointer shrink-0"
-                    style={{ background: shareDigitalTwin ? "var(--solana-green)" : "rgba(153,69,255,0.2)" }}
+                    style={{ background: shareDigitalTwin ? "var(--solana-green)" : "rgba(94, 234, 212,0.2)" }}
                   >
                     <div className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform" style={{ left: shareDigitalTwin ? "22px" : "2px" }} />
                   </button>
@@ -337,7 +337,7 @@ export default function WorkshopProfilePage() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   className="rounded-xl p-3 text-xs space-y-1.5 overflow-hidden"
-                  style={{ background: "rgba(20,241,149,0.05)", border: "1px solid rgba(20,241,149,0.15)" }}
+                  style={{ background: "rgba(94, 234, 212,0.05)", border: "1px solid rgba(94, 234, 212,0.15)" }}
                 >
                   <p className="font-medium flex items-center gap-1.5" style={{ color: "var(--solana-green)" }}>
                     <Lock className="w-3 h-3" /> Data yang akan dibagikan:
@@ -354,7 +354,7 @@ export default function WorkshopProfilePage() {
                       <div className="flex items-center gap-2"><Heart className="w-3 h-3" style={{ color: "var(--solana-pink)" }} /><span>3D Digital Twin Model</span></div>
                     )}
                   </div>
-                  <p className="text-[10px] pt-1" style={{ color: "rgba(20,241,149,0.6)" }}>
+                  <p className="text-[10px] pt-1" style={{ color: "rgba(94, 234, 212,0.6)" }}>
                     Data hanya dapat diakses bengkel setelah booking dikonfirmasi dan dicabut otomatis setelah servis selesai.
                   </p>
                 </motion.div>

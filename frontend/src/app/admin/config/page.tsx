@@ -63,12 +63,12 @@ export default function AdminConfigPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="flex items-center gap-3 font-bold text-2xl md:text-3xl">
-            <Settings className="w-7 h-7" style={{ color: "#F97316" }} />
+            <Settings className="w-7 h-7" style={{ color: "#5EEAD4" }} />
             System Configuration
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Platform-wide parameters, fees, and feature flags.</p>
         </div>
-        <button onClick={handleSave} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all hover:brightness-110" style={{ background: "linear-gradient(135deg, #F97316, #EF4444)", color: "#fff" }}>
+        <button onClick={handleSave} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all hover:brightness-110" style={{ background: "linear-gradient(135deg, #5EEAD4, #FCA5A5)", color: "#fff" }}>
           <Save className="w-4 h-4" /> Save All Changes
         </button>
       </div>
@@ -77,7 +77,7 @@ export default function AdminConfigPage() {
         {/* Fee Configuration */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card-static p-6 rounded-2xl border border-white/5">
           <h3 className="text-base font-semibold mb-5 flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-green-400" /> Fee Configuration
+            <DollarSign className="w-5 h-5 text-teal-400" /> Fee Configuration
           </h3>
           <div className="flex flex-col gap-4">
             {numField("Platform Fee", platformFeePercent, setPlatformFeePercent, "%", 0, 20, 0.1)}
@@ -106,7 +106,7 @@ export default function AdminConfigPage() {
         {/* Minting & Security */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card-static p-6 rounded-2xl border border-white/5">
           <h3 className="text-base font-semibold mb-5 flex items-center gap-2">
-            <Layers className="w-5 h-5 text-purple-400" /> Minting & Security
+            <Layers className="w-5 h-5 text-teal-400" /> Minting & Security
           </h3>
           <div className="flex flex-col gap-4">
             {numField("Max Batch Mint Size", maxBatchMintSize, setMaxBatchMintSize, "vehicles", 1, 1000)}
@@ -122,7 +122,7 @@ export default function AdminConfigPage() {
         {/* Feature Flags */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="glass-card-static p-6 rounded-2xl border border-white/5">
           <h3 className="text-base font-semibold mb-5 flex items-center gap-2">
-            <ToggleLeft className="w-5 h-5 text-cyan-400" /> Feature Flags
+            <ToggleLeft className="w-5 h-5 text-teal-400" /> Feature Flags
           </h3>
           <div className="flex flex-col gap-3">
             {([
@@ -146,7 +146,7 @@ export default function AdminConfigPage() {
                 </div>
                 <div
                   className="w-10 h-5 rounded-full relative transition-all flex-shrink-0"
-                  style={{ background: features[f.key] ? "#22C55E" : "rgba(255,255,255,0.1)" }}
+                  style={{ background: features[f.key] ? "#86EFAC" : "rgba(255,255,255,0.1)" }}
                 >
                   <div
                     className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all"
@@ -161,7 +161,7 @@ export default function AdminConfigPage() {
         {/* Current Config Summary */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card-static p-6 rounded-2xl border border-white/5 lg:col-span-2">
           <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-orange-400" /> Active Configuration Summary
+            <ShieldCheck className="w-5 h-5 text-teal-400" /> Active Configuration Summary
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[

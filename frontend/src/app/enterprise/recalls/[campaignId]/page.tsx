@@ -21,7 +21,7 @@ export default function RecallDetailPage({ params }: { params: Promise<{ campaig
       <div className="text-center py-20">
         <AlertOctagon className="w-12 h-12 mx-auto mb-4 opacity-30" />
         <h2 className="text-xl font-bold mb-2">Campaign Not Found</h2>
-        <Link href="/enterprise/recalls" className="text-sm text-purple-400 hover:underline">Back to Recalls</Link>
+        <Link href="/enterprise/recalls" className="text-sm text-teal-400 hover:underline">Back to Recalls</Link>
       </div>
     );
   }
@@ -31,7 +31,7 @@ export default function RecallDetailPage({ params }: { params: Promise<{ campaig
 
   return (
     <div className="max-w-5xl mx-auto">
-      <Link href="/enterprise/recalls" className="inline-flex items-center gap-2 text-sm mb-6 hover:text-purple-400 transition-colors" style={{ color: "var(--solana-text-muted)" }}>
+      <Link href="/enterprise/recalls" className="inline-flex items-center gap-2 text-sm mb-6 hover:text-teal-400 transition-colors" style={{ color: "var(--solana-text-muted)" }}>
         <ArrowLeft className="w-4 h-4" /> Back to Recalls
       </Link>
 
@@ -40,11 +40,11 @@ export default function RecallDetailPage({ params }: { params: Promise<{ campaig
         <div className="flex flex-col md:flex-row justify-between items-start gap-4">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <span className="mono text-sm text-purple-400">{campaign.id}</span>
-              <span className="text-xs px-2.5 py-1 rounded-full font-semibold" style={{ background: campaign.status === "Active" ? "rgba(249,115,22,0.15)" : "rgba(34,197,94,0.15)", color: campaign.status === "Active" ? "#F97316" : "#22C55E", border: `1px solid ${campaign.status === "Active" ? "#F97316" : "#22C55E"}40` }}>
+              <span className="mono text-sm text-teal-400">{campaign.id}</span>
+              <span className="text-xs px-2.5 py-1 rounded-full font-semibold" style={{ background: campaign.status === "Active" ? "rgba(94, 234, 212,0.15)" : "rgba(34,197,94,0.15)", color: campaign.status === "Active" ? "#5EEAD4" : "#86EFAC", border: `1px solid ${campaign.status === "Active" ? "#5EEAD4" : "#86EFAC"}40` }}>
                 {campaign.status}
               </span>
-              <span className="text-xs px-2.5 py-1 rounded-full font-semibold" style={{ background: campaign.severity === "Critical" ? "rgba(239,68,68,0.15)" : campaign.severity === "High" ? "rgba(249,115,22,0.15)" : "rgba(250,204,21,0.15)", color: campaign.severity === "Critical" ? "#EF4444" : campaign.severity === "High" ? "#F97316" : "#FACC15" }}>
+              <span className="text-xs px-2.5 py-1 rounded-full font-semibold" style={{ background: campaign.severity === "Critical" ? "rgba(239,68,68,0.15)" : campaign.severity === "High" ? "rgba(94, 234, 212,0.15)" : "rgba(250,204,21,0.15)", color: campaign.severity === "Critical" ? "#FCA5A5" : campaign.severity === "High" ? "#5EEAD4" : "#FCD34D" }}>
                 {campaign.severity}
               </span>
             </div>
@@ -63,8 +63,8 @@ export default function RecallDetailPage({ params }: { params: Promise<{ campaig
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
           { icon: Car, label: "Affected Vehicles", value: campaign.affected.toLocaleString(), color: "var(--solana-purple)" },
-          { icon: CheckCircle2, label: "Compliant", value: compliant.toLocaleString(), color: "#22C55E" },
-          { icon: Clock, label: "Pending", value: pending.toLocaleString(), color: "#FACC15" },
+          { icon: CheckCircle2, label: "Compliant", value: compliant.toLocaleString(), color: "#86EFAC" },
+          { icon: Clock, label: "Pending", value: pending.toLocaleString(), color: "#FCD34D" },
           { icon: Calendar, label: "Issue Date", value: campaign.date, color: "var(--solana-cyan)" },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card p-6 rounded-2xl">
@@ -80,7 +80,7 @@ export default function RecallDetailPage({ params }: { params: Promise<{ campaig
         <h3 className="text-base font-semibold mb-4">Completion Progress</h3>
         <div className="flex items-center gap-4 mb-4">
           <div className="flex-1 h-4 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.1)" }}>
-            <motion.div initial={{ width: 0 }} animate={{ width: `${campaign.completion}%` }} transition={{ duration: 1.5 }} className="h-full rounded-full" style={{ background: campaign.completion > 80 ? "var(--solana-green)" : campaign.completion > 50 ? "#FACC15" : "var(--solana-purple)" }} />
+            <motion.div initial={{ width: 0 }} animate={{ width: `${campaign.completion}%` }} transition={{ duration: 1.5 }} className="h-full rounded-full" style={{ background: campaign.completion > 80 ? "var(--solana-green)" : campaign.completion > 50 ? "#FCD34D" : "var(--solana-purple)" }} />
           </div>
           <span className="text-lg font-bold mono">{campaign.completion}%</span>
         </div>
@@ -92,7 +92,7 @@ export default function RecallDetailPage({ params }: { params: Promise<{ campaig
         <div className="flex flex-wrap gap-3">
           {campaign.modelsAffected.map(model => (
             <div key={model} className="px-4 py-3 rounded-xl bg-black/20 border border-white/5 flex items-center gap-2">
-              <Car className="w-4 h-4 text-purple-400" />
+              <Car className="w-4 h-4 text-teal-400" />
               <span className="text-sm font-medium">{model}</span>
             </div>
           ))}

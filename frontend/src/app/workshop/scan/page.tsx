@@ -52,10 +52,10 @@ export default function ScanPage() {
 
       {/* Mode toggle */}
       <div className="flex gap-3 mb-8">
-        <button onClick={() => { setScanMode("nfc"); setScanned(false); setCameraActive(false); }} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: scanMode === "nfc" ? "rgba(153,69,255,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${scanMode === "nfc" ? "var(--solana-purple)" : "rgba(153,69,255,0.2)"}`, color: scanMode === "nfc" ? "var(--solana-purple)" : "var(--solana-text-muted)" }}>
+        <button onClick={() => { setScanMode("nfc"); setScanned(false); setCameraActive(false); }} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: scanMode === "nfc" ? "rgba(94, 234, 212,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${scanMode === "nfc" ? "var(--solana-purple)" : "rgba(94, 234, 212,0.2)"}`, color: scanMode === "nfc" ? "var(--solana-purple)" : "var(--solana-text-muted)" }}>
           <Nfc className="w-5 h-5" /> NFC Scan
         </button>
-        <button onClick={() => { setScanMode("qr"); setScanned(false); setCameraActive(true); }} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: scanMode === "qr" ? "rgba(20,241,149,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${scanMode === "qr" ? "var(--solana-green)" : "rgba(153,69,255,0.2)"}`, color: scanMode === "qr" ? "var(--solana-green)" : "var(--solana-text-muted)" }}>
+        <button onClick={() => { setScanMode("qr"); setScanned(false); setCameraActive(true); }} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: scanMode === "qr" ? "rgba(94, 234, 212,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${scanMode === "qr" ? "var(--solana-green)" : "rgba(94, 234, 212,0.2)"}`, color: scanMode === "qr" ? "var(--solana-green)" : "var(--solana-text-muted)" }}>
           <QrCode className="w-5 h-5" /> QR Scan
         </button>
       </div>
@@ -70,7 +70,7 @@ export default function ScanPage() {
             <>
               {/* NFC Scanner */}
               <div className="relative w-48 h-48 mb-8">
-                <div className="absolute inset-0 rounded-2xl" style={{ border: "2px dashed rgba(153,69,255,0.3)" }} />
+                <div className="absolute inset-0 rounded-2xl" style={{ border: "2px dashed rgba(94, 234, 212,0.3)" }} />
                 <div className="absolute inset-0 rounded-2xl animate-pulse-glow" style={{ border: "2px solid var(--solana-purple)", opacity: 0.5 }} />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Nfc className="w-20 h-20 animate-pulse" style={{ color: "var(--solana-purple)" }} />
@@ -86,10 +86,10 @@ export default function ScanPage() {
           ) : (
             <>
               {/* QR Camera */}
-              <div className="relative w-64 h-64 mb-6 rounded-2xl overflow-hidden" style={{ background: "#111", border: "2px solid rgba(20,241,149,0.3)" }}>
+              <div className="relative w-64 h-64 mb-6 rounded-2xl overflow-hidden" style={{ background: "#111", border: "2px solid rgba(94, 234, 212,0.3)" }}>
                 <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
                 {/* Overlay scanning frame */}
-                <div className="absolute inset-4 rounded-xl" style={{ border: "2px solid rgba(20,241,149,0.5)" }} />
+                <div className="absolute inset-4 rounded-xl" style={{ border: "2px solid rgba(94, 234, 212,0.5)" }} />
                 <motion.div className="absolute left-4 right-4 h-[2px]" style={{ background: "var(--solana-green)", boxShadow: "0 0 10px var(--solana-green)" }} animate={{ top: ["15%", "85%", "15%"] }} transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }} />
                 {/* Corner marks */}
                 <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 rounded-tl-lg" style={{ borderColor: "var(--solana-green)" }} />
@@ -104,7 +104,7 @@ export default function ScanPage() {
                 <button onClick={() => setScanned(true)} className="glow-btn flex-1 flex items-center justify-center gap-2 cursor-pointer">
                   <Scan className="w-5 h-5" /> Simulate Scan
                 </button>
-                <button onClick={() => fileInputRef.current?.click()} className="glow-btn-outline flex-1 flex items-center justify-center gap-2 cursor-pointer" style={{ borderColor: "rgba(20,241,149,0.3)", color: "var(--solana-green)" }}>
+                <button onClick={() => fileInputRef.current?.click()} className="glow-btn-outline flex-1 flex items-center justify-center gap-2 cursor-pointer" style={{ borderColor: "rgba(94, 234, 212,0.3)", color: "var(--solana-green)" }}>
                   <Upload className="w-4 h-4" /> Upload QR
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
@@ -116,9 +116,9 @@ export default function ScanPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mx-auto">
           <div className="glass-card p-8">
             <div className="flex items-center gap-4 mb-6 p-4 rounded-xl" style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)" }}>
-              <CheckCircle2 className="w-8 h-8" style={{ color: "#22C55E" }} />
+              <CheckCircle2 className="w-8 h-8" style={{ color: "#86EFAC" }} />
               <div>
-                <p className="font-semibold" style={{ color: "#22C55E" }}>Vehicle Identity Verified</p>
+                <p className="font-semibold" style={{ color: "#86EFAC" }}>Vehicle Identity Verified</p>
                 <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>On-chain ownership confirmed via Solana</p>
               </div>
             </div>
@@ -126,12 +126,12 @@ export default function ScanPage() {
               <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Vehicle</p><p className="font-semibold flex items-center gap-2"><Car className="w-4 h-4" style={{ color: "var(--solana-purple)" }} /> Toyota Avanza 2025</p></div>
               <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>VIN</p><p className="font-semibold mono text-sm">MHKA1BA1JFK000001</p></div>
               <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>NOC ID</p><p className="font-semibold flex items-center gap-2"><Shield className="w-4 h-4" style={{ color: "var(--solana-green)" }} /> #00001</p></div>
-              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Health Score</p><p className="font-semibold text-xl" style={{ color: "#A3E635" }}>87</p></div>
+              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Health Score</p><p className="font-semibold text-xl" style={{ color: "#5EEAD4" }}>87</p></div>
               <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Mileage</p><p className="font-semibold mono">34,521 km</p></div>
               <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Last Service</p><p className="font-semibold flex items-center gap-2"><Clock className="w-4 h-4" style={{ color: "var(--solana-text-muted)" }} /> 2026-02-10</p></div>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
-              <a href="/workshop/vehicle/MHKA1BA1JFK000001" className="flex-1 py-4 px-4 rounded-xl text-center font-medium transition-colors hover:bg-white/5" style={{ background: "rgba(20,20,40,0.5)", border: "1px solid rgba(153,69,255,0.2)", color: "var(--solana-purple)" }}>View Patient History</a>
+              <a href="/workshop/vehicle/MHKA1BA1JFK000001" className="flex-1 py-4 px-4 rounded-xl text-center font-medium transition-colors hover:bg-white/5" style={{ background: "rgba(20,20,40,0.5)", border: "1px solid rgba(94, 234, 212,0.2)", color: "var(--solana-purple)" }}>View Patient History</a>
               <button onClick={handleAddToQueue} className="glow-btn flex-1 text-center flex justify-center items-center py-4 cursor-pointer">Add to Active Queue</button>
             </div>
           </div>

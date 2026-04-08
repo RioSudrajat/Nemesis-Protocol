@@ -82,10 +82,10 @@ export default function EnterpriseTxPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
-          { icon: DollarSign, label: "Total Volume", value: `Rp ${(totalVolume / 1000000).toFixed(1)}M`, color: "var(--solana-green)" },
+          { icon: DollarSign, label: "Total Volume", value: `Rp ${totalVolume.toLocaleString('id-ID')}`, color: "var(--solana-green)" },
           { icon: Hash, label: "Total Transactions", value: transactions.length.toString(), color: "var(--solana-purple)" },
           { icon: Fuel, label: "Avg Gas Fee", value: `Rp ${avgGas.toLocaleString("id-ID")}`, color: "var(--solana-cyan)" },
-          { icon: CreditCard, label: "Payment Method", value: "IDR → Solana", color: "#FACC15" },
+          { icon: CreditCard, label: "Payment Method", value: "IDR → Solana", color: "#FCD34D" },
         ].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="glass-card p-6 rounded-2xl">
             <s.icon className="w-6 h-6 mb-3" style={{ color: s.color }} />
@@ -113,7 +113,7 @@ export default function EnterpriseTxPage() {
       </div>
 
       {/* Table */}
-      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(153,69,255,0.2)" }}>
+      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-black/20 border-b border-white/5">
             <tr className="text-xs uppercase tracking-wider text-gray-400">
@@ -132,7 +132,7 @@ export default function EnterpriseTxPage() {
               {filtered.length > 0 ? filtered.map((tx) => (
                 <motion.tr key={tx.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="hover:bg-white/5 transition-colors cursor-pointer" onClick={() => setExpandedRow(expandedRow === tx.id ? null : tx.id)}>
                   <td className="py-4 px-6">
-                    <span className="mono text-xs text-purple-400">{tx.txSig}</span>
+                    <span className="mono text-xs text-teal-400">{tx.txSig}</span>
                   </td>
                   <td className="py-4 px-6">
                     <span className="text-xs px-2.5 py-1 rounded-full font-medium capitalize" style={{ background: `${typeColors[tx.type]}15`, color: typeColors[tx.type], border: `1px solid ${typeColors[tx.type]}40` }}>
@@ -144,7 +144,7 @@ export default function EnterpriseTxPage() {
                   <td className="py-4 px-6 font-bold mono">Rp {tx.amount.toLocaleString("id-ID")}</td>
                   <td className="py-4 px-6 text-gray-400 mono text-xs">Rp {tx.gasFee.toLocaleString("id-ID")}</td>
                   <td className="py-4 px-6">
-                    <span className="text-xs px-2 py-1 rounded-full bg-green-500/15 text-green-400 border border-green-500/30">confirmed</span>
+                    <span className="text-xs px-2 py-1 rounded-full bg-teal-500/15 text-teal-400 border border-teal-500/30">confirmed</span>
                   </td>
                   <td className="py-4 px-6 text-right">
                     {expandedRow === tx.id ? <ChevronUp className="w-4 h-4 text-gray-400 inline" /> : <ChevronDown className="w-4 h-4 text-gray-400 inline" />}

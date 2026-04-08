@@ -72,12 +72,12 @@ export function CopilotChatPanel({ isOpen, onClose, partName }: CopilotChatPanel
             className="fixed top-0 right-0 bottom-0 z-50 w-full md:w-96 flex flex-col shadow-2xl"
             style={{ 
               background: "rgba(14,14,26,0.95)", 
-              borderLeft: "1px solid rgba(153,69,255,0.3)",
+              borderLeft: "1px solid rgba(94, 234, 212,0.3)",
               backdropFilter: "blur(20px)"
             }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: "rgba(153,69,255,0.2)" }}>
+            <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center glow-btn">
                   <Bot className="w-6 h-6 text-white" />
@@ -99,13 +99,13 @@ export function CopilotChatPanel({ isOpen, onClose, partName }: CopilotChatPanel
             <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
               {messages.map((msg, idx) => (
                 <div key={idx} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "user" ? "bg-purple-600/20 text-purple-400" : "bg-green-500/20 text-green-400"}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "user" ? "bg-teal-600/20 text-teal-400" : "bg-teal-500/20 text-teal-400"}`}>
                     {msg.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                   </div>
                   <div 
                     className={`p-3 rounded-2xl text-sm max-w-[80%] ${
                       msg.role === "user" 
-                        ? "rounded-tr-sm bg-purple-600/20 border border-purple-500/30" 
+                        ? "rounded-tr-sm bg-teal-600/20 border border-teal-500/30" 
                         : "rounded-tl-sm bg-black/40 border border-white/10"
                     }`}
                   >
@@ -118,7 +118,7 @@ export function CopilotChatPanel({ isOpen, onClose, partName }: CopilotChatPanel
             </div>
 
             {/* Input Area */}
-            <div className="p-4 border-t" style={{ borderColor: "rgba(153,69,255,0.2)" }}>
+            <div className="p-4 border-t" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
               <div className="relative flex items-center">
                 <input 
                   type="text" 
@@ -126,12 +126,12 @@ export function CopilotChatPanel({ isOpen, onClose, partName }: CopilotChatPanel
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSend()}
                   placeholder="Ask about this part..."
-                  className="w-full bg-black/50 border outline-none rounded-xl py-3 pl-4 pr-12 text-sm transition-colors focus:border-purple-500"
+                  className="w-full bg-black/50 border outline-none rounded-xl py-3 pl-4 pr-12 text-sm transition-colors focus:border-teal-500"
                   style={{ borderColor: "rgba(255,255,255,0.1)" }}
                 />
                 <button 
                   onClick={handleSend}
-                  className="absolute right-2 p-2 rounded-lg bg-purple-600/30 text-purple-400 hover:bg-purple-600/50 transition-colors cursor-pointer"
+                  className="absolute right-2 p-2 rounded-lg bg-teal-600/30 text-teal-400 hover:bg-teal-600/50 transition-colors cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
                 </button>
