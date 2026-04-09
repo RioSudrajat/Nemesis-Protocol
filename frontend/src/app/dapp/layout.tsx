@@ -8,17 +8,13 @@ import {
   Clock,
   Brain,
   CalendarCheck,
-  Bell,
-  Scan,
   Shield,
   Box,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
   CreditCard,
-  ArrowRightLeft,
   Car,
-  Activity,
 } from "lucide-react";
 import { GlobalCopilotSidebar } from "@/components/ui/GlobalCopilotSidebar";
 import { ConnectWalletButton } from "@/components/ui/ConnectWalletButton";
@@ -29,10 +25,7 @@ const navItems = [
   { href: "/dapp/insights", label: "AI Insights", icon: Brain },
   { href: "/dapp/viewer", label: "3D Digital Twin", icon: Box },
   { href: "/dapp/book", label: "Book Service", icon: CalendarCheck },
-  { href: "/dapp/book/status", label: "Status Servis", icon: Activity },
-  { href: "/dapp/notifications", label: "Notifications", icon: Bell },
   { href: "/dapp/identity", label: "Identity Card", icon: CreditCard },
-  { href: "/dapp/transfer", label: "Vehicle Transfer", icon: ArrowRightLeft },
 ];
 
 import { ActiveVehicleProvider, useActiveVehicle, vehicleData, VehicleKey } from "@/context/ActiveVehicleContext";

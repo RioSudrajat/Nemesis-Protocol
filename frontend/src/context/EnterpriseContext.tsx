@@ -81,7 +81,9 @@ function getCurrentMonth(): string {
 export function EnterpriseProvider({ children }: { children: ReactNode }) {
   const bookingCtx = useBooking();
   const completed = bookingCtx?.completedBookings || [];
-  const booking = bookingCtx?.booking;
+  // Iterate ALL concurrent bookings — fleet counter should reflect every
+  // vehicle currently being serviced, not just the most recent one.
+  const activeBookings = bookingCtx?.activeBookings || [];
 
   const metrics = useMemo((): EnterpriseMetrics => {
     const currentMonth = getCurrentMonth();
@@ -103,9 +105,9 @@ export function EnterpriseProvider({ children }: { children: ReactNode }) {
       ? Math.round(vehicles.reduce((s, v) => s + v.health, 0) / vehicles.length)
       : 0;
 
-    // Active sessions
+    // Active sessions — count every vehicle currently in an active phase.
     const activeStatuses = ["ACCEPTED", "IN_SERVICE", "INVOICE_SENT"];
-    const activeServiceSessions = booking && activeStatuses.includes(booking.status) ? 1 : 0;
+    const activeServiceSessions = activeBookings.filter(b => activeStatuses.includes(b.status)).length;
 
     // Completed services
     const completedThisMonth = completed.filter(c => c.date.startsWith(currentMonth)).length;
@@ -206,7 +208,7 @@ export function EnterpriseProvider({ children }: { children: ReactNode }) {
       completedBookings: completed,
       workshops: workshopsData,
     };
-  }, [completed, booking]);
+  }, [completed, activeBookings]);
 
   return (
     <EnterpriseContext.Provider value={{ metrics }}>

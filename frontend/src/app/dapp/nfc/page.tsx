@@ -15,8 +15,10 @@ const scanHistory = [
 export default function NFCPage() {
   const ctx = useActiveVehicle();
   const currentVehicleData = ctx?.currentVehicleData || vehicleData.avanza;
+  const activeVehicle = ctx?.activeVehicle || "avanza";
   const bookingCtx = useBooking();
-  const activeSession = bookingCtx?.booking;
+  // Scope active session to the currently selected vehicle only.
+  const activeSession = bookingCtx?.bookings[activeVehicle] || null;
   const hasActiveService = activeSession && !["COMPLETED", "REJECTED"].includes(activeSession.status);
 
   const [isActive, setIsActive] = useState(true);

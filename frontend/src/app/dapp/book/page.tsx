@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Star, Search, CheckCircle2, ShieldCheck, ChevronLeft, Building2, Loader2 } from "lucide-react";
+import { MapPin, Star, Search, CheckCircle2, ShieldCheck, ChevronLeft, Building2, Loader2, Activity } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { workshopsData, Workshop } from "@/context/BookingContext";
+import { workshopsData, Workshop, useBooking } from "@/context/BookingContext";
+import { useActiveVehicle, vehicleData } from "@/context/ActiveVehicleContext";
 
 const LeafletMap = dynamic(() => import("@/components/ui/LeafletMap"), {
   ssr: false,
@@ -24,6 +25,15 @@ export default function BookServicePage() {
   const [activeCity, setActiveCity] = useState("Semua");
   const [activeFilter, setActiveFilter] = useState("Semua");
 
+  // Show the "Status Servis" button only when the currently active vehicle
+  // has an ongoing booking session. Each vehicle has its own slot, so
+  // switching the active vehicle in the sidebar updates this badge.
+  const activeVehicleCtx = useActiveVehicle();
+  const activeVehicle = activeVehicleCtx?.activeVehicle || "avanza";
+  const bookingCtx = useBooking();
+  const currentBooking = bookingCtx?.bookings[activeVehicle] || null;
+  const hasActiveBooking = !!currentBooking && !["COMPLETED", "REJECTED"].includes(currentBooking.status);
+
   const filtered = workshopsData.filter((ws) => {
     const matchSearch = ws.name.toLowerCase().includes(search.toLowerCase()) || ws.specialization.toLowerCase().includes(search.toLowerCase());
     const matchCity = activeCity === "Semua" || ws.city === activeCity;
@@ -34,14 +44,35 @@ export default function BookServicePage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <Link href="/dapp" className="p-2 rounded-xl hover:bg-white/5 transition-colors" style={{ color: "var(--solana-text-muted)" }}>
-          <ChevronLeft className="w-5 h-5" />
-        </Link>
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Cari Bengkel</h1>
-          <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Temukan bengkel terverifikasi di jaringan NOC ID</p>
+      <div className="flex items-center justify-between gap-4 mb-8">
+        <div className="flex items-center gap-4">
+          <Link href="/dapp" className="p-2 rounded-xl hover:bg-white/5 transition-colors" style={{ color: "var(--solana-text-muted)" }}>
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold">Cari Bengkel</h1>
+            <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Temukan bengkel terverifikasi di jaringan NOC ID</p>
+          </div>
         </div>
+        {/* Status Servis button — replaces the old sidebar "Status Servis" tab */}
+        <Link
+          href="/dapp/book/status"
+          className="relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer shrink-0"
+          style={{
+            background: hasActiveBooking ? "rgba(94, 234, 212,0.12)" : "rgba(255,255,255,0.03)",
+            border: `1px solid ${hasActiveBooking ? "rgba(94, 234, 212,0.35)" : "rgba(94, 234, 212,0.15)"}`,
+            color: hasActiveBooking ? "var(--solana-green)" : "var(--solana-text-muted)",
+          }}
+        >
+          <Activity className="w-4 h-4" />
+          <span className="hidden sm:inline">Status Servis</span>
+          {hasActiveBooking && (
+            <>
+              <span className="hidden md:inline text-[10px] opacity-75">· {vehicleData[activeVehicle]?.name}</span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--solana-green)" }} />
+            </>
+          )}
+        </Link>
       </div>
 
       {/* Real Map */}

@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useBooking, type BookingStatus } from "@/context/BookingContext";
+import { useBooking, isDataAccessActive, type BookingStatus, type BookingRequest } from "@/context/BookingContext";
 import { vehicleData } from "@/context/ActiveVehicleContext";
 
 // Static past bookings for display filler
@@ -20,10 +20,10 @@ const pastBookings = [
 
 export default function WorkshopBookingsPage() {
   const ctx = useBooking();
-  const booking = ctx?.booking;
+  const activeBookings = ctx?.activeBookings || [];
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("Semua");
-  const [rejectConfirm, setRejectConfirm] = useState(false);
+  const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
   const [resubmitId, setResubmitId] = useState<string | null>(null);
   const [resubmitReason, setResubmitReason] = useState("");
   const [resubmitPhotos, setResubmitPhotos] = useState<string[]>([]);
@@ -47,7 +47,7 @@ export default function WorkshopBookingsPage() {
     return getTabStatus(activeTab).includes(status);
   };
 
-  const vehicle = booking ? vehicleData[booking.form.vehicleKey] : null;
+  const visibleBookings = activeBookings.filter((b) => matchesTab(b.status));
 
   const statusBadge = (status: BookingStatus) => {
     const map: Record<string, { bg: string; color: string; label: string }> = {
@@ -67,7 +67,8 @@ export default function WorkshopBookingsPage() {
     );
   };
 
-  const handleSendInvoice = () => {
+  const handleSendInvoice = (booking: BookingRequest) => {
+    const vehicle = vehicleData[booking.form.vehicleKey];
     if (!vehicle) return;
     // Redirect to maintenance page with booking context
     router.push(`/workshop/maintenance?fromBooking=true&vin=${vehicle.vin}`);
@@ -140,151 +141,158 @@ export default function WorkshopBookingsPage() {
         ))}
       </div>
 
-      {/* Active booking card */}
-      {booking && matchesTab(booking.status) && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-6 mb-6"
-          style={{ borderLeft: `4px solid ${booking.status === "PENDING" ? "#FCD34D" : booking.status === "REJECTED" ? "#FCA5A5" : "#5EEAD4"}` }}
-        >
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h3 className="font-semibold text-sm">Booking Baru</h3>
-                {statusBadge(booking.status)}
-              </div>
-              <p className="text-[10px] mono" style={{ color: "var(--solana-text-muted)" }}>{booking.id}</p>
-            </div>
-            <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>
-              {new Date(booking.createdAt).toLocaleDateString("id-ID")}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <div className="flex items-center gap-2 text-xs">
-              <Clock className="w-3.5 h-3.5" style={{ color: "var(--solana-purple)" }} />
-              <span>{booking.form.date} · {booking.form.time}</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs">
-              <Car className="w-3.5 h-3.5" style={{ color: "var(--solana-purple)" }} />
-              <span>
-                {vehicle?.name}
-                {/* Only show VIN after accepted + data shared */}
-                {booking.status !== "PENDING" && booking.status !== "REJECTED" && (booking.form.shareHistory || booking.form.shareDigitalTwin) && (
-                  <span className="mono ml-1 text-[10px]" style={{ color: "var(--solana-text-muted)" }}>({vehicle?.vin})</span>
-                )}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-2 text-xs mb-4 p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(94, 234, 212,0.08)" }}>
-            <MessageSquare className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: "var(--solana-text-muted)" }} />
-            <p style={{ color: "var(--solana-text-muted)" }}>{booking.form.complaint}</p>
-          </div>
-
-          {/* Data access links - only when accepted and data shared */}
-          {ctx?.dataAccessActive && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {booking.form.shareHistory && (
-                <Link href={`/workshop/vehicle/${vehicle?.vin}`} className="text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors hover:bg-white/5" style={{ background: "rgba(94, 234, 212,0.05)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
-                  <Eye className="w-3.5 h-3.5" /> Lihat Riwayat Servis
-                </Link>
-              )}
-              {booking.form.shareDigitalTwin && (
-                <Link href={`/workshop/viewer?vin=${vehicle?.vin}`} className="text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors hover:bg-white/5" style={{ background: "rgba(20,209,255,0.05)", color: "var(--solana-cyan)", border: "1px solid rgba(20,209,255,0.15)" }}>
-                  <Box className="w-3.5 h-3.5" /> Lihat 3D Digital Twin
-                </Link>
-              )}
-            </div>
-          )}
-
-          {/* Actions based on status */}
-          {booking.status === "PENDING" && (
-            <div className="flex gap-3">
-              {!rejectConfirm ? (
-                <>
-                  <button onClick={() => ctx?.acceptBooking()} className="glow-btn px-5 py-2 text-xs cursor-pointer flex-1 flex items-center justify-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Terima Booking
-                  </button>
-                  <button onClick={() => setRejectConfirm(true)} className="px-5 py-2 text-xs rounded-xl cursor-pointer flex-1 flex items-center justify-center gap-1.5" style={{ background: "rgba(239,68,68,0.1)", color: "#FCA5A5", border: "1px solid rgba(239,68,68,0.2)" }}>
-                    <XCircle className="w-3.5 h-3.5" /> Tolak
-                  </button>
-                </>
-              ) : (
-                <div className="w-full p-3 rounded-xl" style={{ background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.15)" }}>
-                  <p className="text-xs mb-3" style={{ color: "#FCA5A5" }}>Yakin ingin menolak booking ini?</p>
-                  <div className="flex gap-2">
-                    <button onClick={() => { ctx?.rejectBooking(); setRejectConfirm(false); }} className="px-4 py-1.5 text-xs rounded-lg cursor-pointer" style={{ background: "#FCA5A5", color: "#fff" }}>Ya, Tolak</button>
-                    <button onClick={() => setRejectConfirm(false)} className="px-4 py-1.5 text-xs rounded-lg cursor-pointer" style={{ background: "rgba(255,255,255,0.05)", color: "var(--solana-text-muted)" }}>Batal</button>
-                  </div>
+      {/* Active booking cards — one per vehicle that currently has a session */}
+      {visibleBookings.map((booking) => {
+        const vehicle = vehicleData[booking.form.vehicleKey];
+        const dataActive = isDataAccessActive(booking);
+        return (
+          <motion.div
+            key={booking.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass-card p-6 mb-6"
+            style={{ borderLeft: `4px solid ${booking.status === "PENDING" ? "#FCD34D" : booking.status === "REJECTED" ? "#FCA5A5" : "#5EEAD4"}` }}
+          >
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className="font-semibold text-sm">
+                    {booking.type === "walkin" ? "Walk-In" : "Booking Baru"} · {vehicle?.name || booking.form.vehicleKey}
+                  </h3>
+                  {statusBadge(booking.status)}
                 </div>
-              )}
+                <p className="text-[10px] mono" style={{ color: "var(--solana-text-muted)" }}>{booking.id}</p>
+              </div>
+              <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>
+                {new Date(booking.createdAt).toLocaleDateString("id-ID")}
+              </p>
             </div>
-          )}
 
-          {booking.status === "ACCEPTED" && (
-            <button onClick={() => ctx?.startService()} className="glow-btn px-5 py-2 text-xs cursor-pointer flex items-center gap-1.5">
-              <Wrench className="w-3.5 h-3.5" /> Mulai Servis
-            </button>
-          )}
-
-          {booking.status === "IN_SERVICE" && (
-            <button onClick={handleSendInvoice} className="glow-btn px-5 py-2 text-xs cursor-pointer flex items-center gap-1.5">
-              <Receipt className="w-3.5 h-3.5" /> Buat & Kirim Invoice
-            </button>
-          )}
-
-          {booking.status === "INVOICE_SENT" && (
-            <div className="flex items-center gap-2 text-xs px-4 py-2.5 rounded-xl" style={{ background: "rgba(94, 234, 212,0.05)", color: "#5EEAD4", border: "1px solid rgba(94, 234, 212,0.15)" }}>
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              Menunggu pembayaran dari pelanggan...
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div className="flex items-center gap-2 text-xs">
+                <Clock className="w-3.5 h-3.5" style={{ color: "var(--solana-purple)" }} />
+                <span>{booking.form.date} · {booking.form.time}</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs">
+                <Car className="w-3.5 h-3.5" style={{ color: "var(--solana-purple)" }} />
+                <span>
+                  {vehicle?.name}
+                  {/* Only show VIN after accepted + data shared */}
+                  {booking.status !== "PENDING" && booking.status !== "REJECTED" && (booking.form.shareHistory || booking.form.shareDigitalTwin || booking.type === "walkin") && (
+                    <span className="mono ml-1 text-[10px]" style={{ color: "var(--solana-text-muted)" }}>({vehicle?.vin})</span>
+                  )}
+                </span>
+              </div>
             </div>
-          )}
 
-          {booking.status === "PAID" && (
-            <div className="space-y-3">
+            <div className="flex items-start gap-2 text-xs mb-4 p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(94, 234, 212,0.08)" }}>
+              <MessageSquare className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: "var(--solana-text-muted)" }} />
+              <p style={{ color: "var(--solana-text-muted)" }}>{booking.form.complaint}</p>
+            </div>
+
+            {/* Data access links - only when accepted and data shared */}
+            {dataActive && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {(booking.form.shareHistory || booking.type === "walkin") && (
+                  <Link href={`/workshop/vehicle/${vehicle?.vin}`} className="text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors hover:bg-white/5" style={{ background: "rgba(94, 234, 212,0.05)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
+                    <Eye className="w-3.5 h-3.5" /> Lihat Riwayat Servis
+                  </Link>
+                )}
+                {booking.form.shareDigitalTwin && (
+                  <Link href={`/workshop/viewer?vin=${vehicle?.vin}`} className="text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors hover:bg-white/5" style={{ background: "rgba(20,209,255,0.05)", color: "var(--solana-cyan)", border: "1px solid rgba(20,209,255,0.15)" }}>
+                    <Box className="w-3.5 h-3.5" /> Lihat 3D Digital Twin
+                  </Link>
+                )}
+              </div>
+            )}
+
+            {/* Actions based on status */}
+            {booking.status === "PENDING" && (
+              <div className="flex gap-3">
+                {rejectConfirmId !== booking.id ? (
+                  <>
+                    <button onClick={() => ctx?.acceptBooking(booking.form.vehicleKey)} className="glow-btn px-5 py-2 text-xs cursor-pointer flex-1 flex items-center justify-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Terima Booking
+                    </button>
+                    <button onClick={() => setRejectConfirmId(booking.id)} className="px-5 py-2 text-xs rounded-xl cursor-pointer flex-1 flex items-center justify-center gap-1.5" style={{ background: "rgba(239,68,68,0.1)", color: "#FCA5A5", border: "1px solid rgba(239,68,68,0.2)" }}>
+                      <XCircle className="w-3.5 h-3.5" /> Tolak
+                    </button>
+                  </>
+                ) : (
+                  <div className="w-full p-3 rounded-xl" style={{ background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.15)" }}>
+                    <p className="text-xs mb-3" style={{ color: "#FCA5A5" }}>Yakin ingin menolak booking ini?</p>
+                    <div className="flex gap-2">
+                      <button onClick={() => { ctx?.rejectBooking(booking.form.vehicleKey); setRejectConfirmId(null); }} className="px-4 py-1.5 text-xs rounded-lg cursor-pointer" style={{ background: "#FCA5A5", color: "#fff" }}>Ya, Tolak</button>
+                      <button onClick={() => setRejectConfirmId(null)} className="px-4 py-1.5 text-xs rounded-lg cursor-pointer" style={{ background: "rgba(255,255,255,0.05)", color: "var(--solana-text-muted)" }}>Batal</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {booking.status === "ACCEPTED" && (
+              <button onClick={() => ctx?.startService(booking.form.vehicleKey)} className="glow-btn px-5 py-2 text-xs cursor-pointer flex items-center gap-1.5">
+                <Wrench className="w-3.5 h-3.5" /> Mulai Servis
+              </button>
+            )}
+
+            {booking.status === "IN_SERVICE" && (
+              <button onClick={() => handleSendInvoice(booking)} className="glow-btn px-5 py-2 text-xs cursor-pointer flex items-center gap-1.5">
+                <Receipt className="w-3.5 h-3.5" /> Buat & Kirim Invoice
+              </button>
+            )}
+
+            {booking.status === "INVOICE_SENT" && (
+              <div className="flex items-center gap-2 text-xs px-4 py-2.5 rounded-xl" style={{ background: "rgba(94, 234, 212,0.05)", color: "#5EEAD4", border: "1px solid rgba(94, 234, 212,0.15)" }}>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                Menunggu pembayaran dari pelanggan...
+              </div>
+            )}
+
+            {booking.status === "PAID" && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs px-4 py-2.5 rounded-xl" style={{ background: "rgba(94, 234, 212,0.05)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Pembayaran diterima. Tandatangani transaksi anchoring untuk mencatat log servis on-chain.
+                </div>
+                <button onClick={() => ctx?.signAnchoring(booking.form.vehicleKey)} className="glow-btn px-5 py-2.5 text-xs cursor-pointer flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5" /> Sign Anchoring Transaction
+                </button>
+              </div>
+            )}
+
+            {booking.status === "ANCHORING" && (
+              <div className="flex items-center gap-2 text-xs px-4 py-2.5 rounded-xl" style={{ background: "rgba(94, 234, 212,0.05)", color: "var(--solana-purple)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                Anchoring on-chain... menunggu konfirmasi Solana.
+              </div>
+            )}
+
+            {booking.status === "ANCHORED" && (
               <div className="flex items-center gap-2 text-xs px-4 py-2.5 rounded-xl" style={{ background: "rgba(94, 234, 212,0.05)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                Pembayaran diterima. Tandatangani transaksi anchoring untuk mencatat log servis on-chain.
+                Log servis tercatat on-chain. Menunggu review dari pelanggan.
               </div>
-              <button onClick={() => ctx?.signAnchoring()} className="glow-btn px-5 py-2.5 text-xs cursor-pointer flex items-center gap-1.5">
-                <FileText className="w-3.5 h-3.5" /> Sign Anchoring Transaction
-              </button>
-            </div>
-          )}
+            )}
 
-          {booking.status === "ANCHORING" && (
-            <div className="flex items-center gap-2 text-xs px-4 py-2.5 rounded-xl" style={{ background: "rgba(94, 234, 212,0.05)", color: "var(--solana-purple)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              Anchoring on-chain... menunggu konfirmasi Solana.
-            </div>
-          )}
-
-          {booking.status === "ANCHORED" && (
-            <div className="flex items-center gap-2 text-xs px-4 py-2.5 rounded-xl" style={{ background: "rgba(94, 234, 212,0.05)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              Log servis tercatat on-chain. Menunggu review dari pelanggan.
-            </div>
-          )}
-
-          {booking.status === "COMPLETED" && booking.review && (
-            <div className="p-3 rounded-xl" style={{ background: "rgba(94, 234, 212,0.05)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="flex items-center gap-0.5">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} className="w-3.5 h-3.5" style={{ color: s <= booking.review!.rating ? "#FCD34D" : "rgba(94, 234, 212,0.15)", fill: s <= booking.review!.rating ? "#FCD34D" : "none" }} />
-                  ))}
+            {booking.status === "COMPLETED" && booking.review && (
+              <div className="p-3 rounded-xl" style={{ background: "rgba(94, 234, 212,0.05)", border: "1px solid rgba(94, 234, 212,0.15)" }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center gap-0.5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star key={s} className="w-3.5 h-3.5" style={{ color: s <= booking.review!.rating ? "#FCD34D" : "rgba(94, 234, 212,0.15)", fill: s <= booking.review!.rating ? "#FCD34D" : "none" }} />
+                    ))}
+                  </div>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-green)" }}>On-Chain Verified</span>
                 </div>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-green)" }}>On-Chain Verified</span>
+                {booking.review.comment && (
+                  <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>{booking.review.comment}</p>
+                )}
               </div>
-              {booking.review.comment && (
-                <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>{booking.review.comment}</p>
-              )}
-            </div>
-          )}
-        </motion.div>
-      )}
+            )}
+          </motion.div>
+        );
+      })}
 
       {/* Past bookings (static filler) */}
       <div className="space-y-4">
@@ -318,7 +326,7 @@ export default function WorkshopBookingsPage() {
       </div>
 
       {/* Empty state */}
-      {!booking && pastBookings.filter((pb) => activeTab === "Semua" || getTabStatus(activeTab).includes(pb.status)).length === 0 && (
+      {visibleBookings.length === 0 && pastBookings.filter((pb) => activeTab === "Semua" || getTabStatus(activeTab).includes(pb.status)).length === 0 && (
         <div className="text-center py-16" style={{ color: "var(--solana-text-muted)" }}>
           <CalendarCheck className="w-12 h-12 mx-auto mb-4 opacity-20" />
           <p className="text-sm">Belum ada permintaan booking</p>

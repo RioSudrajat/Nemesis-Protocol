@@ -1,6 +1,6 @@
 "use client";
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
-import { VehicleKey } from "./ActiveVehicleContext";
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
+import { VehicleKey, vehicleData } from "./ActiveVehicleContext";
 
 export interface Workshop {
   id: string;
@@ -153,22 +153,51 @@ export interface WalkinParams {
   workshopName: string;
 }
 
+/** Per-vehicle booking slot map. Independent sessions coexist without overwriting each other. */
+export type BookingMap = Record<VehicleKey, BookingRequest | null>;
+
+/** Helper: returns true when the booking is in a state where the workshop can access
+ *  the customer's shared vehicle data (history / 3D twin). Walk-in sessions always
+ *  grant access for their active phases. */
+export function isDataAccessActive(booking: BookingRequest | null | undefined): boolean {
+  if (!booking) return false;
+  if (booking.type === "walkin") {
+    return booking.status === "ACCEPTED" || booking.status === "IN_SERVICE" || booking.status === "INVOICE_SENT";
+  }
+  if (booking.status !== "ACCEPTED" && booking.status !== "IN_SERVICE" && booking.status !== "INVOICE_SENT") return false;
+  return booking.form.shareHistory || booking.form.shareDigitalTwin;
+}
+
 interface BookingContextType {
+  /** Per-vehicle booking slots. Each vehicle has an independent, coexisting booking state. */
+  bookings: BookingMap;
+  /** All non-null bookings sorted newest-first. Workshops iterate this to see every concurrent session. */
+  activeBookings: BookingRequest[];
+  /**
+   * @deprecated Legacy single-booking accessor. Returns the most recently created active booking
+   * across all vehicles (or null). New code should read `bookings[vehicleKey]` or loop `activeBookings`.
+   * Kept only so any admin/enterprise code that attached helpers via `booking?.addNotification` keeps compiling.
+   */
   booking: BookingRequest | null;
+
   submitBooking: (workshop: Workshop, form: BookingForm) => void;
   createWalkinSession: (params: WalkinParams) => void;
-  // Workshop-side actions
-  acceptBooking: () => void;
-  rejectBooking: () => void;
-  startService: () => void;
-  sendInvoice: (invoice: InvoiceData) => void;
-  attachWarrantyClaim: (draft: WarrantyClaimDraft, vin: string, vehicleName: string) => void;
-  // User-side actions
-  payInvoice: () => void;
-  signAnchoring: () => void;
-  submitReview: (review: ReviewData) => void;
-  reset: () => void;
-  dataAccessActive: boolean;
+
+  // Workshop-side actions — all scoped by vehicleKey so concurrent sessions stay isolated.
+  acceptBooking: (vehicleKey: VehicleKey) => void;
+  rejectBooking: (vehicleKey: VehicleKey) => void;
+  startService: (vehicleKey: VehicleKey) => void;
+  sendInvoice: (vehicleKey: VehicleKey, invoice: InvoiceData) => void;
+  attachWarrantyClaim: (vehicleKey: VehicleKey, draft: WarrantyClaimDraft, vin: string, vehicleName: string) => void;
+
+  // User-side actions — also scoped by vehicleKey.
+  payInvoice: (vehicleKey: VehicleKey) => void;
+  signAnchoring: (vehicleKey: VehicleKey) => void;
+  submitReview: (vehicleKey: VehicleKey, review: ReviewData) => void;
+
+  /** Reset a single vehicle's booking slot. Pass no argument to clear every slot. */
+  reset: (vehicleKey?: VehicleKey) => void;
+
   // Completed bookings & notifications
   completedBookings: CompletedBooking[];
   bookingNotifications: BookingNotification[];
@@ -181,10 +210,19 @@ interface BookingContextType {
   addNotification: (type: BookingNotification["type"], title: string, message: string, targetRole: BookingNotification["targetRole"]) => void;
 }
 
-const STORAGE_KEY = "noc-booking-state";
+const STORAGE_KEY = "noc-booking-state-v2"; // v2: per-vehicle slots
+const LEGACY_STORAGE_KEY = "noc-booking-state"; // v1 legacy (single booking) — migrated on load
 const COMPLETED_KEY = "noc-completed-bookings";
 const NOTIF_KEY = "noc-booking-notifications";
 const WARRANTY_KEY = "noc-warranty-claims";
+
+function emptyBookingMap(): BookingMap {
+  const map = {} as BookingMap;
+  for (const key of Object.keys(vehicleData) as VehicleKey[]) {
+    map[key] = null;
+  }
+  return map;
+}
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
@@ -213,7 +251,7 @@ function formatTimeAgo(): string {
 }
 
 export function BookingProvider({ children }: { children: ReactNode }) {
-  const [booking, setBooking] = useState<BookingRequest | null>(null);
+  const [bookings, setBookings] = useState<BookingMap>(() => emptyBookingMap());
   const [completedBookings, setCompletedBookings] = useState<CompletedBooking[]>([]);
   const [bookingNotifications, setBookingNotifications] = useState<BookingNotification[]>([]);
   const [warrantyClaims, setWarrantyClaims] = useState<WarrantyClaimRecord[]>([]);
@@ -221,8 +259,22 @@ export function BookingProvider({ children }: { children: ReactNode }) {
 
   // Hydrate from localStorage on mount
   useEffect(() => {
-    setBooking(loadJSON<BookingRequest | null>(STORAGE_KEY, null));
-    // Deduplicate by bookingId on load to clean up any existing duplicates
+    // Prefer v2 per-vehicle slot map.
+    const v2 = loadJSON<BookingMap | null>(STORAGE_KEY, null);
+    if (v2 && typeof v2 === "object") {
+      // Merge with an empty map so newly added vehicle keys are always present.
+      setBookings({ ...emptyBookingMap(), ...v2 });
+    } else {
+      // Legacy migration — take the old single-booking blob and drop it into its vehicleKey slot.
+      const legacy = loadJSON<BookingRequest | null>(LEGACY_STORAGE_KEY, null);
+      if (legacy && legacy.form?.vehicleKey) {
+        const migrated = emptyBookingMap();
+        migrated[legacy.form.vehicleKey] = legacy;
+        setBookings(migrated);
+      }
+    }
+
+    // Deduplicate completed bookings by bookingId on load.
     const raw = loadJSON<CompletedBooking[]>(COMPLETED_KEY, []);
     const seen = new Set<string>();
     const deduped = raw.filter(cb => {
@@ -236,15 +288,18 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setHydrated(true);
   }, []);
 
-  // Persist on change (after hydration)
+  // Persist bookings map on change
   useEffect(() => {
     if (!hydrated) return;
-    if (booking) {
-      saveJSON(STORAGE_KEY, booking);
+    const hasAny = Object.values(bookings).some(Boolean);
+    if (hasAny) {
+      saveJSON(STORAGE_KEY, bookings);
     } else {
       localStorage.removeItem(STORAGE_KEY);
     }
-  }, [booking, hydrated]);
+    // Always clear legacy key once hydration completed so future reloads skip migration.
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
+  }, [bookings, hydrated]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -265,7 +320,16 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const handler = (e: StorageEvent) => {
       if (e.key === STORAGE_KEY) {
-        setBooking(e.newValue ? JSON.parse(e.newValue) : null);
+        if (e.newValue) {
+          try {
+            const parsed = JSON.parse(e.newValue) as BookingMap;
+            setBookings({ ...emptyBookingMap(), ...parsed });
+          } catch {
+            setBookings(emptyBookingMap());
+          }
+        } else {
+          setBookings(emptyBookingMap());
+        }
       } else if (e.key === COMPLETED_KEY) {
         setCompletedBookings(e.newValue ? JSON.parse(e.newValue) : []);
       } else if (e.key === NOTIF_KEY) {
@@ -296,9 +360,19 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setBookingNotifications((prev) => [notif, ...prev]);
   }, []);
 
+  // Generic per-vehicle mutator — applies `updater` only to the slot for `vehicleKey`
+  // and leaves every other vehicle's booking untouched.
+  const updateSlot = useCallback((vehicleKey: VehicleKey, updater: (prev: BookingRequest | null) => BookingRequest | null) => {
+    setBookings((prev) => {
+      const next = { ...prev };
+      next[vehicleKey] = updater(prev[vehicleKey] ?? null);
+      return next;
+    });
+  }, []);
+
   const submitBooking = useCallback((workshop: Workshop, form: BookingForm) => {
     const bookingId = `BK-${Date.now()}`;
-    setBooking({
+    const newBooking: BookingRequest = {
       id: bookingId,
       type: "booking",
       workshop,
@@ -307,7 +381,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       createdAt: new Date().toISOString(),
       invoice: null,
       review: null,
-    });
+    };
+    updateSlot(form.vehicleKey, () => newBooking);
     // Notify workshop
     addNotification(
       "booking_pending",
@@ -315,12 +390,11 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       `Permintaan booking dari pelanggan untuk ${form.date} pukul ${form.time}. Keluhan: ${form.complaint.slice(0, 60)}...`,
       "workshop"
     );
-  }, [addNotification]);
+  }, [addNotification, updateSlot]);
 
   const createWalkinSession = useCallback((params: WalkinParams) => {
-    // Find the mock workshop or build a minimal one
     const mockWorkshop = workshopsData[0]; // default to first workshop
-    setBooking({
+    const walkin: BookingRequest = {
       id: `WI-${Date.now()}`,
       type: "walkin",
       workshop: mockWorkshop,
@@ -336,7 +410,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       createdAt: new Date().toISOString(),
       invoice: null,
       review: null,
-    });
+    };
+    updateSlot(params.vehicleKey, () => walkin);
     addNotification(
       "booking_accepted",
       "Kendaraan Masuk Antrian Bengkel 🔧",
@@ -349,60 +424,60 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       `Kendaraan datang langsung. VIN: ${params.vin}. Siapkan mekanik.`,
       "workshop"
     );
-  }, [addNotification]);
+  }, [addNotification, updateSlot]);
 
-  const acceptBooking = useCallback(() => {
-    setBooking((prev) => prev ? { ...prev, status: "ACCEPTED" } : null);
+  const acceptBooking = useCallback((vehicleKey: VehicleKey) => {
+    updateSlot(vehicleKey, (prev) => prev ? { ...prev, status: "ACCEPTED" } : null);
     addNotification(
       "booking_accepted",
       "Booking Diterima! ✅",
       "Bengkel telah mengkonfirmasi booking Anda. Kendaraan sedang dianalisis. Datang sesuai jadwal.",
       "user"
     );
-  }, [addNotification]);
+  }, [addNotification, updateSlot]);
 
-  const rejectBooking = useCallback(() => {
-    setBooking((prev) => prev ? { ...prev, status: "REJECTED" } : null);
+  const rejectBooking = useCallback((vehicleKey: VehicleKey) => {
+    updateSlot(vehicleKey, (prev) => prev ? { ...prev, status: "REJECTED" } : null);
     addNotification(
       "booking_rejected",
       "Booking Ditolak",
       "Mohon maaf, bengkel tidak dapat menerima booking pada waktu yang dipilih. Silakan cari bengkel lain.",
       "user"
     );
-  }, [addNotification]);
+  }, [addNotification, updateSlot]);
 
-  const startService = useCallback(() => {
-    setBooking((prev) => prev ? { ...prev, status: "IN_SERVICE" } : null);
+  const startService = useCallback((vehicleKey: VehicleKey) => {
+    updateSlot(vehicleKey, (prev) => prev ? { ...prev, status: "IN_SERVICE" } : null);
     addNotification(
       "booking_service",
       "Kendaraan Sedang Diservis 🔧",
       "Mekanik sudah mulai mengerjakan kendaraan Anda. Invoice akan dikirim setelah servis selesai.",
       "user"
     );
-  }, [addNotification]);
+  }, [addNotification, updateSlot]);
 
-  const sendInvoice = useCallback((invoice: InvoiceData) => {
-    setBooking((prev) => prev ? { ...prev, status: "INVOICE_SENT", invoice } : null);
+  const sendInvoice = useCallback((vehicleKey: VehicleKey, invoice: InvoiceData) => {
+    updateSlot(vehicleKey, (prev) => prev ? { ...prev, status: "INVOICE_SENT", invoice } : null);
     addNotification(
       "booking_invoice",
       "Invoice Diterima 📄",
       `Invoice servis sebesar Rp ${invoice.totalIDR.toLocaleString("id-ID")} telah dikirim. Silakan lakukan pembayaran.`,
       "user"
     );
-  }, [addNotification]);
+  }, [addNotification, updateSlot]);
 
-  const payInvoice = useCallback(() => {
-    setBooking((prev) => prev ? { ...prev, status: "PAID" } : null);
+  const payInvoice = useCallback((vehicleKey: VehicleKey) => {
+    updateSlot(vehicleKey, (prev) => prev ? { ...prev, status: "PAID" } : null);
     addNotification(
       "booking_paid",
       "Pembayaran Diterima 💰",
       "Pelanggan telah menyelesaikan pembayaran. Silakan tandatangani transaksi anchoring untuk mencatat log servis on-chain.",
       "workshop"
     );
-  }, [addNotification]);
+  }, [addNotification, updateSlot]);
 
-  const signAnchoring = useCallback(() => {
-    setBooking((prev) => prev ? { ...prev, status: "ANCHORING" } : null);
+  const signAnchoring = useCallback((vehicleKey: VehicleKey) => {
+    updateSlot(vehicleKey, (prev) => prev ? { ...prev, status: "ANCHORING" } : null);
     addNotification(
       "service_anchoring",
       "Menandatangani Log Servis ⏳",
@@ -411,7 +486,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     );
     setTimeout(() => {
       const txSig = `${Math.random().toString(36).slice(2, 6)}...${Math.random().toString(36).slice(2, 6)}`;
-      setBooking((prev) => prev ? { ...prev, status: "ANCHORED", anchorTxSig: txSig } : null);
+      updateSlot(vehicleKey, (prev) => prev ? { ...prev, status: "ANCHORED", anchorTxSig: txSig } : null);
       addNotification(
         "service_anchored",
         "Log Servis Tercatat On-Chain ✅",
@@ -425,23 +500,29 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         "workshop"
       );
     }, 2500);
-  }, [addNotification]);
+  }, [addNotification, updateSlot]);
 
-  const attachWarrantyClaim = useCallback((draft: WarrantyClaimDraft, vin: string, vehicleName: string) => {
-    setBooking((prev) => prev ? { ...prev, warrantyClaim: draft } : null);
-    setBooking((curr) => {
-      const bookingId = curr?.id || `BK-${Date.now()}`;
+  const attachWarrantyClaim = useCallback((vehicleKey: VehicleKey, draft: WarrantyClaimDraft, vin: string, vehicleName: string) => {
+    // Generate stable record ID outside the updater so StrictMode double-invoke is idempotent
+    const recordId = `WC-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`;
+
+    updateSlot(vehicleKey, (prev) => prev ? { ...prev, warrantyClaim: draft } : null);
+
+    setWarrantyClaims((prev) => {
+      // Dedup guard: if record already added (StrictMode double-invoke), skip
+      if (prev.some((c) => c.id === recordId)) return prev;
+      const bookingId = `BK-${Date.now()}`;
       const record: WarrantyClaimRecord = {
         ...draft,
-        id: `WC-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`,
+        id: recordId,
         bookingId,
         vin,
         vehicleName,
         status: "Pending",
       };
-      setWarrantyClaims((prev) => [record, ...prev]);
-      return curr;
+      return [record, ...prev];
     });
+
     addNotification(
       "warranty_submitted",
       "Klaim Garansi Diajukan 🛡️",
@@ -454,7 +535,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       `Klaim garansi Anda untuk ${vehicleName} sedang ditinjau enterprise.`,
       "user"
     );
-  }, [addNotification]);
+  }, [addNotification, updateSlot]);
 
   const updateWarrantyClaimStatus = useCallback((id: string, status: WarrantyClaimStatus, opts?: { reimbursementIDR?: number; rejectionReason?: string }) => {
     let target: WarrantyClaimRecord | undefined;
@@ -505,21 +586,21 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     );
   }, [addNotification]);
 
-  const submitReview = useCallback((review: ReviewData) => {
-    setBooking((prev) => {
+  const submitReview = useCallback((vehicleKey: VehicleKey, review: ReviewData) => {
+    let completedToAppend: CompletedBooking | null = null;
+
+    updateSlot(vehicleKey, (prev) => {
       if (!prev || !prev.invoice) return prev;
       const updated = { ...prev, status: "COMPLETED" as BookingStatus, review };
 
-      // Create completed booking entry for timeline/ledger
-      // Use deterministic ID so double-invocation (React StrictMode) doesn't produce duplicates
-      const completed: CompletedBooking = {
+      completedToAppend = {
         id: `SRV-${prev.id}`,
         bookingId: prev.id,
         workshopName: prev.workshop.name,
         workshopId: prev.workshop.id,
-        vehicleName: "",
+        vehicleName: vehicleData[prev.form.vehicleKey]?.name || "",
         vehicleKey: prev.form.vehicleKey,
-        vin: "",
+        vin: vehicleData[prev.form.vehicleKey]?.vin || "",
         serviceType: prev.invoice.serviceType,
         date: new Date().toISOString().split("T")[0],
         parts: prev.invoice.parts,
@@ -532,33 +613,40 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         txSig: `${prev.id.slice(-4)}...${prev.workshop.id.slice(-4)}`,
       };
 
-      setCompletedBookings((existing) => {
-        // Prevent duplicate if updater runs more than once
-        if (existing.some(cb => cb.bookingId === prev.id)) return existing;
-        return [completed, ...existing];
-      });
-
-      // Notify workshop about review
-      addNotification(
-        "booking_completed",
-        `Review Baru: ${review.rating}/5 ⭐`,
-        review.comment || "Pelanggan memberikan review tanpa komentar.",
-        "workshop"
-      );
-
-      // Notify user about completion
-      addNotification(
-        "booking_completed",
-        "Servis Selesai & Tercatat On-Chain ✅",
-        "Riwayat servis telah di-anchor ke Solana. Review Anda telah diverifikasi on-chain.",
-        "user"
-      );
-
       return updated;
     });
-  }, [addNotification]);
 
-  const reset = useCallback(() => setBooking(null), []);
+    if (completedToAppend) {
+      const appendId = (completedToAppend as CompletedBooking).bookingId;
+      setCompletedBookings((existing) => {
+        if (existing.some(cb => cb.bookingId === appendId)) return existing;
+        return [completedToAppend as CompletedBooking, ...existing];
+      });
+    }
+
+    // Notifications OUTSIDE the state updater — state updaters run twice in
+    // React StrictMode, so any side-effect inside them is duplicated.
+    addNotification(
+      "booking_completed",
+      `Review Baru: ${review.rating}/5 ⭐`,
+      review.comment || "Pelanggan memberikan review tanpa komentar.",
+      "workshop"
+    );
+    addNotification(
+      "booking_completed",
+      "Servis Selesai & Tercatat On-Chain ✅",
+      "Riwayat servis telah di-anchor ke Solana. Review Anda telah diverifikasi on-chain.",
+      "user"
+    );
+  }, [addNotification, updateSlot]);
+
+  const reset = useCallback((vehicleKey?: VehicleKey) => {
+    if (vehicleKey) {
+      updateSlot(vehicleKey, () => null);
+    } else {
+      setBookings(emptyBookingMap());
+    }
+  }, [updateSlot]);
 
   const markNotificationRead = useCallback((id: string) => {
     setBookingNotifications((prev) =>
@@ -576,17 +664,21 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setBookingNotifications((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
-  const dataAccessActive =
-    booking?.status === "ACCEPTED" ||
-    booking?.status === "IN_SERVICE" ||
-    booking?.status === "INVOICE_SENT"
-      ? booking.form.shareHistory || booking.form.shareDigitalTwin
-      : false;
+  // Derive activeBookings list (non-null slots, newest first)
+  const activeBookings = useMemo<BookingRequest[]>(() => {
+    return (Object.values(bookings).filter(Boolean) as BookingRequest[])
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [bookings]);
+
+  // Legacy single-booking accessor: most recent active booking across all vehicles.
+  const legacyBooking = activeBookings[0] || null;
 
   return (
     <BookingContext.Provider
       value={{
-        booking,
+        bookings,
+        activeBookings,
+        booking: legacyBooking,
         submitBooking,
         createWalkinSession,
         acceptBooking,
@@ -598,7 +690,6 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         signAnchoring,
         submitReview,
         reset,
-        dataAccessActive,
         completedBookings,
         bookingNotifications,
         warrantyClaims,

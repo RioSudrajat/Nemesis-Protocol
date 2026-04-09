@@ -10,8 +10,11 @@ import { useBooking } from "@/context/BookingContext";
 export default function QRPage() {
   const ctx = useActiveVehicle();
   const currentVehicleData = ctx?.currentVehicleData || vehicleData.avanza;
+  const activeVehicle = ctx?.activeVehicle || "avanza";
   const bookingCtx = useBooking();
-  const activeSession = bookingCtx?.booking;
+  // Show the active session for the currently selected vehicle only — other
+  // vehicles may have their own sessions running independently.
+  const activeSession = bookingCtx?.bookings[activeVehicle] || null;
   const hasActiveService = activeSession && !["COMPLETED", "REJECTED"].includes(activeSession.status);
 
   const [copied, setCopied] = useState(false);

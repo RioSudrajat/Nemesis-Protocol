@@ -11,29 +11,29 @@ import { useBooking } from "@/context/BookingContext";
 export default function WorkshopQueue() {
   const bookingCtx = useBooking();
 
-  // Derive queue entry from active booking session if ACCEPTED or IN_SERVICE
-  const bookingQueueItem = useMemo(() => {
-    const b = bookingCtx?.booking;
-    if (!b || !["ACCEPTED", "IN_SERVICE"].includes(b.status)) return null;
-    const vd = vehicleData[b.form.vehicleKey];
-    return {
-      id: b.id,
-      vin: vd?.vin || b.id,
-      model: vd?.name || b.form.vehicleKey,
-      year: 2025,
-      owner: "Pelanggan NOC",
-      arrivalTime: b.form.time,
-      status: b.status === "IN_SERVICE" ? "IN_PROGRESS" as const : "WAITING" as const,
-      priority: "NORMAL" as "NORMAL" | "HIGH",
-      mechanic: b.workshop.name,
-      isBooking: true,
-    };
-  }, [bookingCtx?.booking]);
-
+  // Build one queue entry per active booking (ACCEPTED or IN_SERVICE) so that
+  // concurrent sessions for different vehicles all appear side-by-side instead
+  // of overwriting each other.
   const activeQueue = useMemo(() => {
-    if (!bookingQueueItem) return [];
-    return [bookingQueueItem];
-  }, [bookingQueueItem]);
+    const list = bookingCtx?.activeBookings || [];
+    return list
+      .filter((b) => ["ACCEPTED", "IN_SERVICE"].includes(b.status))
+      .map((b) => {
+        const vd = vehicleData[b.form.vehicleKey];
+        return {
+          id: b.id,
+          vin: vd?.vin || b.id,
+          model: vd?.name || b.form.vehicleKey,
+          year: 2025,
+          owner: "Pelanggan NOC",
+          arrivalTime: b.form.time,
+          status: b.status === "IN_SERVICE" ? ("IN_PROGRESS" as const) : ("WAITING" as const),
+          priority: "NORMAL" as "NORMAL" | "HIGH",
+          mechanic: b.workshop.name,
+          isBooking: true,
+        };
+      });
+  }, [bookingCtx?.activeBookings]);
 
   return (
     <div className="max-w-6xl mx-auto">

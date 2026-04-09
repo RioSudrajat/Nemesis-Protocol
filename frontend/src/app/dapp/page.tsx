@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import {
-  Heart,
   Calendar,
   Clock,
   Wrench,
@@ -10,6 +9,7 @@ import {
   CheckCircle2,
   ArrowUpRight,
   Activity,
+  Bell,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -102,16 +102,24 @@ import { Shield } from "lucide-react";
 
 export default function DAppDashboard() {
   const ctx = useActiveVehicle();
-  const booking = useBooking();
+  const bookingCtx = useBooking();
   const currentKey = ctx?.activeVehicle || "avanza";
   const currentVehicleData = ctx?.currentVehicleData || vehicleData.avanza;
   const { recentEvents, aiAlerts } = dashboardData[currentKey] || dashboardData.avanza;
 
   // Warranty data for active vehicle
-  const vehicleClaims = (booking?.warrantyClaims || []).filter(c => c.vin === currentVehicleData.vin);
+  const vehicleClaims = (bookingCtx?.warrantyClaims || []).filter(c => c.vin === currentVehicleData.vin);
   const latestClaim = vehicleClaims[0];
   const coverageSummary = `Basic warranty active — expires 2028-06-15`;
   const drivetrainSummary = `Drivetrain — 62,000 km remaining`;
+
+  // Per-vehicle active booking — drives the "Status Servis" button badge.
+  const activeBookingForVehicle = bookingCtx?.bookings[currentKey] || null;
+  const hasActiveBooking = !!activeBookingForVehicle && !["COMPLETED", "REJECTED"].includes(activeBookingForVehicle.status);
+
+  // Unread notifications for the user role — badge on the Bell button.
+  const unreadNotifCount = (bookingCtx?.bookingNotifications || [])
+    .filter(n => n.targetRole === "user" && !n.read).length;
 
   return (
     <div>
@@ -130,9 +138,28 @@ export default function DAppDashboard() {
             </span>
           </div>
         </div>
-        <Link href="/dapp/viewer" className="glow-btn text-sm flex items-center gap-2" style={{ padding: "10px 20px" }}>
-          View 3D Digital Twin <ArrowUpRight className="w-4 h-4" />
-        </Link>
+        <div className="flex items-center gap-3">
+          {/* Notifications button — replaces the old sidebar Notifications tab. */}
+          <Link
+            href="/dapp/notifications"
+            className="relative p-2.5 rounded-xl hover:bg-white/5 transition-colors"
+            style={{ color: "var(--solana-text-muted)", border: "1px solid rgba(94, 234, 212,0.15)" }}
+            aria-label="Notifications"
+          >
+            <Bell className="w-5 h-5" />
+            {unreadNotifCount > 0 && (
+              <span
+                className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold px-1"
+                style={{ background: "#FCA5A5", color: "#0E0E1A" }}
+              >
+                {unreadNotifCount > 9 ? "9+" : unreadNotifCount}
+              </span>
+            )}
+          </Link>
+          <Link href="/dapp/viewer" className="glow-btn text-sm flex items-center gap-2" style={{ padding: "10px 20px" }}>
+            View 3D Digital Twin <ArrowUpRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
 
       {/* Top cards */}
@@ -237,7 +264,7 @@ export default function DAppDashboard() {
               <p className="text-xs italic" style={{ color: "var(--solana-text-muted)" }}>No active warranty claims.</p>
             )}
           </div>
-          <Link href="/dapp/warranty" className="mt-4 text-xs flex items-center gap-1 transition-colors hover:text-white" style={{ color: "var(--solana-purple)" }}>
+          <Link href="/dapp/notifications" className="mt-4 text-xs flex items-center gap-1 transition-colors hover:text-white" style={{ color: "var(--solana-purple)" }}>
             View all claims <ArrowUpRight className="w-3 h-3" />
           </Link>
         </motion.div>

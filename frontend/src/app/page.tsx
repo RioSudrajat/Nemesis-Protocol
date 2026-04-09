@@ -252,8 +252,8 @@ export default function LandingPage() {
       <Navbar />
 
       {/* ========== HERO ========== */}
-      <section className="relative pt-32 md:pt-40 pb-20 md:pb-28 px-6">
-        <div className="mx-auto max-w-6xl">
+      <section className="relative min-h-screen flex items-center px-6">
+        <div className="mx-auto max-w-6xl w-full">
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
             <div className="lg:col-span-7">
               <p className="text-xs font-medium tracking-[0.18em] uppercase text-teal-700 mb-6">

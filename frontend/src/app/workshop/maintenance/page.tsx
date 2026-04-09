@@ -51,8 +51,13 @@ function MaintenanceContent() {
     if (v) currentVehicleData = v;
   }
 
-  // If from booking, show booking info
-  const booking = fromBooking ? bookingCtx?.booking : null;
+  // If from booking, locate the matching booking by VIN so concurrent sessions
+  // for other vehicles stay untouched. Falls back to null if not found.
+  const booking = fromBooking
+    ? (Object.values(bookingCtx?.bookings || {}).find(
+        (b) => b && vehicleData[b.form.vehicleKey]?.vin === (vin ?? currentVehicleData.vin)
+      ) || null)
+    : null;
 
   const { showToast } = useToast();
   const [submitting, setSubmitting] = useState(false);
@@ -139,7 +144,7 @@ function MaintenanceContent() {
     setTimeout(() => {
       setSubmitting(false);
 
-      if (fromBooking && bookingCtx) {
+      if (fromBooking && bookingCtx && booking) {
         // Build InvoiceData and send through BookingContext
         const invoiceParts: InvoicePart[] = parts
           .filter(p => p.name.trim())
@@ -160,7 +165,9 @@ function MaintenanceContent() {
           mechanicNotes: techNotes,
         };
 
-        bookingCtx.sendInvoice(invoice);
+        // Scope invoice send to THIS booking's vehicle slot — don't clobber
+        // any other vehicle the same customer may also be servicing.
+        bookingCtx.sendInvoice(booking.form.vehicleKey, invoice);
 
         if (warrantyEnabled) {
           const draft: WarrantyClaimDraft = {
@@ -168,12 +175,12 @@ function MaintenanceContent() {
             description: `${serviceType} — claimed under OEM warranty. Parts: ${invoiceParts.map(p => p.name).join(", ") || "(none)"}. Notes: ${techNotes || "-"}`,
             estimatedAmountIDR: subtotal,
             evidencePhotos: [],
-            submittedByWorkshopId: bookingCtx.booking?.workshop.id || "ws-1",
-            submittedByWorkshopName: bookingCtx.booking?.workshop.name || "Bengkel",
+            submittedByWorkshopId: booking.workshop.id,
+            submittedByWorkshopName: booking.workshop.name,
             submittedAt: new Date().toISOString(),
             aiPreScore: 75,
           };
-          bookingCtx.attachWarrantyClaim(draft, currentVehicleData.vin, currentVehicleData.name);
+          bookingCtx.attachWarrantyClaim(booking.form.vehicleKey, draft, currentVehicleData.vin, currentVehicleData.name);
           showToast("success", "Invoice + Klaim Garansi Terkirim 📄🛡️", "Customer dibebaskan dari biaya. Klaim garansi menunggu review enterprise.");
         } else {
           showToast("success", "Invoice Terkirim! 📄", "Invoice telah dikirim ke pelanggan. Menunggu pembayaran.");

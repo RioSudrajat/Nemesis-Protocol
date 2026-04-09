@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Scan, Nfc, QrCode, CheckCircle2, Car, Shield, Clock, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useBooking } from "@/context/BookingContext";
+import { vehicleData, type VehicleKey } from "@/context/ActiveVehicleContext";
 
 export default function ScanPage() {
   const router = useRouter();
@@ -12,14 +13,20 @@ export default function ScanPage() {
   const [scanMode, setScanMode] = useState<"nfc" | "qr">("nfc");
   const [scanned, setScanned] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
+  // Simulation vehicle picker — determines which vehicle's NFC/QR the scanner "sees".
+  // This lets the same workshop demo independent concurrent sessions for different
+  // vehicles without hardcoding a single VIN.
+  const [simVehicleKey, setSimVehicleKey] = useState<VehicleKey>("avanza");
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const simVehicle = vehicleData[simVehicleKey];
+
   const handleAddToQueue = () => {
     bookingCtx?.createWalkinSession({
-      vehicleKey: "avanza",
-      vehicleName: "Toyota Avanza 2025",
-      vin: "MHKA1BA1JFK000001",
+      vehicleKey: simVehicleKey,
+      vehicleName: simVehicle.name,
+      vin: simVehicle.vin,
       workshopName: "Bengkel Hendra Motor",
     });
     router.push("/workshop/queue");
@@ -51,7 +58,7 @@ export default function ScanPage() {
       </div>
 
       {/* Mode toggle */}
-      <div className="flex gap-3 mb-8">
+      <div className="flex gap-3 mb-6">
         <button onClick={() => { setScanMode("nfc"); setScanned(false); setCameraActive(false); }} className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer" style={{ background: scanMode === "nfc" ? "rgba(94, 234, 212,0.15)" : "rgba(20,20,40,0.5)", border: `1px solid ${scanMode === "nfc" ? "var(--solana-purple)" : "rgba(94, 234, 212,0.2)"}`, color: scanMode === "nfc" ? "var(--solana-purple)" : "var(--solana-text-muted)" }}>
           <Nfc className="w-5 h-5" /> NFC Scan
         </button>
@@ -59,6 +66,29 @@ export default function ScanPage() {
           <QrCode className="w-5 h-5" /> QR Scan
         </button>
       </div>
+
+      {/* Simulation vehicle picker — only visible while awaiting scan */}
+      {!scanned && (
+        <div className="mb-8 p-4 rounded-xl border max-w-lg" style={{ background: "rgba(20,20,40,0.5)", borderColor: "rgba(94, 234, 212,0.15)" }}>
+          <div className="flex items-center gap-2 mb-2">
+            <Car className="w-4 h-4" style={{ color: "var(--solana-purple)" }} />
+            <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--solana-text-muted)" }}>Simulate Vehicle</label>
+          </div>
+          <select
+            value={simVehicleKey}
+            onChange={(e) => { setSimVehicleKey(e.target.value as VehicleKey); setScanned(false); }}
+            className="w-full text-sm px-3 py-2 rounded-lg bg-black/30 text-white outline-none cursor-pointer"
+            style={{ border: "1px solid rgba(94, 234, 212,0.2)" }}
+          >
+            {(Object.keys(vehicleData) as VehicleKey[]).map((k) => (
+              <option key={k} value={k}>{vehicleData[k].name}</option>
+            ))}
+          </select>
+          <p className="text-[11px] mt-2" style={{ color: "var(--solana-text-muted)" }}>
+            Choose which vehicle&apos;s NFC/QR this simulated scan represents. Each vehicle keeps its own independent service queue.
+          </p>
+        </div>
+      )}
 
       {!scanned ? (
         <motion.div
@@ -123,15 +153,15 @@ export default function ScanPage() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Vehicle</p><p className="font-semibold flex items-center gap-2"><Car className="w-4 h-4" style={{ color: "var(--solana-purple)" }} /> Toyota Avanza 2025</p></div>
-              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>VIN</p><p className="font-semibold mono text-sm">MHKA1BA1JFK000001</p></div>
-              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>NOC ID</p><p className="font-semibold flex items-center gap-2"><Shield className="w-4 h-4" style={{ color: "var(--solana-green)" }} /> #00001</p></div>
-              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Health Score</p><p className="font-semibold text-xl" style={{ color: "#5EEAD4" }}>87</p></div>
-              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Mileage</p><p className="font-semibold mono">34,521 km</p></div>
+              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Vehicle</p><p className="font-semibold flex items-center gap-2"><Car className="w-4 h-4" style={{ color: "var(--solana-purple)" }} /> {simVehicle.name}</p></div>
+              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>VIN</p><p className="font-semibold mono text-sm">{simVehicle.vin}</p></div>
+              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>NOC ID</p><p className="font-semibold flex items-center gap-2"><Shield className="w-4 h-4" style={{ color: "var(--solana-green)" }} /> #{simVehicleKey.toUpperCase().padEnd(5, "0").slice(0, 5)}</p></div>
+              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Health Score</p><p className="font-semibold text-xl" style={{ color: "#5EEAD4" }}>{simVehicle.health}</p></div>
+              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Mileage</p><p className="font-semibold mono">{simVehicle.mileage} km</p></div>
               <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Last Service</p><p className="font-semibold flex items-center gap-2"><Clock className="w-4 h-4" style={{ color: "var(--solana-text-muted)" }} /> 2026-02-10</p></div>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
-              <a href="/workshop/vehicle/MHKA1BA1JFK000001" className="flex-1 py-4 px-4 rounded-xl text-center font-medium transition-colors hover:bg-white/5" style={{ background: "rgba(20,20,40,0.5)", border: "1px solid rgba(94, 234, 212,0.2)", color: "var(--solana-purple)" }}>View Patient History</a>
+              <a href={`/workshop/vehicle/${simVehicle.vin}`} className="flex-1 py-4 px-4 rounded-xl text-center font-medium transition-colors hover:bg-white/5" style={{ background: "rgba(20,20,40,0.5)", border: "1px solid rgba(94, 234, 212,0.2)", color: "var(--solana-purple)" }}>View Patient History</a>
               <button onClick={handleAddToQueue} className="glow-btn flex-1 text-center flex justify-center items-center py-4 cursor-pointer">Add to Active Queue</button>
             </div>
           </div>

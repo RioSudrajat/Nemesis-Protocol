@@ -8,8 +8,8 @@ import {
   Receipt, Bell, WifiIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useBooking, type BookingStatus, type SessionType } from "@/context/BookingContext";
-import { vehicleData } from "@/context/ActiveVehicleContext";
+import { useBooking, isDataAccessActive, type BookingStatus, type SessionType } from "@/context/BookingContext";
+import { useActiveVehicle, vehicleData } from "@/context/ActiveVehicleContext";
 import { PaymentModal } from "@/components/ui/PaymentModal";
 
 // Steps for each session type
@@ -176,7 +176,13 @@ function StatusSidebarPanel({
 
 export default function BookingStatusPage() {
   const ctx = useBooking();
-  const booking = ctx?.booking;
+  const activeVehicleCtx = useActiveVehicle();
+  const activeVehicle = activeVehicleCtx?.activeVehicle || "avanza";
+  // Show the booking slot belonging to the currently selected vehicle. Each
+  // vehicle keeps its own independent booking state, so switching the active
+  // vehicle in the sidebar reveals that vehicle's session without affecting
+  // any other ongoing session.
+  const booking = ctx?.bookings[activeVehicle] || null;
   const unreadNotifCount = (ctx?.bookingNotifications || []).filter(n => n.targetRole === "user" && !n.read).length;
   const [paymentOpen, setPaymentOpen] = useState(false);
   const [rating, setRating] = useState(0);
@@ -436,7 +442,7 @@ export default function BookingStatusPage() {
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>Review + service record di-anchor ke Solana dalam 1 transaksi (gas fee sudah termasuk)</span>
                   </div>
-                  <button onClick={() => { if (rating > 0) { ctx?.submitReview({ rating, comment: reviewComment, onChainVerified: true }); setReviewSubmitted(true); } }} disabled={rating === 0} className="glow-btn w-full py-2.5 text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                  <button onClick={() => { if (rating > 0) { ctx?.submitReview(activeVehicle, { rating, comment: reviewComment, onChainVerified: true }); setReviewSubmitted(true); } }} disabled={rating === 0} className="glow-btn w-full py-2.5 text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
                     Kirim Review & Selesaikan
                   </button>
                 </div>
@@ -453,7 +459,7 @@ export default function BookingStatusPage() {
                     </div>
                   </div>
                   <p className="text-xs mb-4" style={{ color: "var(--solana-text-muted)" }}>Data kendaraan Anda tidak dibagikan kepada bengkel ini.</p>
-                  <Link href="/dapp/book" className="glow-btn px-4 py-2 text-xs text-center block cursor-pointer" onClick={() => ctx?.reset()}>
+                  <Link href="/dapp/book" className="glow-btn px-4 py-2 text-xs text-center block cursor-pointer" onClick={() => ctx?.reset(activeVehicle)}>
                     <Search className="w-3.5 h-3.5 inline mr-1.5" /> Cari Bengkel Lain
                   </Link>
                 </div>
@@ -479,7 +485,7 @@ export default function BookingStatusPage() {
                     <Link href="/dapp/timeline" className="flex-1 py-2 text-xs text-center rounded-xl flex items-center justify-center gap-1.5 cursor-pointer" style={{ background: "rgba(94, 234, 212,0.1)", color: "var(--solana-green)", border: "1px solid rgba(94, 234, 212,0.2)" }}>
                       <FileText className="w-3.5 h-3.5" /> Lihat Timeline
                     </Link>
-                    <Link href="/dapp/book" className="flex-1 glow-btn py-2 text-xs text-center block cursor-pointer" onClick={() => ctx?.reset()}>
+                    <Link href="/dapp/book" className="flex-1 glow-btn py-2 text-xs text-center block cursor-pointer" onClick={() => ctx?.reset(activeVehicle)}>
                       Booking Baru
                     </Link>
                   </div>
@@ -531,7 +537,7 @@ export default function BookingStatusPage() {
 
             {/* Data access indicator */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-              {ctx?.dataAccessActive || (booking.type === "walkin" && booking.status !== "COMPLETED" && booking.status !== "PAID") ? (
+              {isDataAccessActive(booking) || (booking.type === "walkin" && booking.status !== "COMPLETED" && booking.status !== "PAID") ? (
                 <div className="glass-card p-4 border-l-4" style={{ borderLeftColor: "var(--solana-green)" }}>
                   <div className="flex items-center gap-2 mb-1">
                     <LockOpen className="w-4 h-4" style={{ color: "var(--solana-green)" }} />
@@ -579,7 +585,7 @@ export default function BookingStatusPage() {
             })),
             serviceCost: booking.invoice.serviceCost,
           }}
-          onPaymentComplete={() => { ctx?.payInvoice(); setPaymentOpen(false); }}
+          onPaymentComplete={() => { ctx?.payInvoice(activeVehicle); setPaymentOpen(false); }}
         />
       )}
     </div>
