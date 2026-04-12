@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { PortalLayout } from "@/components/layout/PortalLayout";
 import type { NavItem } from "@/components/layout/AppSidebar";
-import { ENTERPRISE_NAME, ENTERPRISE_ROLE } from "./_shared";
+import { ENTERPRISE_NAME, ENTERPRISE_ROLE } from "@/data/enterprise-models";
 
 const navItems: NavItem[] = [
   { href: "/enterprise", label: "Overview", icon: LayoutDashboard },

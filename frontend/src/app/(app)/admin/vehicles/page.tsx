@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useTransition } from "react";
 import { motion } from "framer-motion";
 import { Car, Search, Filter, Shield, Download, MoreHorizontal } from "lucide-react";
 import { useEnterprise } from "@/context/EnterpriseContext";
@@ -13,6 +13,7 @@ export default function AdminVehiclesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [isPending, startTransition] = useTransition();
 
   const regions = useMemo(() => [...new Set(vehicles.map(v => v.region))], [vehicles]);
 
@@ -61,14 +62,14 @@ export default function AdminVehiclesPage() {
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="relative flex-1">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input type="text" placeholder="Search by VIN or Model..." className="input-field pl-9 w-full text-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+          <input type="text" placeholder="Search by VIN or Model..." className="input-field pl-9 w-full text-sm" value={searchQuery} onChange={e => startTransition(() => setSearchQuery(e.target.value))} />
         </div>
         <div className="flex gap-3">
-          <select className="input-field text-sm w-36 bg-transparent" value={regionFilter} onChange={e => setRegionFilter(e.target.value)}>
+          <select className="input-field text-sm w-36 bg-transparent" value={regionFilter} onChange={e => startTransition(() => setRegionFilter(e.target.value))}>
             <option value="">All Regions</option>
             {regions.map(r => <option key={r} value={r}>{r}</option>)}
           </select>
-          <select className="input-field text-sm w-36 bg-transparent" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+          <select className="input-field text-sm w-36 bg-transparent" value={statusFilter} onChange={e => startTransition(() => setStatusFilter(e.target.value))}>
             <option value="">All Status</option>
             <option value="good">Good / Excellent</option>
             <option value="warning">Warning</option>
@@ -78,7 +79,7 @@ export default function AdminVehiclesPage() {
       </div>
 
       {/* Table */}
-      <div className="glass-card-static overflow-hidden rounded-2xl border" style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
+      <div className={`glass-card-static overflow-hidden rounded-2xl border transition-opacity ${isPending ? "opacity-60" : ""}`} style={{ borderColor: "rgba(94, 234, 212,0.2)" }}>
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-black/20 border-b border-white/5">
             <tr className="text-xs uppercase tracking-wider text-gray-400">

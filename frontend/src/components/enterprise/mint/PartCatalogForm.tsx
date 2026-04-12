@@ -9,7 +9,7 @@ import {
   PART_CATEGORIES,
   PartCategory,
   CATEGORY_COLORS,
-} from "@/app/enterprise/_shared";
+} from "@/data/enterprise-models";
 
 export interface PartCatalogEntry {
   name: string;

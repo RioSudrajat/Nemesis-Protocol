@@ -11,7 +11,7 @@ import {
   PART_CATEGORIES,
   PartCategory,
   CATEGORY_COLORS,
-} from "@/app/enterprise/_shared";
+} from "@/data/enterprise-models";
 
 // ─── Types ───────────────────────────────────────────────────────────────
 export interface ManifestPart {

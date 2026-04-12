@@ -8,7 +8,7 @@ import {
   ENTERPRISE_MODEL_LABELS,
   EnterpriseModelKey,
   PartCategory,
-} from "../_shared";
+} from "@/data/enterprise-models";
 import VehicleForm, { type VehicleEntry, type ManifestPart } from "@/components/enterprise/mint/VehicleForm";
 import PartCatalogForm, { type PartCatalogEntry } from "@/components/enterprise/mint/PartCatalogForm";
 import CsvImportModal from "@/components/enterprise/mint/CsvImportModal";

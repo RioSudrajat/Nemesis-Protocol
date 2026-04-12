@@ -13,7 +13,7 @@ import {
   ENTERPRISE_MODEL_LABELS,
   EnterpriseModel,
   EnterpriseModelKey,
-} from "../_shared";
+} from "@/data/enterprise-models";
 
 const SharedDigitalTwinViewer = dynamic(
   () => import("@/components/3d/SharedDigitalTwinViewer"),
