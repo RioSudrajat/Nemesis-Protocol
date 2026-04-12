@@ -3,11 +3,11 @@
 | Field | Value |
 |---|---|
 | **Product Name** | NOC ID (Nusantara Otomotif Chain ID) |
-| **Version** | 2.0.0 |
+| **Version** | 2.1.0 |
 | **Status** | Implementation Complete — Frontend MVP |
 | **Author** | NOC ID Product Team |
 | **Created** | 2026-03-18 |
-| **Last Updated** | 2026-03-28 |
+| **Last Updated** | 2026-04-12 |
 
 ---
 
@@ -44,7 +44,7 @@ The system is designed for **enterprise-grade scalability**, leveraging Solana's
 
 ### 1.1. Frontend MVP Status
 
-> **As of v2.0.0, the complete frontend MVP has been implemented and is fully operational.** The application consists of **49 pages** across **5 portal ecosystems**, powered by **5 React Context providers** and **17 shared components** (12 UI + 5 3D). All portals share a unified Solana-inspired dark theme with role-specific accent colors.
+> **As of v2.1.0, the complete frontend MVP has been implemented and is fully operational.** The application consists of **54 pages** (59 routes — see Appendix D) across **5 portal ecosystems**, powered by **3 Zustand stores** with **5 React Context shims** for hook access, and **30+ components** (11 UI + 6 3D + 2 layout + portal-specific domain components). All portals share a unified Solana-inspired dark theme with role-specific accent colors.
 >
 > The Admin/Superadmin portal — not part of the original 4-layer design — has been added as a 5th application layer to provide platform-wide governance, wallet-based RBAC, dispute escalation, and system configuration capabilities.
 
@@ -160,9 +160,10 @@ A centralized database could store records, but it cannot guarantee **immutabili
 │         └───────────┬───────────────────────────────────────            │
 │                     │                                                    │
 │         ┌───────────┴───────────────────────────────────────┐           │
-│         │   React Context Providers (State Management)       │           │
-│         │   BookingCtx · ActiveVehicleCtx · EnterpriseCtx   │           │
-│         │   AdminCtx · PartCatalogCtx                        │           │
+│         │   State Management: Zustand Stores + Context Shims  │           │
+│         │   useAdminStore · useBookingStore · useEnterpriseStore│         │
+│         │   BookingCtx · AdminCtx · EnterpriseCtx  (shims)  │           │
+│         │   ActiveVehicleCtx · PartCatalogCtx (standalone)   │           │
 │         │   + localStorage persistence + cross-tab sync      │           │
 │         └───────────────────────────────────────────────────┘           │
 └──────────────────────────────────────────────────────────────────────────┘
@@ -212,7 +213,8 @@ A centralized database could store records, but it cannot guarantee **immutabili
 | **Off-chain ML, on-chain anchoring** | ML inference is too compute-intensive for on-chain execution. Predictions are computed off-chain and their hashes are anchored on-chain for auditability. |
 | **React Three Fiber (R3F)** | Production-grade 3D rendering in React. Enables component-level interaction, animation, and integration with the existing React component tree. |
 | **RAG-based LLM over fine-tuned model** | RAG allows the Copilot to leverage real-time on-chain data without expensive retraining. Context injection per-click ensures relevance. |
-| **React Context + localStorage (MVP)** | Frontend MVP uses 5 React Context providers with localStorage persistence and cross-tab sync via `StorageEvent`. This isolates data access patterns — swapping localStorage for API calls requires minimal frontend changes. |
+| **Zustand for client state (Active)** | 3 Zustand stores (`useAdminStore`, `useBookingStore`, `useEnterpriseStore`) serve as the primary client-state layer. Each store persists to localStorage independently. Chosen for minimal boilerplate, devtools support, and easy migration to server-side state when the backend is integrated. |
+| **React Context as shim layer** | 5 Context providers wrap the Zustand stores (`AdminContext`, `BookingContext`, `EnterpriseContext`) for backward-compatible hook access (`useAdmin()`, `useBooking()`, `useEnterprise()`). `ActiveVehicleContext` and `PartCatalogContext` remain standalone with `StorageEvent` cross-tab sync. |
 | **Framer Motion for animations** | Production-grade animation library for React. Used for page transitions, micro-interactions, and UI state animations across all 5 portals. Replaced React Spring in the initial tech stack. |
 
 ---
@@ -887,11 +889,21 @@ The complete booking-to-completion pipeline is implemented in `BookingContext` w
         ┌──────────┐
         │   PAID    │
         └────┬─────┘
+             │ payInvoice() triggers blockchain anchoring
+             ▼
+        ┌────────────┐
+        │  ANCHORING │  → Broadcasting service data to Solana
+        └────┬───────┘
+             │ (on-chain confirmation received)
+             ▼
+        ┌────────────┐
+        │  ANCHORED  │  → Service record permanently on-chain
+        └────┬───────┘
              │ submitReview(review)
              ▼
         ┌───────────┐
         │ COMPLETED │  → Creates CompletedBooking entry
-        └───────────┘    → Anchored to Solana (txSig)
+        └───────────┘    → txSig stored; accessible at /dapp/timeline/[txSig]
 ```
 
 **Two entry points:**
@@ -1571,8 +1583,8 @@ Anonymized, aggregated fleet data sold to third-party consumers:
 | **@react-three/drei** | `^10.7.7` | R3F helpers (OrbitControls, GLTF loader, Environment, etc.) |
 | **Leaflet** | `^1.9.4` | Interactive map library |
 | **react-leaflet** | `^5.0.0` | React wrapper for Leaflet |
-| **@tanstack/react-query** | `^5.90.21` | Server-state management (installed, prepared for API integration) |
-| **Zustand** | `^5.0.12` | Client-side state management (installed, prepared for future use) |
+| **@tanstack/react-query** | `^5.90.21` | Server-state management (installed, ready for API integration) |
+| **Zustand** | `^5.0.12` | Client-side state management — **active** (`useAdminStore`, `useBookingStore`, `useEnterpriseStore`) |
 
 #### 3D Pipeline
 
@@ -1711,7 +1723,7 @@ Anonymized, aggregated fleet data sold to third-party consumers:
 | 29 | Enterprise | `/enterprise/mint` | Genesis Minting Console | ED-01 |
 | 30 | Enterprise | `/enterprise/fleet` | Fleet Map | ED-03 |
 | 31 | Enterprise | `/enterprise/analytics` | Macro Analytics | ED-04 |
-| 32 | Enterprise | `/enterprise/warranty` | Warranty Management | ED-05 |
+| 32 | Enterprise | `/enterprise/warranties` | Warranty Management | ED-05 |
 | 33 | Enterprise | `/enterprise/workshops` | Workshop Network | ED-06 |
 | 34 | Enterprise | `/enterprise/workshops/[workshopId]` | Workshop Detail | ED-07 |
 | 35 | Enterprise | `/enterprise/recalls` | Recall Management | ED-08 |
@@ -1729,6 +1741,16 @@ Anonymized, aggregated fleet data sold to third-party consumers:
 | 47 | Admin | `/admin/analytics` | Platform Analytics | AD-08 |
 | 48 | Admin | `/admin/config` | System Configuration | AD-09 |
 | 49 | Admin | `/admin/audit` | Audit Logs | AD-10 |
+| 50 | DApp | `/dapp/timeline/[txSig]` | Transaction Detail | UD-05-D |
+| 51 | Workshop | `/workshop/bookings/[bookingId]` | Booking Detail | WP-06-D |
+| 52 | Workshop | `/workshop/queue/[queueId]` | Queue Item Detail | WP-03-D |
+| 53 | Enterprise | `/enterprise/transfer` | Vehicle Transfer Wizard | ED-13 |
+| 54 | Enterprise | `/enterprise/models` | 3D Model Management | ED-14 |
+| 55 | Enterprise | `/enterprise/warranties/[claimId]` | Warranty Claim Detail | ED-05-D |
+| 56 | Enterprise | `/enterprise/disputes/[disputeId]` | Dispute Case Detail | ED-11-D |
+| 57 | Admin | `/admin/vehicles/[vin]` | Vehicle Detail | AD-05-D |
+| 58 | Admin | `/admin/disputes/[disputeId]` | Dispute Case Detail | AD-07-D |
+| 59 | Admin | `/admin/workshops/[workshopId]` | Workshop Detail | AD-04-D |
 
 ---
 
@@ -1754,7 +1776,8 @@ Anonymized, aggregated fleet data sold to third-party consumers:
 
 | Component | File | Vehicle Model |
 |---|---|---|
-| `CarModel` | `CarModel.tsx` | Toyota Avanza 2025 |
+| `CarModel` | `CarModel.tsx` | Generic car (base geometry / fallback) |
+| `SupraModel` | `SupraModel.tsx` | Toyota Supra |
 | `BMWM4Model` | `BMWM4Model.tsx` | BMW M4 G82 2025 |
 | `MotorcycleModel` | `MotorcycleModel.tsx` | Honda Beat 2024 |
 | `HarleyDavidsonModel` | `HarleyDavidsonModel.tsx` | Harley-Davidson Sportster S |
@@ -1780,6 +1803,18 @@ Anonymized, aggregated fleet data sold to third-party consumers:
 </ActiveVehicleProvider>
 ```
 
+#### Zustand Store Layer (Primary State)
+
+Three Zustand stores form the actual state layer. The three Context providers — `AdminContext`, `BookingContext`, `EnterpriseContext` — are thin shims that expose these stores via hooks:
+
+| Store | File | State Managed |
+|---|---|---|
+| `useAdminStore` | `store/useAdminStore.ts` | `WalletEntry[]`, `PlatformConfig`, `AuditLogEntry[]`, `DisputeEntry[]` |
+| `useBookingStore` | `store/useBookingStore.ts` | `BookingRequest \| null`, `CompletedBooking[]`, `BookingNotification[]`, `WarrantyClaimRecord[]` |
+| `useEnterpriseStore` | `store/useEnterpriseStore.ts` | `EnterpriseMetrics`, `FleetVehicle[]`, `WorkshopMetrics[]` |
+
+> `ActiveVehicleContext` and `PartCatalogContext` are **standalone** (no Zustand backing) and retain direct localStorage access with `StorageEvent` cross-tab sync.
+
 #### localStorage Key Registry
 
 | Key | Context | Data Type | Description |
@@ -1796,6 +1831,210 @@ Anonymized, aggregated fleet data sold to third-party consumers:
 
 ---
 
+### Appendix G: Frontend Folder Structure
+
+Complete `src/` directory tree as implemented (v2.1.0). Files listed are `.tsx`/`.ts` unless noted.
+
+```
+frontend/src/
+│
+├── app/                                          # Next.js App Router
+│   ├── globals.css
+│   ├── favicon.ico
+│   ├── layout.tsx                                # Root layout (wraps all providers)
+│   ├── template.tsx                              # Page transition wrapper
+│   │
+│   ├── (marketing)/
+│   │   └── page.tsx                              # / — Public landing page
+│   │
+│   └── (app)/                                    # Protected portal group
+│       │
+│       ├── dapp/                                 # User DApp Portal (10 pages)
+│       │   ├── layout.tsx
+│       │   ├── page.tsx                          # /dapp — Dashboard
+│       │   ├── loading.tsx
+│       │   ├── error.tsx
+│       │   ├── identity/page.tsx                 # /dapp/identity
+│       │   ├── viewer/page.tsx                   # /dapp/viewer
+│       │   ├── insights/page.tsx                 # /dapp/insights
+│       │   ├── notifications/page.tsx            # /dapp/notifications
+│       │   ├── timeline/
+│       │   │   ├── page.tsx                      # /dapp/timeline
+│       │   │   └── [txSig]/page.tsx              # /dapp/timeline/[txSig] ← detail
+│       │   └── book/
+│       │       ├── page.tsx                      # /dapp/book
+│       │       ├── status/page.tsx               # /dapp/book/status
+│       │       └── [workshopId]/page.tsx         # /dapp/book/[workshopId]
+│       │
+│       ├── workshop/                             # Workshop Portal (14 pages)
+│       │   ├── layout.tsx
+│       │   ├── page.tsx                          # /workshop — Dashboard
+│       │   ├── loading.tsx
+│       │   ├── error.tsx
+│       │   ├── scan/page.tsx                     # /workshop/scan
+│       │   ├── maintenance/page.tsx              # /workshop/maintenance
+│       │   ├── history/page.tsx                  # /workshop/history
+│       │   ├── analytics/page.tsx                # /workshop/analytics
+│       │   ├── reputation/page.tsx               # /workshop/reputation
+│       │   ├── viewer/page.tsx                   # /workshop/viewer
+│       │   ├── verification/page.tsx             # /workshop/verification
+│       │   ├── notifications/page.tsx            # /workshop/notifications
+│       │   ├── vehicle/[vin]/page.tsx            # /workshop/vehicle/[vin]
+│       │   ├── queue/
+│       │   │   ├── page.tsx                      # /workshop/queue
+│       │   │   └── [queueId]/page.tsx            # /workshop/queue/[queueId] ← detail
+│       │   └── bookings/
+│       │       ├── page.tsx                      # /workshop/bookings
+│       │       └── [bookingId]/page.tsx          # /workshop/bookings/[bookingId] ← detail
+│       │
+│       ├── enterprise/                           # Enterprise Portal (16 pages)
+│       │   ├── layout.tsx
+│       │   ├── page.tsx                          # /enterprise — Dashboard
+│       │   ├── loading.tsx
+│       │   ├── error.tsx
+│       │   ├── mint/page.tsx                     # /enterprise/mint
+│       │   ├── transfer/page.tsx                 # /enterprise/transfer
+│       │   ├── models/page.tsx                   # /enterprise/models
+│       │   ├── fleet/page.tsx                    # /enterprise/fleet
+│       │   ├── analytics/page.tsx                # /enterprise/analytics
+│       │   ├── transactions/page.tsx             # /enterprise/transactions
+│       │   ├── settings/page.tsx                 # /enterprise/settings
+│       │   ├── workshops/
+│       │   │   ├── page.tsx                      # /enterprise/workshops
+│       │   │   └── [workshopId]/page.tsx         # /enterprise/workshops/[workshopId]
+│       │   ├── recalls/
+│       │   │   ├── page.tsx                      # /enterprise/recalls
+│       │   │   └── [campaignId]/page.tsx         # /enterprise/recalls/[campaignId]
+│       │   ├── warranties/
+│       │   │   ├── page.tsx                      # /enterprise/warranties
+│       │   │   └── [claimId]/page.tsx            # /enterprise/warranties/[claimId] ← detail
+│       │   └── disputes/
+│       │       ├── page.tsx                      # /enterprise/disputes
+│       │       └── [disputeId]/page.tsx          # /enterprise/disputes/[disputeId] ← detail
+│       │
+│       └── admin/                                # Admin Portal (13 pages)
+│           ├── layout.tsx
+│           ├── page.tsx                          # /admin — Dashboard
+│           ├── loading.tsx
+│           ├── error.tsx
+│           ├── roles/page.tsx                    # /admin/roles
+│           ├── enterprises/page.tsx              # /admin/enterprises
+│           ├── transactions/page.tsx             # /admin/transactions
+│           ├── analytics/page.tsx                # /admin/analytics
+│           ├── config/page.tsx                   # /admin/config
+│           ├── audit/page.tsx                    # /admin/audit
+│           ├── workshops/
+│           │   ├── page.tsx                      # /admin/workshops
+│           │   └── [workshopId]/page.tsx         # /admin/workshops/[workshopId] ← detail
+│           ├── vehicles/
+│           │   ├── page.tsx                      # /admin/vehicles
+│           │   └── [vin]/page.tsx                # /admin/vehicles/[vin] ← detail
+│           └── disputes/
+│               ├── page.tsx                      # /admin/disputes
+│               └── [disputeId]/page.tsx          # /admin/disputes/[disputeId] ← detail
+│
+├── components/
+│   ├── 3d/                                       # 3D / R3F components (7 files)
+│   │   ├── SharedDigitalTwinViewer.tsx           # Unified viewer (all portals)
+│   │   ├── CarModel.tsx                          # Generic car geometry
+│   │   ├── SupraModel.tsx                        # Toyota Supra
+│   │   ├── BMWM4Model.tsx                        # BMW M4 G82
+│   │   ├── MotorcycleModel.tsx                   # Honda Beat
+│   │   ├── HarleyDavidsonModel.tsx               # Harley-Davidson Sportster S
+│   │   └── fix_rounded_box.js                    # Three.js geometry utility
+│   │
+│   ├── layout/                                   # Portal layout components (2 files)
+│   │   ├── PortalLayout.tsx                      # Multi-portal layout wrapper
+│   │   └── AppSidebar.tsx                        # Navigation sidebar
+│   │
+│   ├── ui/                                       # Shared UI components (11 files)
+│   │   ├── ConnectWalletButton.tsx
+│   │   ├── Toast.tsx
+│   │   ├── CopilotChatPanel.tsx
+│   │   ├── GlobalCopilotSidebar.tsx
+│   │   ├── LeafletMap.tsx
+│   │   ├── FleetLeafletMap.tsx
+│   │   ├── SharedNotificationCard.tsx
+│   │   ├── SharedServiceCard.tsx
+│   │   ├── PaymentModal.tsx
+│   │   ├── InteractiveDonutChart.tsx
+│   │   └── WorkshopRevenueChart.tsx
+│   │
+│   ├── landing/
+│   │   └── HeroCanvas.tsx                        # Landing page 3D hero
+│   │
+│   ├── dapp/
+│   │   └── status/
+│   │       ├── StatusCards.tsx
+│   │       └── ServiceDetailPanel.tsx
+│   │
+│   ├── enterprise/
+│   │   ├── mint/
+│   │   │   ├── VehicleForm.tsx
+│   │   │   ├── PartCatalogForm.tsx
+│   │   │   ├── CsvImportModal.tsx
+│   │   │   └── MintSummary.tsx
+│   │   └── transfer/
+│   │       ├── VehicleSelectStep.tsx
+│   │       ├── BuyerInfoStep.tsx
+│   │       ├── SaleVerifyStep.tsx
+│   │       ├── ConfirmStep.tsx
+│   │       ├── TransferComplete.tsx
+│   │       └── types.ts
+│   │
+│   └── workshop/
+│       └── maintenance/
+│           ├── PartsTable.tsx
+│           ├── InvoiceBreakdown.tsx
+│           ├── ScanPartModal.tsx
+│           └── types.ts
+│
+├── context/                                      # Context providers (5 files)
+│   ├── Providers.tsx                             # Root provider composition
+│   ├── AdminContext.tsx                          # Shim → useAdminStore
+│   ├── BookingContext.tsx                        # Shim → useBookingStore
+│   ├── EnterpriseContext.tsx                     # Shim → useEnterpriseStore
+│   ├── PartCatalogContext.tsx                    # Standalone
+│   └── ActiveVehicleContext.tsx                  # Standalone
+│
+├── store/                                        # Zustand stores (3 files)
+│   ├── useAdminStore.ts
+│   ├── useBookingStore.ts
+│   └── useEnterpriseStore.ts
+│
+├── types/                                        # TypeScript definitions (2 files)
+│   ├── admin.ts                                  # PlatformRole, WalletEntry, PlatformConfig, AuditLogEntry, DisputeEntry
+│   └── booking.ts                                # Workshop, BookingRequest, BookingStatus, InvoiceData, WarrantyClaimRecord, …
+│
+├── lib/                                          # Utilities (3 files)
+│   ├── booking.ts
+│   ├── health.ts
+│   └── middleware.ts
+│
+├── data/                                         # Static seed data (3 files)
+│   ├── workshops.ts
+│   ├── enterprise-models.ts
+│   └── status.ts
+│
+├── constants/
+│   └── status.ts                                 # Status enums / constants
+│
+└── middleware.ts                                 # Next.js request middleware
+```
+
+**Page counts by portal:**
+
+| Portal | Route Prefix | Pages | Dynamic Detail Pages |
+|---|---|---|---|
+| Landing | `/` | 1 | — |
+| User DApp | `/dapp` | 10 | `timeline/[txSig]` |
+| Workshop | `/workshop` | 14 | `queue/[queueId]`, `bookings/[bookingId]` |
+| Enterprise | `/enterprise` | 16 | `warranties/[claimId]`, `disputes/[disputeId]` |
+| Admin | `/admin` | 13 | `vehicles/[vin]`, `disputes/[disputeId]`, `workshops/[workshopId]` |
+| **Total** | | **54** | **7 dynamic detail routes** |
+
+---
+
 > [!NOTE]
 > This PRD is a living document. It should be updated as the project evolves, new stakeholders provide feedback, and market conditions change. All major revisions should be tracked in the version history below.
 
@@ -1806,3 +2045,4 @@ Anonymized, aggregated fleet data sold to third-party consumers:
 | 1.0.0 | 2026-03-18 | NOC ID Product Team | Initial PRD draft |
 | 1.1.0 | 2026-03-18 | NOC ID Product Team | Tech stack versions validated via Context7. Frontend updated: React Query → TanStack Query v5.84.1, added shadcn/ui v3.5.0 + Tailwind CSS v4. Appendix A expanded with per-package version tables. |
 | 2.0.0 | 2026-03-28 | NOC ID Product Team | **Major update:** Reflects complete frontend MVP (49 pages, 5 portals, 5 contexts, 17 components). Added Section 6.5 (Admin/Superadmin Portal), Section 8.5-8.6 (Booking Lifecycle, Notification System), Section 9.4 (Frontend State Model), Section 13 (Business Model & Revenue Schema with 8 revenue streams). Updated Release Strategy with completion status. Added Appendices D-F (Route Map, Components Registry, Context Architecture). Corrected tech stack in Appendix A from actual package.json. Added 3 new risks (R11-R13) for MVP limitations. |
+| 2.1.0 | 2026-04-12 | NOC ID Product Team | **Sync with actual frontend codebase.** Updated page count to 54 pages / 59 routes. Migrated state management description from React Context to Zustand-primary architecture (3 stores + 5 Context shims). Updated booking lifecycle (§8.5) with ANCHORING → ANCHORED states confirmed in `types/booking.ts`. Added 10 missing routes to Appendix D (detail pages: `[txSig]`, `[bookingId]`, `[queueId]`, `[claimId]`, `[disputeId]`, `[vin]`, `[workshopId]`); fixed `/enterprise/warranty` → `/enterprise/warranties`. Added `SupraModel.tsx` to Appendix E 3D components; corrected `CarModel.tsx` description. Updated Appendix A Zustand entry from "prepared for future use" to active. Added Zustand store layer to Appendix F. Added **Appendix G** (Frontend Folder Structure) with complete `src/` tree and page count table. |
