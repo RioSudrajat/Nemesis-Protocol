@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "WebSearch",
+      "WebFetch(domain:help.grab.com)",
+      "WebFetch(domain:projectmultatuli.org)",
+      "WebFetch(domain:messari.io)"
     ]
   }
 }
