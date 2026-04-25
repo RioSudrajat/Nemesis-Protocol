@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+/* ── Landing Page CSS Animations ─────────────────────────────────────────── */
+/* Injected once by browser, GPU compositor thread only, zero JS overhead.   */
+@keyframes floatA {
+  0%, 100% { transform: translateY(0px) rotate(30deg) skewX(12deg); }
+  50%       { transform: translateY(-20px) rotate(30deg) skewX(12deg); }
+}
+@keyframes floatB {
+  0%, 100% { transform: translateY(0px) rotate(-20deg) skewY(6deg); }
+  50%       { transform: translateY(30px) rotate(-20deg) skewY(6deg); }
+}
+@keyframes floatC {
+  0%, 100% { transform: translateY(0px) scale(1) rotate(60deg) skewX(12deg); }
+  50%       { transform: translateY(-40px) scale(1.05) rotate(60deg) skewX(12deg); }
+}
+@keyframes floatNode {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-20px); }
+}
+
+
 :root {
   /* === Base 1: Neutral (soft charcoal — corporate/automotive, not pitch black) === */
   --bg-base: #1A1D23;
