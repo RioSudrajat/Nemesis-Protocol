@@ -24,8 +24,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${orbitron.variable} ${exo2.variable}`}>
-      <body className="font-exo bg-[#1A1D23] text-zinc-100 antialiased selection:bg-teal-400/25 selection:text-teal-900">
+    <html lang="en" className={`${orbitron.variable} ${exo2.variable}`} suppressHydrationWarning>
+      <body className="font-[family-name:var(--font-exo2)] bg-[#0F0F23] text-[#F8FAFC] antialiased selection:bg-[#8B5CF6]/30 selection:text-white" suppressHydrationWarning>
         <Providers>
           {children}
         </Providers>
