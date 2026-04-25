@@ -8,7 +8,13 @@ import {
   Users,
   CheckCircle2,
   Clock,
+  Lock,
+  Bike,
+  Zap,
+  Star,
+  Shield,
 } from "lucide-react";
+import { formatNumber, formatIDRXFull } from "@/lib/yield";
 
 const POOLS = [
   {
@@ -81,20 +87,13 @@ const POOLS = [
   },
 ];
 
-const formatIDRX = (n: number) => {
-  if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1).replace(".", ",") + " M";
-  if (n >= 1_000_000) return (n / 1_000_000).toFixed(0) + " jt";
-  if (n >= 1_000) return (n / 1_000).toFixed(0) + " rb";
-  return n.toString();
-};
-
 type FilterKey = "all" | "highest" | "flex" | "locked" | "native";
 
-const HEADER_STATS = [
-  { label: "Total Value Locked", value: "8,7 M IDRX", Icon: DollarSign },
+const HEADER_STATS: { label: string; value: string; Icon: typeof DollarSign }[] = [
+  { label: "Total Value Locked", value: `${formatIDRXFull(8_700_000_000)}`, Icon: DollarSign },
   { label: "Avg APY", value: "35,2%", Icon: TrendingUp },
-  { label: "Total Investors", value: "342", Icon: Users },
-  { label: "Total Yield Distributed", value: "124 jt IDRX", Icon: CheckCircle2 },
+  { label: "Total Investor", value: formatNumber(342), Icon: Users },
+  { label: "Total Yield Terdistribusi", value: formatIDRXFull(124_000_000), Icon: CheckCircle2 },
 ];
 
 const FILTERS: { key: FilterKey; label: string }[] = [
@@ -120,195 +119,275 @@ export default function FiPoolsPage() {
   const upcomingPools = POOLS.filter((p) => p.status === "upcoming");
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto">
-      {/* Header stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {HEADER_STATS.map(({ label, value, Icon }) => (
-          <div key={label} className="glass-card p-4 relative">
-            <Icon className="absolute top-3 right-3 text-teal-300/60" size={18} />
-            <p className="text-xs text-gray-400 mb-1">{label}</p>
-            <p className="text-2xl font-bold font-[family-name:var(--font-orbitron)]">{value}</p>
-          </div>
-        ))}
-      </div>
+    <div className="min-h-screen p-6 md:p-8" style={{ background: "#FAFAFA", color: "#0A0A0B" }}>
+      <div className="max-w-7xl mx-auto">
+        {/* Title */}
+        <div className="mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 mb-1">
+            Nemesis FI — Investment Pools
+          </h1>
+          <p className="text-sm text-zinc-500">
+            Invest di infrastruktur EV produktif Indonesia. Yield otomatis terdistribusi setiap Senin.
+          </p>
+        </div>
 
-      {/* Title */}
-      <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-orbitron)] gradient-text mb-2">
-          Nemesis FI — Investment Pools
-        </h1>
-        <p className="text-gray-400">
-          Invest di infrastruktur EV produktif Indonesia. Yield otomatis tiap Senin.
-        </p>
-      </div>
-
-      {/* Filter bar */}
-      <div className="flex flex-wrap gap-2 mb-8">
-        {FILTERS.map((f) => {
-          const active = activeFilter === f.key;
-          return (
-            <button
-              key={f.key}
-              onClick={() => setActiveFilter(f.key)}
-              className="px-4 py-2 rounded-full text-sm font-medium transition"
-              style={{
-                background: active ? "rgba(94,234,212,0.18)" : "rgba(34,38,46,0.6)",
-                border: active ? "1px solid rgba(94,234,212,0.6)" : "1px solid rgba(94,234,212,0.15)",
-                color: active ? "#5EEAD4" : "#cbd5e1",
-              }}
+        {/* Header stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          {HEADER_STATS.map(({ label, value, Icon }) => (
+            <div
+              key={label}
+              className="rounded-xl p-5"
+              style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
             >
-              {f.label}
-            </button>
-          );
-        })}
-      </div>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs text-zinc-500">{label}</p>
+                <Icon size={16} style={{ color: "#0F766E" }} />
+              </div>
+              <p className="text-xl md:text-2xl font-bold text-zinc-900 break-all">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
 
-      {/* Pool Aktif */}
-      <h2 className="text-2xl font-bold font-[family-name:var(--font-orbitron)] mb-5">Pool Aktif</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
-        {activePools.map((pool) => {
-          const pct = (pool.totalSupplied / pool.targetSupply) * 100;
-          return (
-            <Link key={pool.id} href={`/fi/pools/${pool.id}`}>
-              <div className="glass-card overflow-hidden cursor-pointer hover:scale-[1.01] transition">
+        {/* Filter bar */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {FILTERS.map((f) => {
+            const active = activeFilter === f.key;
+            return (
+              <button
+                key={f.key}
+                onClick={() => setActiveFilter(f.key)}
+                className="px-4 py-2 rounded-lg text-xs font-medium transition-colors"
+                style={{
+                  background: active ? "#14B8A6" : "#FFFFFF",
+                  color: active ? "#FFFFFF" : "#52525B",
+                  border: active ? "1px solid #14B8A6" : "1px solid rgba(15,23,42,0.08)",
+                }}
+              >
+                {f.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Pool Aktif */}
+        <h2 className="text-base font-semibold text-zinc-900 mb-4">Pool Aktif</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
+          {activePools.map((pool) => {
+            const pct = (pool.totalSupplied / pool.targetSupply) * 100;
+            const isFilled = pool.status === "filled";
+            return (
+              <Link key={pool.id} href={`/fi/pools/${pool.id}`}>
                 <div
-                  className="h-20 px-4 flex items-end pb-3"
-                  style={{ background: "linear-gradient(135deg, rgba(94,234,212,0.3), rgba(139,92,246,0.25))" }}
+                  className="rounded-xl overflow-hidden cursor-pointer transition-colors h-full flex flex-col"
+                  style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
                 >
-                  <div>
-                    <p className="text-xs opacity-80">{pool.city}</p>
-                    <p className="text-sm font-bold">{pool.city.toUpperCase()} POOL</p>
+                  {/* Header */}
+                  <div className="p-5 flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                        style={{ background: "rgba(20,184,166,0.10)" }}
+                      >
+                        <Bike size={18} style={{ color: "#0F766E" }} />
+                      </div>
+                      <div>
+                        <p className="text-xs text-zinc-500">{pool.city}</p>
+                        <h3 className="text-sm font-semibold text-zinc-900 leading-tight">
+                          {pool.name}
+                        </h3>
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                <div className="p-5">
-                  <h3 className="font-bold mb-2">{pool.name}</h3>
-
-                  <div className="mb-3">
+                  {/* Badges */}
+                  <div className="px-5 flex flex-wrap gap-1.5 mb-3">
                     {pool.operatorType === "nemesis_native" ? (
-                      <span className="badge badge-green">🔵 Nemesis Native</span>
+                      <span
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+                        style={{ background: "rgba(20,184,166,0.10)", color: "#0F766E" }}
+                      >
+                        <Shield size={11} /> Nemesis Native
+                      </span>
                     ) : (
                       <span
-                        className="badge"
-                        style={{ background: "rgba(139,92,246,0.15)", color: "#c4b5fd" }}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+                        style={{ background: "#F4F4F5", color: "#52525B" }}
                       >
-                        ⭐ Partner
+                        <Star size={11} /> Partner
+                      </span>
+                    )}
+                    {pool.energyPointsEligible && (
+                      <span
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+                        style={{ background: "rgba(20,184,166,0.10)", color: "#0F766E" }}
+                      >
+                        <Zap size={11} /> Points Eligible
                       </span>
                     )}
                   </div>
 
-                  <div className="mb-3">
-                    <p className="text-xs text-gray-400">APY</p>
-                    <p className="text-3xl font-bold gradient-text font-[family-name:var(--font-orbitron)]">
+                  {/* APY */}
+                  <div className="px-5 mb-4">
+                    <p className="text-xs text-zinc-500 mb-1">APY</p>
+                    <p className="text-2xl font-bold" style={{ color: "#0F766E" }}>
                       {pool.apyMin}–{pool.apyMax}%
                     </p>
                   </div>
 
-                  {pool.energyPointsEligible && (
-                    <div className="mb-3">
-                      <span className="badge text-xs">⚡ Energy Points Eligible</span>
-                    </div>
-                  )}
-
-                  <div className="mb-2">
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-gray-400">Supplied</span>
-                      <span>
-                        {formatIDRX(pool.totalSupplied)} / {formatIDRX(pool.targetSupply)} IDRX
+                  {/* Progress */}
+                  <div className="px-5 mb-4">
+                    <div className="flex justify-between text-xs mb-1.5">
+                      <span className="text-zinc-500">Tersuplai</span>
+                      <span className="text-zinc-900 font-medium">
+                        {pct.toFixed(0)}%
                       </span>
                     </div>
-                    <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(94,234,212,0.1)" }}>
+                    <div
+                      className="h-2 rounded-full overflow-hidden mb-2"
+                      style={{ background: "#F4F4F5" }}
+                    >
                       <div
-                        className="h-full rounded-full"
-                        style={{
-                          width: `${pct}%`,
-                          background: "linear-gradient(90deg, #5EEAD4, #14B8A6)",
-                        }}
+                        className="h-full"
+                        style={{ width: `${pct}%`, background: "#14B8A6" }}
                       />
                     </div>
+                    <p className="text-xs text-zinc-500 break-all">
+                      {formatIDRXFull(pool.totalSupplied)}
+                      <span className="text-zinc-400"> dari </span>
+                      {formatIDRXFull(pool.targetSupply)}
+                    </p>
                   </div>
 
-                  <div className="flex gap-2 text-xs text-gray-400 mt-3 flex-wrap">
-                    <span>🔒 {pool.lockPeriodMonths === null ? "Fleksibel" : `${pool.lockPeriodMonths} bln`}</span>
+                  {/* Meta */}
+                  <div className="px-5 flex items-center gap-3 text-xs text-zinc-500 mb-5 flex-wrap">
+                    <span className="inline-flex items-center gap-1">
+                      <Lock size={11} />
+                      {pool.lockPeriodMonths === null
+                        ? "Fleksibel"
+                        : `Kunci ${pool.lockPeriodMonths} bulan`}
+                    </span>
                     <span>·</span>
-                    <span>{pool.unitCount} unit</span>
+                    <span>{formatNumber(pool.unitCount)} unit</span>
                   </div>
 
-                  <button
-                    className={`w-full mt-4 py-2.5 rounded-xl font-semibold ${
-                      pool.status === "filled" ? "bg-gray-700 text-gray-400 cursor-not-allowed" : "glow-btn"
-                    }`}
+                  {/* CTA */}
+                  <div className="px-5 pb-5 mt-auto">
+                    <button
+                      className="w-full py-2.5 rounded-lg text-sm font-semibold transition-colors"
+                      style={
+                        isFilled
+                          ? {
+                              background: "#F4F4F5",
+                              color: "#A1A1AA",
+                              cursor: "not-allowed",
+                            }
+                          : {
+                              background: "#14B8A6",
+                              color: "#FFFFFF",
+                            }
+                      }
+                    >
+                      {isFilled ? "Pool Penuh" : "Lihat Detail"}
+                    </button>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Pool Segera Hadir */}
+        <h2 className="text-base font-semibold text-zinc-900 mb-4">Pool Segera Hadir</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
+          {upcomingPools.map((pool) => (
+            <div
+              key={pool.id}
+              className="rounded-xl overflow-hidden h-full flex flex-col"
+              style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
+            >
+              <div className="p-5 flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: "rgba(20,184,166,0.10)" }}
                   >
-                    {pool.status === "filled" ? "Pool Penuh" : "Lihat Detail"}
-                  </button>
+                    <Bike size={18} style={{ color: "#0F766E" }} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-zinc-500">{pool.city}</p>
+                    <h3 className="text-sm font-semibold text-zinc-900 leading-tight">
+                      {pool.name}
+                    </h3>
+                  </div>
                 </div>
               </div>
-            </Link>
-          );
-        })}
-      </div>
 
-      {/* Pool Segera Hadir */}
-      <h2 className="text-2xl font-bold font-[family-name:var(--font-orbitron)] mb-5">Pool Segera Hadir</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
-        {upcomingPools.map((pool) => (
-          <div key={pool.id} className="glass-card overflow-hidden opacity-90">
-            <div
-              className="h-20 px-4 flex items-end pb-3"
-              style={{ background: "linear-gradient(135deg, rgba(245,158,11,0.25), rgba(94,234,212,0.2))" }}
-            >
-              <div>
-                <p className="text-xs opacity-80">{pool.city}</p>
-                <p className="text-sm font-bold">{pool.city.toUpperCase()} POOL</p>
-              </div>
-            </div>
-
-            <div className="p-5">
-              <h3 className="font-bold mb-2">{pool.name}</h3>
-
-              <div className="mb-3 flex gap-2 flex-wrap">
-                <span className="badge" style={{ background: "rgba(245,158,11,0.15)", color: "#fcd34d" }}>
-                  ⏳ Segera
+              <div className="px-5 flex flex-wrap gap-1.5 mb-3">
+                <span
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+                  style={{ background: "#FEF3C7", color: "#B45309" }}
+                >
+                  <Clock size={11} /> Segera
                 </span>
                 {pool.operatorType === "nemesis_native" && (
-                  <span className="badge badge-green">🔵 Nemesis Native</span>
+                  <span
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+                    style={{ background: "rgba(20,184,166,0.10)", color: "#0F766E" }}
+                  >
+                    <Shield size={11} /> Nemesis Native
+                  </span>
                 )}
               </div>
 
-              <div className="mb-3">
-                <p className="text-xs text-gray-400">Target APY</p>
-                <p className="text-3xl font-bold gradient-text font-[family-name:var(--font-orbitron)]">
+              <div className="px-5 mb-4">
+                <p className="text-xs text-zinc-500 mb-1">Target APY</p>
+                <p className="text-2xl font-bold" style={{ color: "#0F766E" }}>
                   {pool.apyMin}–{pool.apyMax}%
                 </p>
               </div>
 
-              <div className="flex gap-2 text-xs text-gray-400 mt-3 flex-wrap">
-                <span>🔒 {pool.lockPeriodMonths === null ? "Fleksibel" : `${pool.lockPeriodMonths} bln`}</span>
+              <div className="px-5 flex items-center gap-3 text-xs text-zinc-500 mb-5 flex-wrap">
+                <span className="inline-flex items-center gap-1">
+                  <Lock size={11} />
+                  {pool.lockPeriodMonths === null
+                    ? "Fleksibel"
+                    : `Kunci ${pool.lockPeriodMonths} bulan`}
+                </span>
                 <span>·</span>
-                <span>{pool.unitCount} unit</span>
+                <span>{formatNumber(pool.unitCount)} unit</span>
+                <span>·</span>
+                <span>Target {formatIDRXFull(pool.targetSupply)}</span>
               </div>
 
-              <button className="w-full mt-4 py-2.5 rounded-xl font-semibold glow-btn-outline">
-                Join Waitlist
-              </button>
+              <div className="px-5 pb-5 mt-auto">
+                <button
+                  className="w-full py-2.5 rounded-lg text-sm font-semibold transition-colors"
+                  style={{
+                    background: "#FFFFFF",
+                    color: "#0F766E",
+                    border: "1px solid rgba(20,184,166,0.4)",
+                  }}
+                >
+                  Join Waitlist
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* Fixed Income — Coming Soon */}
-      <h2 className="text-2xl font-bold font-[family-name:var(--font-orbitron)] mb-5">Fixed Income</h2>
-      <div className="glass-card p-10 text-center relative overflow-hidden">
+        {/* Fixed Income — Coming Soon */}
+        <h2 className="text-base font-semibold text-zinc-900 mb-4">Fixed Income</h2>
         <div
-          className="absolute inset-0 backdrop-blur-sm"
-          style={{ background: "rgba(26,29,35,0.4)" }}
-        />
-        <div className="relative z-10 flex flex-col items-center gap-4">
-          <Clock size={56} className="text-teal-300" />
-          <h3 className="text-xl font-bold font-[family-name:var(--font-orbitron)]">Segera Hadir</h3>
-          <p className="text-gray-400 max-w-md">
-            Pool dengan return tetap — Coming Soon. Predictable yield untuk investor konservatif yang
-            ingin exposure ke EV fleet tanpa volatilitas utilisasi.
+          className="rounded-xl p-10 text-center"
+          style={{ background: "#FFFFFF", border: "1px dashed rgba(20,184,166,0.4)" }}
+        >
+          <Clock size={40} style={{ color: "#14B8A6" }} className="mx-auto mb-3" />
+          <h3 className="text-base font-semibold text-zinc-900 mb-2">Segera Hadir</h3>
+          <p className="text-sm text-zinc-500 max-w-md mx-auto">
+            Pool dengan return tetap untuk investor konservatif yang ingin exposure ke EV fleet
+            tanpa volatilitas utilisasi.
           </p>
         </div>
       </div>

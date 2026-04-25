@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Share2, Users, CheckCircle2 } from "lucide-react";
+import { Copy, Share2, Users, CheckCircle2, Send, Twitter, MessageCircle } from "lucide-react";
+import { DepinStatsBar } from "@/components/ui/DepinStatsBar";
+import { formatNumber, truncateWallet } from "@/lib/yield";
 
 const referred = [
-  { wallet: "NMS3f2a...bc4", type: "Operator", joined: "12 Apr 2026", pts: 500 },
-  { wallet: "NMS7def...gh5", type: "Investor", joined: "10 Apr 2026", pts: 500 },
-  { wallet: "NMS9ijk...lm6", type: "Operator", joined: "5 Apr 2026", pts: 500 },
+  { wallet: "NMS3f2abc4de", type: "Operator", joined: "12 Apr 2026", pts: 500 },
+  { wallet: "NMS7defgh5ij", type: "Investor", joined: "10 Apr 2026", pts: 500 },
+  { wallet: "NMS9ijklm6no", type: "Operator", joined: "5 Apr 2026", pts: 500 },
 ];
 
 export default function ReferralsPage() {
@@ -23,40 +25,44 @@ export default function ReferralsPage() {
     }
   };
 
+  const totalReferrals = referred.length;
+  const totalPoints = referred.reduce((s, r) => s + r.pts, 0);
+
   return (
-    <div
-      className="min-h-screen p-6 md:p-8"
-      style={{ background: "var(--solana-dark)", color: "#E4E6EB" }}
-    >
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-orbitron)] gradient-text mb-2 flex items-center gap-3">
-          <Users size={32} style={{ color: "#5EEAD4" }} />
-          Referrals
-        </h1>
-        <p className="text-sm text-gray-400 mb-6">
-          Ajak orang lain dan dapatkan 500 poin per referral.
-        </p>
+    <div className="text-zinc-900 pb-8 w-full max-w-7xl mx-auto px-4 md:px-0">
+      <DepinStatsBar />
+      <div className="space-y-6">
+        {/* Page Header */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+          <h1 className="text-xl md:text-2xl font-bold text-zinc-900 flex items-center gap-2">
+            <Users size={28} className="text-teal-600" />
+            Referrals
+          </h1>
+          <p className="text-sm text-zinc-500 mt-2">
+            Ajak orang lain bergabung — dapatkan {formatNumber(500)} poin untuk setiap referral yang aktif.
+          </p>
+        </div>
 
         {/* Link section */}
-        <div className="glass-card p-6 mb-6">
-          <label className="text-xs text-gray-400 uppercase mb-2 block">Link Referral Lo</label>
-          <div className="flex flex-col md:flex-row gap-2">
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+          <label className="text-xs text-zinc-500 font-semibold uppercase tracking-wider mb-2 block">Link Referral Kamu</label>
+          <div className="flex flex-col md:flex-row gap-3">
             <input
               readOnly
               value={refLink}
-              className="input-field flex-1 font-mono text-sm"
+              className="flex-1 font-mono text-sm px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
             <button
               onClick={handleCopy}
-              className={copied ? "glow-btn inline-flex items-center gap-2" : "glow-btn-outline inline-flex items-center gap-2"}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white transition-colors bg-teal-500 hover:bg-teal-600 shadow-sm"
             >
               {copied ? (
                 <>
-                  <CheckCircle2 size={16} /> Copied!
+                  <CheckCircle2 size={18} /> Tersalin
                 </>
               ) : (
                 <>
-                  <Copy size={16} /> Copy
+                  <Copy size={18} /> Salin Link
                 </>
               )}
             </button>
@@ -64,86 +70,79 @@ export default function ReferralsPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <div className="glass-card p-5">
-            <p className="text-xs text-gray-400 uppercase">Total Referrals</p>
-            <p className="text-2xl font-bold text-white mt-2">3</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+            <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Total Referral</p>
+            <p className="text-2xl font-bold text-zinc-900 mt-2">{formatNumber(totalReferrals)}</p>
           </div>
-          <div className="glass-card p-5">
-            <p className="text-xs text-gray-400 uppercase">Points dari Referral</p>
-            <p className="text-2xl font-bold mt-2" style={{ color: "#5EEAD4" }}>
-              1.500 pts
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-200 bg-teal-50/10">
+            <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Poin dari Referral</p>
+            <p className="text-2xl font-bold mt-2 text-teal-600">
+              {formatNumber(totalPoints)}
             </p>
           </div>
         </div>
 
         {/* Referred wallets */}
-        <h3 className="text-lg font-bold text-white mb-4">Referred Wallets</h3>
-        <div
-          className="rounded-2xl overflow-hidden mb-8"
-          style={{
-            background: "rgba(34,38,46,0.7)",
-            border: "1px solid rgba(94,234,212,0.25)",
-          }}
-        >
-          <table className="w-full data-table text-sm">
-            <thead>
-              <tr
-                style={{
-                  background: "rgba(94,234,212,0.08)",
-                  color: "#5EEAD4",
-                }}
-              >
-                <th className="text-left py-3 px-4">Wallet</th>
-                <th className="text-left py-3 px-4">Tipe</th>
-                <th className="text-left py-3 px-4">Bergabung</th>
-                <th className="text-right py-3 px-4">Poin</th>
-              </tr>
-            </thead>
-            <tbody>
-              {referred.map((r, idx) => (
-                <tr
-                  key={idx}
-                  className="border-t"
-                  style={{ borderColor: "rgba(94,234,212,0.1)" }}
-                >
-                  <td className="py-3 px-4 font-mono text-white">{r.wallet}</td>
-                  <td className="py-3 px-4">
-                    <span className="badge text-xs">{r.type}</span>
-                  </td>
-                  <td className="py-3 px-4 text-gray-400">{r.joined}</td>
-                  <td className="py-3 px-4 text-right font-bold" style={{ color: "#5EEAD4" }}>
-                    +{r.pts}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div>
+          <h3 className="text-lg font-bold text-zinc-900 mb-4">Wallet yang Direferensikan</h3>
+          <div className="bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-zinc-50 border-b border-zinc-100">
+                    <th className="text-left py-4 px-6 font-semibold text-zinc-500">Wallet</th>
+                    <th className="text-left py-4 px-6 font-semibold text-zinc-500">Tipe</th>
+                    <th className="text-left py-4 px-6 font-semibold text-zinc-500">Bergabung</th>
+                    <th className="text-right py-4 px-6 font-semibold text-zinc-500">Poin</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {referred.map((r, idx) => (
+                    <tr
+                      key={idx}
+                      className="hover:bg-zinc-50/50 transition-colors border-b border-zinc-50 last:border-0"
+                    >
+                      <td className="py-4 px-6 font-mono font-medium text-zinc-900">{truncateWallet(r.wallet)}</td>
+                      <td className="py-4 px-6">
+                        <span className="inline-block px-2.5 py-1 rounded-md text-xs font-bold bg-zinc-100 text-zinc-600">
+                          {r.type}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-zinc-500 font-medium">{r.joined}</td>
+                      <td className="py-4 px-6 text-right font-bold text-teal-600">
+                        +{formatNumber(r.pts)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
         {/* Share */}
-        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <Share2 size={18} style={{ color: "#5EEAD4" }} />
-          Bagikan Sekarang
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div
-            className="rounded-xl p-4 cursor-pointer text-center font-bold flex items-center justify-center gap-2 transition hover:scale-105"
-            style={{ background: "#0088cc", color: "white" }}
-          >
-            <Share2 size={18} /> Telegram
-          </div>
-          <div
-            className="rounded-xl p-4 cursor-pointer text-center font-bold flex items-center justify-center gap-2 transition hover:scale-105"
-            style={{ background: "#000", color: "white", border: "1px solid #333" }}
-          >
-            <Share2 size={18} /> Twitter / X
-          </div>
-          <div
-            className="rounded-xl p-4 cursor-pointer text-center font-bold flex items-center justify-center gap-2 transition hover:scale-105"
-            style={{ background: "#25D366", color: "white" }}
-          >
-            <Share2 size={18} /> WhatsApp
+        <div>
+          <h3 className="text-lg font-bold text-zinc-900 mb-4 flex items-center gap-2">
+            <Share2 size={20} className="text-teal-600" />
+            Bagikan Sekarang
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button
+              className="bg-white rounded-xl px-4 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors border border-zinc-200 text-zinc-900 hover:border-teal-200 hover:text-teal-600 shadow-sm"
+            >
+              <Send size={18} className="text-[#0088cc]" /> Telegram
+            </button>
+            <button
+              className="bg-white rounded-xl px-4 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors border border-zinc-200 text-zinc-900 hover:border-teal-200 hover:text-teal-600 shadow-sm"
+            >
+              <Twitter size={18} className="text-zinc-900" /> Twitter / X
+            </button>
+            <button
+              className="bg-white rounded-xl px-4 py-4 text-sm font-bold flex items-center justify-center gap-2 transition-colors border border-zinc-200 text-zinc-900 hover:border-teal-200 hover:text-teal-600 shadow-sm"
+            >
+              <MessageCircle size={18} className="text-[#25D366]" /> WhatsApp
+            </button>
           </div>
         </div>
       </div>

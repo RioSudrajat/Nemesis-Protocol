@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, use } from "react";
 import Link from "next/link";
 import { WorkshopRevenueChart } from "@/components/ui/WorkshopRevenueChart";
 import {
@@ -8,10 +8,19 @@ import {
   FileText,
   Leaf,
   MapPin,
+  ArrowRight,
+  Download,
+  Bike,
+  Package,
+  Truck,
+  Shield,
+  Star,
+  Zap,
+  Car,
   Users,
   DollarSign,
-  ArrowRight,
 } from "lucide-react";
+import { formatNumber, formatIDRXFull, formatRupiah } from "@/lib/yield";
 
 const POOLS = [
   {
@@ -84,42 +93,34 @@ const POOLS = [
   },
 ];
 
-const formatIDRX = (n: number) => {
-  if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1).replace(".", ",") + " M";
-  if (n >= 1_000_000) return (n / 1_000_000).toFixed(0) + " jt";
-  if (n >= 1_000) return (n / 1_000).toFixed(0) + " rb";
-  return n.toString();
-};
-const formatFull = (n: number) => new Intl.NumberFormat("id-ID").format(n);
-
 type TabKey = "overview" | "report" | "impact" | "calculator";
 
 const DISTRIBUTIONS = [
-  { date: "28 Apr 2026", total: 192000, per: "1,92", hash: "4xK9...mR2p" },
-  { date: "21 Apr 2026", total: 184000, per: "1,84", hash: "7yL3...nS4q" },
-  { date: "14 Apr 2026", total: 197000, per: "1,97", hash: "9zM5...pT6r" },
-  { date: "7 Apr 2026", total: 176000, per: "1,76", hash: "2wN7...qU8s" },
+  { date: "28 Apr 2026", total: 192000, per: 1920, hash: "4xK9...mR2p" },
+  { date: "21 Apr 2026", total: 184000, per: 1840, hash: "7yL3...nS4q" },
+  { date: "14 Apr 2026", total: 197000, per: 1970, hash: "9zM5...pT6r" },
+  { date: "7 Apr 2026", total: 176000, per: 1760, hash: "2wN7...qU8s" },
 ];
 
 const YIELD_HISTORY = [
-  { name: "W1", revenue: 176000 },
-  { name: "W2", revenue: 184000 },
-  { name: "W3", revenue: 191000 },
-  { name: "W4", revenue: 197000 },
-  { name: "W5", revenue: 202000 },
-  { name: "W6", revenue: 185000 },
-  { name: "W7", revenue: 188000 },
-  { name: "W8", revenue: 192000 },
+  { name: "W1", value: 176000 },
+  { name: "W2", value: 184000 },
+  { name: "W3", value: 191000 },
+  { name: "W4", value: 197000 },
+  { name: "W5", value: 202000 },
+  { name: "W6", value: 185000 },
+  { name: "W7", value: 188000 },
+  { name: "W8", value: 192000 },
 ];
 
 const UTILIZATION = [
-  { name: "Sen", revenue: 73 },
-  { name: "Sel", revenue: 71 },
-  { name: "Rab", revenue: 78 },
-  { name: "Kam", revenue: 75 },
-  { name: "Jum", revenue: 82 },
-  { name: "Sab", revenue: 68 },
-  { name: "Min", revenue: 62 },
+  { name: "Sen", value: 73 },
+  { name: "Sel", value: 71 },
+  { name: "Rab", value: 78 },
+  { name: "Kam", value: 75 },
+  { name: "Jum", value: 82 },
+  { name: "Sab", value: 68 },
+  { name: "Min", value: 62 },
 ];
 
 const REVENUE_LOG = [
@@ -133,8 +134,18 @@ const REVENUE_LOG = [
   { week: "W8", revenue: 307_000, expenses: 115_000, net: 192_000, distributed: 192_000 },
 ];
 
-export default function PoolDetailPage({ params }: { params: { poolId: string } }) {
-  const pool = POOLS.find((p) => p.id === params.poolId) ?? POOLS[0];
+const CARD_STYLE = {
+  background: "#FFFFFF",
+  border: "1px solid rgba(15,23,42,0.08)",
+};
+
+export default function PoolDetailPage({
+  params,
+}: {
+  params: Promise<{ poolId: string }>;
+}) {
+  const { poolId } = use(params);
+  const pool = POOLS.find((p) => p.id === poolId) ?? POOLS[0];
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const [investAmount, setInvestAmount] = useState<number>(300_000);
   const [utilizationPct, setUtilizationPct] = useState<number>(75);
@@ -155,7 +166,7 @@ export default function PoolDetailPage({ params }: { params: { poolId: string } 
   }, [investAmount, utilizationPct, lockMonths, pool.apyMin, pool.apyMax]);
 
   const sharesPreview = Math.floor(investAmount / 30_000);
-  const yieldPerWeekPreview = sharesPreview * 1.92 * 10; // rough per-saham/week
+  const yieldPerWeekPreview = sharesPreview * 1920;
 
   const TABS: { key: TabKey; label: string }[] = [
     { key: "overview", label: "Overview" },
@@ -165,380 +176,547 @@ export default function PoolDetailPage({ params }: { params: { poolId: string } 
   ];
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto">
-      {/* Pool header card */}
-      <div className="glass-card overflow-hidden mb-6">
-        <div
-          className="h-24 px-6 flex items-end pb-4"
-          style={{ background: "linear-gradient(135deg, rgba(94,234,212,0.35), rgba(139,92,246,0.25))" }}
+    <div className="min-h-screen p-6 md:p-8" style={{ background: "#FAFAFA", color: "#0A0A0B" }}>
+      <div className="max-w-7xl mx-auto">
+        {/* Breadcrumb */}
+        <Link
+          href="/fi"
+          className="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 mb-4"
         >
-          <p className="text-sm flex items-center gap-2 opacity-90">
-            <MapPin size={14} /> {pool.city}
-          </p>
-        </div>
-        <div className="p-6">
-          <h1 className="text-2xl md:text-3xl font-bold font-[family-name:var(--font-orbitron)] mb-3">
-            {pool.name}
-          </h1>
+          ← Kembali ke Pools
+        </Link>
 
-          <div className="flex flex-wrap gap-2 mb-4">
-            <span className="badge badge-green">{pool.status === "filled" ? "Pool Penuh" : "Aktif"}</span>
+        {/* Pool header card */}
+        <div className="rounded-xl p-6 mb-6" style={CARD_STYLE}>
+          <p className="text-xs text-zinc-500 flex items-center gap-1 mb-2">
+            <MapPin size={12} /> {pool.city}
+          </p>
+          <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 mb-4">{pool.name}</h1>
+
+          <div className="flex flex-wrap gap-2 mb-5">
+            <span
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+              style={
+                pool.status === "filled"
+                  ? { background: "#F4F4F5", color: "#52525B" }
+                  : { background: "rgba(20,184,166,0.10)", color: "#0F766E" }
+              }
+            >
+              {pool.status === "filled" ? "Pool Penuh" : "Aktif"}
+            </span>
             {pool.operatorType === "nemesis_native" ? (
-              <span className="badge badge-green">🔵 Nemesis Native</span>
+              <span
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+                style={{ background: "rgba(20,184,166,0.10)", color: "#0F766E" }}
+              >
+                <Shield size={11} /> Nemesis Native
+              </span>
             ) : (
-              <span className="badge" style={{ background: "rgba(139,92,246,0.15)", color: "#c4b5fd" }}>
-                ⭐ Partner — {pool.managedBy}
+              <span
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+                style={{ background: "#F4F4F5", color: "#52525B" }}
+              >
+                <Star size={11} /> Partner — {pool.managedBy}
               </span>
             )}
-            {pool.energyPointsEligible && <span className="badge">⚡ Energy Points</span>}
+            {pool.energyPointsEligible && (
+              <span
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium"
+                style={{ background: "rgba(20,184,166,0.10)", color: "#0F766E" }}
+              >
+                <Zap size={11} /> Energy Points Eligible
+              </span>
+            )}
           </div>
 
           <div>
-            <p className="text-xs text-gray-400">APY Range</p>
-            <p className="text-5xl font-bold gradient-text font-[family-name:var(--font-orbitron)]">
+            <p className="text-xs text-zinc-500 mb-1">APY Range</p>
+            <p className="text-4xl md:text-5xl font-bold" style={{ color: "#0F766E" }}>
               {pool.apyMin}–{pool.apyMax}%
             </p>
           </div>
         </div>
-      </div>
 
-      {/* Stats row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: "Total Supplied", value: `${formatIDRX(pool.totalSupplied)} IDRX` },
-          { label: "Target", value: `${formatIDRX(pool.targetSupply)} IDRX` },
-          { label: "% Terisi", value: `${pctFilled}%` },
-          { label: "Next Distribution", value: pool.nextDistribution },
-        ].map((s) => (
-          <div key={s.label} className="glass-card p-4">
-            <p className="text-xs text-gray-400 mb-1">{s.label}</p>
-            <p className="text-xl font-bold font-[family-name:var(--font-orbitron)]">{s.value}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {TABS.map((t) => {
-          const active = activeTab === t.key;
-          return (
-            <button
-              key={t.key}
-              onClick={() => setActiveTab(t.key)}
-              className="px-5 py-2 rounded-full text-sm font-medium transition"
-              style={{
-                background: active ? "rgba(94,234,212,0.18)" : "rgba(34,38,46,0.6)",
-                border: active ? "1px solid rgba(94,234,212,0.6)" : "1px solid rgba(94,234,212,0.15)",
-                color: active ? "#5EEAD4" : "#cbd5e1",
-              }}
-            >
-              {t.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* OVERVIEW */}
-      {activeTab === "overview" && (
-        <div className="space-y-8">
-          {/* Fleet health bar */}
-          <div className="glass-card p-6">
-            <h3 className="font-bold mb-3 font-[family-name:var(--font-orbitron)]">Fleet Health</h3>
-            <div className="w-full h-4 rounded-full overflow-hidden flex">
-              <div style={{ width: "71%", background: "#5EEAD4" }} />
-              <div style={{ width: "18%", background: "#64748b" }} />
-              <div style={{ width: "11%", background: "#f59e0b" }} />
+        {/* Stats row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {[
+            { label: "Total Tersuplai", value: formatIDRXFull(pool.totalSupplied) },
+            { label: "Target", value: formatIDRXFull(pool.targetSupply) },
+            { label: "Persentase Terisi", value: `${pctFilled}%` },
+            { label: "Distribusi Berikutnya", value: pool.nextDistribution },
+          ].map((s) => (
+            <div key={s.label} className="rounded-xl p-5" style={CARD_STYLE}>
+              <p className="text-xs text-zinc-500 mb-1">{s.label}</p>
+              <p className="text-base md:text-lg font-bold text-zinc-900 break-all">{s.value}</p>
             </div>
-            <div className="flex gap-4 mt-3 text-sm flex-wrap">
-              <span className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full" style={{ background: "#5EEAD4" }} /> Aktif 71%
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full" style={{ background: "#64748b" }} /> Idle 18%
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full" style={{ background: "#f59e0b" }} /> Servis 11%
-              </span>
-            </div>
-            <p className="text-sm text-gray-400 mt-4">
-              Unit breakdown: {pool.unitBreakdown.ojol} ojol · {pool.unitBreakdown.kurir} kurir ·{" "}
-              {pool.unitBreakdown.logistik} logistik
-            </p>
-          </div>
+          ))}
+        </div>
 
-          {/* Recent distributions */}
-          <div className="glass-card p-6">
-            <h3 className="font-bold mb-4 font-[family-name:var(--font-orbitron)]">Distribusi Terbaru</h3>
-            <div className="overflow-x-auto">
-              <table className="data-table w-full text-sm">
-                <thead>
-                  <tr>
-                    <th>Tanggal</th>
-                    <th>Total IDRX</th>
-                    <th>Per Saham</th>
-                    <th>Hash</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {DISTRIBUTIONS.map((d) => (
-                    <tr key={d.date}>
-                      <td>{d.date}</td>
-                      <td>{formatFull(d.total)} IDRX</td>
-                      <td>{d.per} IDRX</td>
-                      <td className="flex items-center gap-1">
-                        {d.hash} <ExternalLink size={12} className="opacity-60" />
-                      </td>
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {TABS.map((t) => {
+            const active = activeTab === t.key;
+            return (
+              <button
+                key={t.key}
+                onClick={() => setActiveTab(t.key)}
+                className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                style={{
+                  background: active ? "#14B8A6" : "#FFFFFF",
+                  color: active ? "#FFFFFF" : "#52525B",
+                  border: active ? "1px solid #14B8A6" : "1px solid rgba(15,23,42,0.08)",
+                }}
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* OVERVIEW */}
+        {activeTab === "overview" && (
+          <div className="space-y-6">
+            {/* Fleet health bar */}
+            <div className="rounded-xl p-6" style={CARD_STYLE}>
+              <h3 className="text-base font-semibold text-zinc-900 mb-3">Kesehatan Fleet</h3>
+              <div
+                className="w-full h-3 rounded-full overflow-hidden flex"
+                style={{ background: "#F4F4F5" }}
+              >
+                <div style={{ width: "71%", background: "#14B8A6" }} />
+                <div style={{ width: "18%", background: "#A1A1AA" }} />
+                <div style={{ width: "11%", background: "#F59E0B" }} />
+              </div>
+              <div className="flex gap-4 mt-3 text-sm flex-wrap">
+                <span className="flex items-center gap-1.5 text-zinc-700">
+                  <span className="w-2 h-2 rounded-full" style={{ background: "#14B8A6" }} />
+                  Aktif 71%
+                </span>
+                <span className="flex items-center gap-1.5 text-zinc-700">
+                  <span className="w-2 h-2 rounded-full" style={{ background: "#A1A1AA" }} />
+                  Idle 18%
+                </span>
+                <span className="flex items-center gap-1.5 text-zinc-700">
+                  <span className="w-2 h-2 rounded-full" style={{ background: "#F59E0B" }} />
+                  Servis 11%
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mt-5 pt-5 border-t" style={{ borderColor: "rgba(15,23,42,0.06)" }}>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: "rgba(20,184,166,0.10)" }}
+                  >
+                    <Bike size={16} style={{ color: "#0F766E" }} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-zinc-500">Ojol</p>
+                    <p className="text-sm font-semibold text-zinc-900">
+                      {formatNumber(pool.unitBreakdown.ojol)} unit
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: "rgba(20,184,166,0.10)" }}
+                  >
+                    <Package size={16} style={{ color: "#0F766E" }} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-zinc-500">Kurir</p>
+                    <p className="text-sm font-semibold text-zinc-900">
+                      {formatNumber(pool.unitBreakdown.kurir)} unit
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: "rgba(20,184,166,0.10)" }}
+                  >
+                    <Truck size={16} style={{ color: "#0F766E" }} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-zinc-500">Logistik</p>
+                    <p className="text-sm font-semibold text-zinc-900">
+                      {formatNumber(pool.unitBreakdown.logistik)} unit
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Recent distributions */}
+            <div className="rounded-xl overflow-hidden" style={CARD_STYLE}>
+              <div className="p-5 pb-3">
+                <h3 className="text-base font-semibold text-zinc-900">Distribusi Terbaru</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr style={{ background: "#F4F4F5", color: "#52525B" }}>
+                      <th className="text-left py-3 px-4 font-medium">Tanggal</th>
+                      <th className="text-right py-3 px-4 font-medium">Total</th>
+                      <th className="text-right py-3 px-4 font-medium">Per Saham</th>
+                      <th className="text-left py-3 px-4 font-medium">Hash</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {DISTRIBUTIONS.map((d) => (
+                      <tr key={d.date} style={{ borderTop: "1px solid rgba(15,23,42,0.06)" }}>
+                        <td className="py-3 px-4 text-zinc-700">{d.date}</td>
+                        <td className="py-3 px-4 text-right text-zinc-900">
+                          {formatIDRXFull(d.total)}
+                        </td>
+                        <td className="py-3 px-4 text-right text-zinc-900">
+                          {formatIDRXFull(d.per)}
+                        </td>
+                        <td className="py-3 px-4">
+                          <a
+                            href="#"
+                            className="font-mono text-xs inline-flex items-center gap-1 hover:underline"
+                            style={{ color: "#0F766E" }}
+                          >
+                            {d.hash} <ExternalLink size={12} />
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Invest section */}
+            <div
+              className="rounded-xl p-6"
+              style={{ background: "#FFFFFF", border: "1px solid rgba(20,184,166,0.4)" }}
+            >
+              <h3 className="text-base font-semibold text-zinc-900 mb-4">Invest di Pool Ini</h3>
+              <div className="mb-4">
+                <label className="text-xs text-zinc-500 mb-1 block">Jumlah (IDRX)</label>
+                <input
+                  type="number"
+                  value={investAmount}
+                  onChange={(e) => setInvestAmount(Number(e.target.value) || 0)}
+                  className="w-full px-3 py-2 rounded-lg text-base"
+                  style={{
+                    background: "#FAFAFA",
+                    border: "1px solid rgba(15,23,42,0.08)",
+                    color: "#0A0A0B",
+                  }}
+                />
+                <p className="text-xs text-zinc-500 mt-2">
+                  {formatNumber(sharesPreview)} saham · estimasi{" "}
+                  <span className="font-semibold text-zinc-900">
+                    {formatIDRXFull(yieldPerWeekPreview)}
+                  </span>{" "}
+                  per minggu
+                </p>
+              </div>
+              <button
+                onClick={() => alert("Wallet integration coming soon")}
+                className="w-full py-3 rounded-lg text-sm font-semibold text-white transition-colors"
+                style={{ background: "#14B8A6" }}
+              >
+                Invest Sekarang
+              </button>
+            </div>
+
+            <Link
+              href={`/depin/pool/${pool.id}`}
+              className="inline-flex items-center gap-1 text-sm font-medium"
+              style={{ color: "#0F766E" }}
+            >
+              Lihat Aktivitas Fleet <ArrowRight size={14} />
+            </Link>
+          </div>
+        )}
+
+        {/* REPORT */}
+        {activeTab === "report" && (
+          <div className="space-y-6">
+            <div className="rounded-xl p-5" style={CARD_STYLE}>
+              <h3 className="text-base font-semibold text-zinc-900 mb-1">Yield History</h3>
+              <p className="text-sm text-zinc-500 mb-2">8 minggu terakhir (IDRX)</p>
+              <WorkshopRevenueChart data={YIELD_HISTORY} suffix="IDRX" />
+            </div>
+
+            <div className="rounded-xl p-5" style={CARD_STYLE}>
+              <h3 className="text-base font-semibold text-zinc-900 mb-1">Utilization Rate</h3>
+              <p className="text-sm text-zinc-500 mb-2">Persentase unit aktif (harian)</p>
+              <WorkshopRevenueChart data={UTILIZATION} suffix="%" />
+            </div>
+
+            <div className="rounded-xl overflow-hidden" style={CARD_STYLE}>
+              <div className="p-5 pb-3">
+                <h3 className="text-base font-semibold text-zinc-900">Revenue Log</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr style={{ background: "#F4F4F5", color: "#52525B" }}>
+                      <th className="text-left py-3 px-4 font-medium">Minggu</th>
+                      <th className="text-right py-3 px-4 font-medium">Revenue</th>
+                      <th className="text-right py-3 px-4 font-medium">Expenses</th>
+                      <th className="text-right py-3 px-4 font-medium">Net</th>
+                      <th className="text-right py-3 px-4 font-medium">Distributed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {REVENUE_LOG.map((r) => (
+                      <tr key={r.week} style={{ borderTop: "1px solid rgba(15,23,42,0.06)" }}>
+                        <td className="py-3 px-4 text-zinc-700">{r.week}</td>
+                        <td className="py-3 px-4 text-right text-zinc-900">
+                          {formatIDRXFull(r.revenue)}
+                        </td>
+                        <td className="py-3 px-4 text-right text-zinc-700">
+                          {formatIDRXFull(r.expenses)}
+                        </td>
+                        <td className="py-3 px-4 text-right text-zinc-900 font-semibold">
+                          {formatIDRXFull(r.net)}
+                        </td>
+                        <td className="py-3 px-4 text-right" style={{ color: "#0F766E" }}>
+                          {formatIDRXFull(r.distributed)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div
+              className="rounded-xl p-5 flex items-center justify-between flex-wrap gap-4"
+              style={CARD_STYLE}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                  style={{ background: "rgba(20,184,166,0.10)" }}
+                >
+                  <FileText size={18} style={{ color: "#0F766E" }} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-zinc-900">Laporan Bulan Maret 2026</p>
+                  <p className="text-xs text-zinc-500">PDF · 2,4 MB</p>
+                </div>
+              </div>
+              <button
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-colors"
+                style={{
+                  background: "#FFFFFF",
+                  color: "#0F766E",
+                  border: "1px solid rgba(20,184,166,0.4)",
+                }}
+              >
+                <Download size={14} /> Download
+              </button>
             </div>
           </div>
+        )}
 
-          {/* Invest section */}
-          <div
-            className="glass-card p-6"
-            style={{ border: "1px solid rgba(94,234,212,0.5)" }}
-          >
-            <h3 className="font-bold mb-4 font-[family-name:var(--font-orbitron)]">Invest di Pool Ini</h3>
-            <div className="mb-3">
-              <label className="text-xs text-gray-400 mb-1 block">Jumlah (IDRX)</label>
-              <input
-                type="number"
-                value={investAmount}
-                onChange={(e) => setInvestAmount(Number(e.target.value) || 0)}
-                className="input-field w-full"
-              />
-              <p className="text-xs text-gray-400 mt-2">
-                {sharesPreview} saham = est. {formatFull(Math.round(yieldPerWeekPreview))} IDRX/minggu
+        {/* IMPACT */}
+        {activeTab === "impact" && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {[
+                {
+                  Icon: Leaf,
+                  value: `${formatNumber(47200)} kg`,
+                  label: "CO2 Dikurangi",
+                  sub: `Setara dengan ${formatNumber(3200)} pohon dewasa`,
+                },
+                {
+                  Icon: Car,
+                  value: `${formatNumber(1247832)} km`,
+                  label: "Total Km EV",
+                  sub: "Dalam pool ini",
+                },
+                {
+                  Icon: Users,
+                  value: `${formatNumber(94)} pengemudi`,
+                  label: "Driver Didukung",
+                  sub: "Pendapatan harian aktif",
+                },
+                {
+                  Icon: DollarSign,
+                  value: formatRupiah(892_000_000),
+                  label: "Nilai Ekonomi",
+                  sub: "Total economic value generated",
+                },
+              ].map((c) => (
+                <div key={c.label} className="rounded-xl p-6" style={CARD_STYLE}>
+                  <div
+                    className="w-10 h-10 rounded-lg flex items-center justify-center mb-3"
+                    style={{ background: "rgba(20,184,166,0.10)" }}
+                  >
+                    <c.Icon size={18} style={{ color: "#0F766E" }} />
+                  </div>
+                  <p className="text-xs text-zinc-500 mb-1">{c.label}</p>
+                  <p className="text-2xl font-bold text-zinc-900 mb-1 break-all">{c.value}</p>
+                  <p className="text-xs text-zinc-500">{c.sub}</p>
+                </div>
+              ))}
+            </div>
+
+            <div
+              className="rounded-xl p-5 flex items-start gap-3"
+              style={{ background: "#FFFFFF", border: "1px solid rgba(20,184,166,0.25)" }}
+            >
+              <Leaf size={20} style={{ color: "#0F766E" }} className="flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-zinc-700">
+                Setiap 1 km EV setara dengan {formatNumber(87)} gram CO2 yang dihindari vs motor BBM
+                equivalent. Pool ini berkontribusi pada target Net Zero Indonesia 2060.
               </p>
             </div>
-            <button
-              onClick={() => alert("Wallet integration coming soon")}
-              className="glow-btn w-full py-3 rounded-xl font-semibold"
-            >
-              Invest Sekarang
-            </button>
           </div>
+        )}
 
-          <Link
-            href={`/depin/pool/${pool.id}`}
-            className="inline-flex items-center gap-2 text-teal-300 hover:text-teal-200"
-          >
-            Lihat Aktivitas Fleet <ArrowRight size={16} />
-          </Link>
-        </div>
-      )}
+        {/* CALCULATOR */}
+        {activeTab === "calculator" && (
+          <div className="space-y-6">
+            <div className="rounded-xl p-6" style={CARD_STYLE}>
+              <h3 className="text-base font-semibold text-zinc-900 mb-5">Parameter Investasi</h3>
 
-      {/* REPORT */}
-      {activeTab === "report" && (
-        <div className="space-y-8">
-          <div className="glass-card p-6">
-            <h3 className="font-bold mb-4 font-[family-name:var(--font-orbitron)]">Yield History (8 minggu)</h3>
-            <WorkshopRevenueChart data={YIELD_HISTORY} />
-          </div>
+              <div className="mb-5">
+                <label className="text-xs text-zinc-500 mb-1 block">
+                  Jumlah Investasi (IDRX)
+                </label>
+                <input
+                  type="number"
+                  value={investAmount}
+                  onChange={(e) => setInvestAmount(Number(e.target.value) || 0)}
+                  className="w-full px-3 py-2 rounded-lg text-base font-semibold"
+                  style={{
+                    background: "#FAFAFA",
+                    border: "1px solid rgba(15,23,42,0.08)",
+                    color: "#0A0A0B",
+                  }}
+                />
+                <p className="text-xs text-zinc-500 mt-1">
+                  Harga 1 saham = {formatIDRXFull(30000)} · kamu akan mendapat{" "}
+                  <span className="font-semibold text-zinc-900">
+                    {formatNumber(Math.floor(investAmount / 30_000))}
+                  </span>{" "}
+                  saham
+                </p>
+              </div>
 
-          <div className="glass-card p-6">
-            <h3 className="font-bold mb-4 font-[family-name:var(--font-orbitron)]">Utilization Rate (harian)</h3>
-            <WorkshopRevenueChart data={UTILIZATION} />
-          </div>
+              <div className="mb-5">
+                <div className="flex justify-between mb-2">
+                  <label className="text-xs text-zinc-500">Utilisasi Fleet</label>
+                  <span className="text-sm font-semibold" style={{ color: "#0F766E" }}>
+                    {utilizationPct}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={60}
+                  max={100}
+                  value={utilizationPct}
+                  onChange={(e) => setUtilizationPct(Number(e.target.value))}
+                  className="w-full accent-teal-500"
+                />
+              </div>
 
-          <div className="glass-card p-6">
-            <h3 className="font-bold mb-4 font-[family-name:var(--font-orbitron)]">Revenue Log</h3>
-            <div className="overflow-x-auto">
-              <table className="data-table w-full text-sm">
-                <thead>
-                  <tr>
-                    <th>Minggu</th>
-                    <th>Total Revenue</th>
-                    <th>Expenses</th>
-                    <th>Net</th>
-                    <th>Distributed</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {REVENUE_LOG.map((r) => (
-                    <tr key={r.week}>
-                      <td>{r.week}</td>
-                      <td>{formatFull(r.revenue)} IDRX</td>
-                      <td>{formatFull(r.expenses)} IDRX</td>
-                      <td>{formatFull(r.net)} IDRX</td>
-                      <td>{formatFull(r.distributed)} IDRX</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="glass-card p-6 flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-3">
-              <FileText size={32} className="text-teal-300" />
               <div>
-                <p className="font-bold">Laporan Maret 2026</p>
-                <p className="text-xs text-gray-400">PDF · 2,4 MB</p>
+                <label className="text-xs text-zinc-500 mb-2 block">Periode Lock</label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: "Fleksibel", val: null },
+                    { label: "3 Bulan", val: 3 },
+                    { label: "6 Bulan", val: 6 },
+                    { label: "12 Bulan", val: 12 },
+                  ].map((opt) => {
+                    const active = lockMonths === opt.val;
+                    return (
+                      <button
+                        key={opt.label}
+                        onClick={() => setLockMonths(opt.val)}
+                        className="px-4 py-2 rounded-lg text-xs font-medium transition-colors"
+                        style={{
+                          background: active ? "#14B8A6" : "#FFFFFF",
+                          color: active ? "#FFFFFF" : "#52525B",
+                          border: active ? "1px solid #14B8A6" : "1px solid rgba(15,23,42,0.08)",
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-zinc-500 mt-2">Lock lebih lama → APY lebih tinggi</p>
               </div>
             </div>
-            <button className="glow-btn-outline px-5 py-2 rounded-xl font-semibold">Download</button>
-          </div>
-        </div>
-      )}
 
-      {/* IMPACT */}
-      {activeTab === "impact" && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {[
-              { icon: "🌱", value: "47,2 ton", label: "CO2 Dikurangi", sub: "setara dengan 3.200 pohon" },
-              { icon: "🚗", value: "1.247.832 km", label: "Total Km EV", sub: "dalam pool ini" },
-              { icon: "👤", value: "94 pengemudi", label: "Driver Didukung", sub: "income harian" },
-              { icon: "💰", value: "Rp 892 juta", label: "Nilai Ekonomi", sub: "economic value generated" },
-            ].map((c) => (
-              <div key={c.label} className="glass-card p-6">
-                <div className="text-4xl mb-3">{c.icon}</div>
-                <p className="text-xs text-gray-400 mb-1">{c.label}</p>
-                <p className="text-3xl font-bold gradient-text font-[family-name:var(--font-orbitron)] mb-1">
-                  {c.value}
-                </p>
-                <p className="text-xs text-gray-400">{c.sub}</p>
+            {/* Output cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                {
+                  label: "Estimasi Yield Bulanan",
+                  value: formatIDRXFull(Math.round(calc.monthlyYield)),
+                },
+                {
+                  label: "Estimasi Yield Tahunan",
+                  value: formatIDRXFull(Math.round(calc.annualYield)),
+                },
+                {
+                  label: "APY Efektif",
+                  value: `${calc.effectiveApy.toFixed(1)}%`,
+                },
+                {
+                  label: "Break-even",
+                  value: `${calc.breakEvenMonths.toFixed(1)} bulan`,
+                },
+              ].map((c) => (
+                <div key={c.label} className="rounded-xl p-5" style={CARD_STYLE}>
+                  <p className="text-xs text-zinc-500 mb-1">{c.label}</p>
+                  <p className="text-2xl font-bold break-all" style={{ color: "#0F766E" }}>
+                    {c.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* 5-Year Projection */}
+            <div className="rounded-xl overflow-hidden" style={CARD_STYLE}>
+              <div className="p-5 pb-3">
+                <h3 className="text-base font-semibold text-zinc-900">Proyeksi 5 Tahun</h3>
               </div>
-            ))}
-          </div>
-
-          <div
-            className="glass-card p-6 flex items-start gap-4"
-            style={{ border: "1px solid rgba(94,234,212,0.5)" }}
-          >
-            <Leaf className="text-teal-300 shrink-0" size={28} />
-            <p className="text-sm text-gray-200 leading-relaxed">
-              Setiap 1 km EV = 87g CO2 dihindari vs motor BBM equivalent. Nemesis Protocol membantu
-              Indonesia mencapai target Net Zero 2060.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* CALCULATOR */}
-      {activeTab === "calculator" && (
-        <div className="space-y-6">
-          <div className="glass-card p-6">
-            <h3 className="font-bold mb-5 font-[family-name:var(--font-orbitron)]">Parameter Investasi</h3>
-
-            <div className="mb-5">
-              <label className="text-xs text-gray-400 mb-1 block">Jumlah Investasi (IDRX)</label>
-              <input
-                type="number"
-                value={investAmount}
-                onChange={(e) => setInvestAmount(Number(e.target.value) || 0)}
-                className="input-field w-full text-xl font-bold"
-              />
-              <p className="text-xs text-gray-400 mt-1">
-                30.000 IDRX = 1 saham · kamu dapet {Math.floor(investAmount / 30_000)} saham
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr style={{ background: "#F4F4F5", color: "#52525B" }}>
+                      <th className="text-left py-3 px-4 font-medium">Tahun</th>
+                      <th className="text-right py-3 px-4 font-medium">Yield Tahunan</th>
+                      <th className="text-right py-3 px-4 font-medium">Kumulatif</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[1, 2, 3, 4, 5].map((yr) => (
+                      <tr key={yr} style={{ borderTop: "1px solid rgba(15,23,42,0.06)" }}>
+                        <td className="py-3 px-4 text-zinc-700">Tahun {yr}</td>
+                        <td className="py-3 px-4 text-right text-zinc-900">
+                          {formatIDRXFull(Math.round(calc.annualYield))}
+                        </td>
+                        <td className="py-3 px-4 text-right font-semibold" style={{ color: "#0F766E" }}>
+                          {formatIDRXFull(Math.round(calc.annualYield * yr))}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-zinc-500 p-5 pt-3">
+                * Asumsi APY konstan. Kondisi pasar dapat mempengaruhi hasil aktual.
               </p>
             </div>
-
-            <div className="mb-5">
-              <div className="flex justify-between mb-2">
-                <label className="text-xs text-gray-400">Utilisasi Fleet</label>
-                <span className="text-teal-300 font-semibold">{utilizationPct}%</span>
-              </div>
-              <input
-                type="range"
-                min={60}
-                max={100}
-                value={utilizationPct}
-                onChange={(e) => setUtilizationPct(Number(e.target.value))}
-                className="w-full accent-teal-400"
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="text-xs text-gray-400 mb-2 block">Periode Lock</label>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { label: "Fleksibel", val: null },
-                  { label: "3 Bulan", val: 3 },
-                  { label: "6 Bulan", val: 6 },
-                  { label: "12 Bulan", val: 12 },
-                ].map((opt) => {
-                  const active = lockMonths === opt.val;
-                  return (
-                    <button
-                      key={opt.label}
-                      onClick={() => setLockMonths(opt.val)}
-                      className="px-4 py-2 rounded-full text-sm font-medium transition"
-                      style={{
-                        background: active ? "rgba(94,234,212,0.18)" : "rgba(34,38,46,0.6)",
-                        border: active
-                          ? "1px solid rgba(94,234,212,0.6)"
-                          : "1px solid rgba(94,234,212,0.15)",
-                        color: active ? "#5EEAD4" : "#cbd5e1",
-                      }}
-                    >
-                      {opt.label}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="text-xs text-gray-400 mt-2">Lock lebih lama → APY lebih tinggi</p>
-            </div>
           </div>
-
-          {/* Output cards */}
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              {
-                label: "Estimasi Yield Bulanan",
-                value: `${formatFull(Math.round(calc.monthlyYield))} IDRX`,
-              },
-              {
-                label: "Estimasi Yield Tahunan",
-                value: `${formatFull(Math.round(calc.annualYield))} IDRX`,
-              },
-              { label: "APY Efektif", value: `${calc.effectiveApy.toFixed(1)}%` },
-              {
-                label: "Break-even",
-                value: `${calc.breakEvenMonths.toFixed(1)} bulan`,
-              },
-            ].map((c) => (
-              <div key={c.label} className="glass-card p-5">
-                <p className="text-xs text-gray-400 mb-1">{c.label}</p>
-                <p className="text-2xl md:text-3xl font-bold gradient-text font-[family-name:var(--font-orbitron)]">
-                  {c.value}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* 5-Year Projection */}
-          <div className="glass-card p-6">
-            <h3 className="font-bold mb-4 font-[family-name:var(--font-orbitron)]">Proyeksi 5 Tahun</h3>
-            <div className="overflow-x-auto">
-              <table className="data-table w-full text-sm">
-                <thead>
-                  <tr>
-                    <th>Tahun</th>
-                    <th>Yield Tahunan</th>
-                    <th>Kumulatif</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[1, 2, 3, 4, 5].map((yr) => (
-                    <tr key={yr}>
-                      <td>{yr}</td>
-                      <td>{formatFull(Math.round(calc.annualYield))} IDRX</td>
-                      <td>{formatFull(Math.round(calc.annualYield * yr))} IDRX</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="text-xs text-gray-400 mt-3">
-              * Asumsi APY konstan. Kondisi pasar dapat mempengaruhi.
-            </p>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

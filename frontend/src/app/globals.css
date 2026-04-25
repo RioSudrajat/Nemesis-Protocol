@@ -73,15 +73,97 @@
   background-clip: text;
 }
 .theme-light .glow-btn {
-  background: linear-gradient(135deg, #14B8A6 0%, #0F766E 100%);
+  background: #14B8A6;
   color: #FFFFFF;
 }
+.theme-light .glow-btn::before { display: none; }
+.theme-light .glow-btn:hover {
+  background: #0F766E;
+  transform: none;
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.2);
+}
 .theme-light .glow-btn-outline {
-  color: #0A0A0B;
+  color: #0F766E;
   border-color: rgba(20, 184, 166, 0.5);
+  background: #FFFFFF;
 }
 .theme-light .glow-btn-outline:hover {
   background: rgba(20, 184, 166, 0.08);
+}
+/* Flat cards in theme-light — no blur/glow, subtle shadow instead */
+.theme-light .glass-card,
+.theme-light .glass-card-static {
+  background: #FFFFFF;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.theme-light .glass-card:hover {
+  border-color: rgba(20, 184, 166, 0.35);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  transform: none;
+}
+/* Solid green for gradient-text inside theme-light */
+.theme-light .gradient-text,
+.theme-light .gradient-text-2 {
+  background: none;
+  -webkit-text-fill-color: initial;
+  color: #0F766E;
+}
+/* Scoped sidebar overrides for light theme */
+.theme-light .app-sidebar {
+  background: #FFFFFF;
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: none;
+}
+.theme-light .app-sidebar-mobile {
+  background: #FFFFFF;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  backdrop-filter: none;
+}
+.theme-light .app-sidebar-toggle {
+  background: #14B8A6;
+  color: #FFFFFF;
+}
+.theme-light .app-sidebar-link {
+  color: #52525B;
+}
+.theme-light .app-sidebar-link:hover {
+  background: rgba(20, 184, 166, 0.06);
+  color: #0A0A0B;
+}
+.theme-light .app-sidebar-link.active {
+  background: rgba(20, 184, 166, 0.10);
+  color: #0F766E;
+}
+/* data-table overrides for light theme */
+.theme-light .data-table thead tr {
+  background: #F4F4F5;
+  color: #52525B;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+.theme-light .data-table tbody tr {
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+.theme-light .data-table tbody tr:hover {
+  background: rgba(20, 184, 166, 0.04);
+}
+/* Badges in light theme */
+.theme-light .badge {
+  background: rgba(15, 23, 42, 0.05);
+  color: #27272A;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+.theme-light .badge-green {
+  background: rgba(20, 184, 166, 0.10);
+  color: #0F766E;
+  border-color: rgba(20, 184, 166, 0.25);
+}
+.theme-light .badge-purple {
+  background: rgba(20, 184, 166, 0.06);
+  color: #14B8A6;
+  border-color: rgba(20, 184, 166, 0.18);
 }
 .theme-light .hero-grid {
   background-image: radial-gradient(rgba(15, 23, 42, 0.10) 1px, transparent 1px);

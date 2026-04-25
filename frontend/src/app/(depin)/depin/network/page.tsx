@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Globe, ExternalLink, Activity } from "lucide-react";
+import { formatNumber } from "@/lib/yield";
 
 const filters = ["Semua", "Ojol", "Kurir", "Logistik"];
 
@@ -27,169 +28,183 @@ export default function NetworkDetailPage() {
       : activityRows.filter((r) => r.cat === activeFilter);
 
   return (
-    <div
-      className="min-h-screen p-6 md:p-8"
-      style={{ background: "var(--solana-dark)", color: "#E4E6EB" }}
-    >
+    <div className="min-h-screen p-6 md:p-8" style={{ background: "#FAFAFA", color: "#0A0A0B" }}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-orbitron)] gradient-text">
-              Network Detail
-            </h1>
-            <p className="text-sm text-gray-400 mt-2">
-              Monitor fleet status, connectivity, dan aktivitas on-chain
+            <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 mb-1">Network Detail</h1>
+            <p className="text-sm text-zinc-500">
+              Monitor status fleet, konektivitas, dan aktivitas on-chain.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {filters.map((f) => (
-              <button
-                key={f}
-                onClick={() => setActiveFilter(f)}
-                className={
-                  activeFilter === f
-                    ? "glow-btn text-xs px-4 py-2"
-                    : "glow-btn-outline text-xs px-4 py-2"
-                }
-              >
-                {f}
-              </button>
-            ))}
+            {filters.map((f) => {
+              const active = activeFilter === f;
+              return (
+                <button
+                  key={f}
+                  onClick={() => setActiveFilter(f)}
+                  className="px-4 py-2 rounded-lg text-xs font-medium transition-colors"
+                  style={{
+                    background: active ? "#14B8A6" : "#FFFFFF",
+                    color: active ? "#FFFFFF" : "#52525B",
+                    border: active ? "1px solid #14B8A6" : "1px solid rgba(15,23,42,0.08)",
+                  }}
+                >
+                  {f}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Stats bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="glass-card p-4">
-            <p className="text-xs text-gray-400 uppercase">Online</p>
-            <p className="text-2xl font-bold text-white mt-1">623</p>
+          <div
+            className="rounded-xl p-5"
+            style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
+          >
+            <p className="text-xs text-zinc-500">Online</p>
+            <p className="text-2xl font-bold text-zinc-900 mt-1">{formatNumber(623)}</p>
           </div>
-          <div className="glass-card p-4">
-            <p className="text-xs text-gray-400 uppercase">Offline</p>
-            <p className="text-2xl font-bold text-white mt-1">224</p>
+          <div
+            className="rounded-xl p-5"
+            style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
+          >
+            <p className="text-xs text-zinc-500">Offline</p>
+            <p className="text-2xl font-bold text-zinc-900 mt-1">{formatNumber(224)}</p>
           </div>
-          <div className="glass-card p-4">
-            <p className="text-xs text-gray-400 uppercase">In Transit</p>
-            <p className="text-2xl font-bold text-white mt-1">412</p>
+          <div
+            className="rounded-xl p-5"
+            style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
+          >
+            <p className="text-xs text-zinc-500">In Transit</p>
+            <p className="text-2xl font-bold text-zinc-900 mt-1">{formatNumber(412)}</p>
           </div>
-          <div className="glass-card p-4">
-            <p className="text-xs text-gray-400 uppercase">Uptime</p>
-            <p className="text-2xl font-bold mt-1" style={{ color: "#5EEAD4" }}>
-              73.6%
+          <div
+            className="rounded-xl p-5"
+            style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
+          >
+            <p className="text-xs text-zinc-500">Uptime</p>
+            <p className="text-2xl font-bold mt-1" style={{ color: "#0F766E" }}>
+              73,6%
             </p>
           </div>
         </div>
 
         {/* Map placeholder */}
         <div
-          className="glass-card mb-8 flex flex-col items-center justify-center"
+          className="rounded-xl mb-8 flex flex-col items-center justify-center text-center p-6"
           style={{
             height: "420px",
-            border: "2px dashed rgba(94,234,212,0.4)",
-            background:
-              "radial-gradient(circle at center, rgba(94,234,212,0.08) 0%, rgba(34,38,46,0.6) 70%)",
+            background: "#FFFFFF",
+            border: "1px dashed rgba(20,184,166,0.4)",
           }}
         >
-          <Globe size={64} style={{ color: "#5EEAD4" }} className="mb-4 animate-pulse" />
-          <h3 className="text-xl font-bold text-white">Peta Fleet Network</h3>
-          <p className="text-sm text-gray-400 mt-2">
-            Sebaran unit aktif di 10+ kota Indonesia
+          <Globe size={56} style={{ color: "#14B8A6" }} className="mb-3" />
+          <h3 className="text-base font-semibold text-zinc-900">Peta Fleet Network</h3>
+          <p className="text-sm text-zinc-500 mt-2 max-w-sm">
+            Sebaran unit aktif di lebih dari 10 kota di Indonesia. Data teranonimisasi — hanya
+            agregat per zona.
           </p>
         </div>
 
         {/* Connectivity + Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="glass-card p-5">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Activity size={18} style={{ color: "#5EEAD4" }} />
-              Connectivity
+          <div
+            className="rounded-xl p-5"
+            style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
+          >
+            <h3 className="text-base font-semibold text-zinc-900 mb-4 flex items-center gap-2">
+              <Activity size={16} style={{ color: "#0F766E" }} />
+              Konektivitas
             </h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-gray-400">Avg Uptime</p>
-                <p className="text-xl font-bold text-white">96,4%</p>
+                <p className="text-xs text-zinc-500">Avg Uptime</p>
+                <p className="text-lg font-bold text-zinc-900">96,4%</p>
               </div>
               <div>
-                <p className="text-gray-400">Data Lag</p>
-                <p className="text-xl font-bold text-white">2.1s</p>
+                <p className="text-xs text-zinc-500">Data Lag</p>
+                <p className="text-lg font-bold text-zinc-900">2,1 detik</p>
               </div>
               <div>
-                <p className="text-gray-400">Blockchain Sync</p>
-                <p className="text-xl font-bold" style={{ color: "#5EEAD4" }}>
+                <p className="text-xs text-zinc-500">Blockchain Sync</p>
+                <p className="text-lg font-bold" style={{ color: "#0F766E" }}>
                   99,8%
                 </p>
               </div>
               <div>
-                <p className="text-gray-400">Tx Success</p>
-                <p className="text-xl font-bold text-white">98,2%</p>
+                <p className="text-xs text-zinc-500">Tx Success</p>
+                <p className="text-lg font-bold text-zinc-900">98,2%</p>
               </div>
             </div>
-            <div className="mt-6 pt-4 border-t" style={{ borderColor: "rgba(94,234,212,0.15)" }}>
-              <p className="text-xs text-gray-400 mb-2">Zona Teratas</p>
+            <div
+              className="mt-6 pt-4 border-t"
+              style={{ borderColor: "rgba(15,23,42,0.06)" }}
+            >
+              <p className="text-xs text-zinc-500 mb-3">Zona Teratas</p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-300">Jakarta Selatan</span>
-                  <span className="text-white">147 unit</span>
+                  <span className="text-zinc-700">Jakarta Selatan</span>
+                  <span className="text-zinc-900 font-medium">{formatNumber(147)} unit</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-300">Jakarta Pusat</span>
-                  <span className="text-white">121 unit</span>
+                  <span className="text-zinc-700">Jakarta Pusat</span>
+                  <span className="text-zinc-900 font-medium">{formatNumber(121)} unit</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-300">Bandung</span>
-                  <span className="text-white">94 unit</span>
+                  <span className="text-zinc-700">Bandung</span>
+                  <span className="text-zinc-900 font-medium">{formatNumber(94)} unit</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-300">Surabaya</span>
-                  <span className="text-white">88 unit</span>
+                  <span className="text-zinc-700">Surabaya</span>
+                  <span className="text-zinc-900 font-medium">{formatNumber(88)} unit</span>
                 </div>
               </div>
             </div>
           </div>
 
           <div
-            className="lg:col-span-2 rounded-2xl overflow-hidden"
-            style={{
-              background: "rgba(34,38,46,0.7)",
-              border: "1px solid rgba(94,234,212,0.25)",
-            }}
+            className="lg:col-span-2 rounded-xl overflow-hidden"
+            style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
           >
-            <table className="w-full data-table text-sm">
+            <table className="w-full text-sm">
               <thead>
-                <tr
-                  style={{
-                    background: "rgba(94,234,212,0.08)",
-                    color: "#5EEAD4",
-                  }}
-                >
-                  <th className="text-left py-3 px-4">Unit</th>
-                  <th className="text-left py-3 px-4">Kategori</th>
-                  <th className="text-left py-3 px-4">Zona</th>
-                  <th className="text-left py-3 px-4">Waktu</th>
-                  <th className="text-left py-3 px-4">Km</th>
-                  <th className="text-left py-3 px-4">On-chain</th>
+                <tr style={{ background: "#F4F4F5", color: "#52525B" }}>
+                  <th className="text-left py-3 px-4 font-medium">Unit</th>
+                  <th className="text-left py-3 px-4 font-medium">Kategori</th>
+                  <th className="text-left py-3 px-4 font-medium">Zona</th>
+                  <th className="text-left py-3 px-4 font-medium">Waktu</th>
+                  <th className="text-left py-3 px-4 font-medium">Km</th>
+                  <th className="text-left py-3 px-4 font-medium">On-chain</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((row, idx) => (
                   <tr
                     key={idx}
-                    className="border-t hover:bg-white/5 transition"
-                    style={{ borderColor: "rgba(94,234,212,0.1)" }}
+                    className="hover:bg-zinc-50"
+                    style={{ borderTop: "1px solid rgba(15,23,42,0.06)" }}
                   >
-                    <td className="py-3 px-4 font-mono text-white">{row.unit}</td>
+                    <td className="py-3 px-4 font-mono text-zinc-900">{row.unit}</td>
                     <td className="py-3 px-4">
-                      <span className="badge text-xs">{row.cat}</span>
+                      <span
+                        className="inline-block px-2 py-0.5 rounded text-xs font-medium"
+                        style={{ background: "#F4F4F5", color: "#52525B" }}
+                      >
+                        {row.cat}
+                      </span>
                     </td>
-                    <td className="py-3 px-4 text-gray-300">{row.zone}</td>
-                    <td className="py-3 px-4 text-gray-400">{row.time}</td>
-                    <td className="py-3 px-4 text-white">{row.km} km</td>
+                    <td className="py-3 px-4 text-zinc-700">{row.zone}</td>
+                    <td className="py-3 px-4 text-zinc-500">{row.time}</td>
+                    <td className="py-3 px-4 text-zinc-900">{formatNumber(row.km)} km</td>
                     <td className="py-3 px-4">
                       <a
                         href="#"
                         className="font-mono text-xs flex items-center gap-1 hover:underline"
-                        style={{ color: "#5EEAD4" }}
+                        style={{ color: "#0F766E" }}
                       >
                         {row.hash}
                         <ExternalLink size={12} />

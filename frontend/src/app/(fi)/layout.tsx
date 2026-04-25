@@ -11,12 +11,12 @@ const NAV_ITEMS: NavItem[] = [
 
 export default function FiLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen" style={{ background: "var(--solana-dark)" }}>
+    <div className="theme-light flex min-h-screen" style={{ background: "#FAFAFA" }}>
       <AppSidebar
         navItems={NAV_ITEMS}
         portalName="Nemesis FI"
         portalLabel="FI"
-        useInlineActiveStyle={true}
+        theme="light"
         mobileNavCount={3}
       />
       <main className="flex-1 min-w-0 pt-16 md:pt-0">{children}</main>

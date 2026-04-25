@@ -1,34 +1,69 @@
 "use client";
 
+import { use } from "react";
 import Link from "next/link";
 import { Lock, MapPin, ChevronRight } from "lucide-react";
+import { formatNumber } from "@/lib/yield";
 
-const units = [
-  { unit: "#NMS-0001", status: "🟢 Aktif", nodeScore: 94, kmToday: 127, health: 91 },
-  { unit: "#NMS-0042", status: "🟡 Servis", nodeScore: 72, kmToday: 0, health: 72 },
-  { unit: "#NMS-0018", status: "🟢 Aktif", nodeScore: 81, kmToday: 94, health: 79 },
-  { unit: "#NMS-0055", status: "🟢 Aktif", nodeScore: 88, kmToday: 156, health: 92 },
-  { unit: "#NMS-0073", status: "🟢 Aktif", nodeScore: 95, kmToday: 73, health: 98 },
+type UnitStatus = "Aktif" | "Idle" | "Servis" | "Offline";
+
+interface Unit {
+  unit: string;
+  status: UnitStatus;
+  nodeScore: number;
+  kmToday: number;
+  health: number;
+}
+
+const STATUS_COLOR: Record<UnitStatus, string> = {
+  Aktif: "#14B8A6",
+  Idle: "#A1A1AA",
+  Servis: "#F59E0B",
+  Offline: "#EF4444",
+};
+
+const units: Unit[] = [
+  { unit: "#NMS-0001", status: "Aktif", nodeScore: 94, kmToday: 127, health: 91 },
+  { unit: "#NMS-0042", status: "Servis", nodeScore: 72, kmToday: 0, health: 72 },
+  { unit: "#NMS-0018", status: "Aktif", nodeScore: 81, kmToday: 94, health: 79 },
+  { unit: "#NMS-0055", status: "Aktif", nodeScore: 88, kmToday: 156, health: 92 },
+  { unit: "#NMS-0073", status: "Aktif", nodeScore: 95, kmToday: 73, health: 98 },
 ];
 
-export default function PoolFleetMapPage({ params }: { params: { poolId: string } }) {
+export default function PoolFleetMapPage({
+  params,
+}: {
+  params: Promise<{ poolId: string }>;
+}) {
+  const { poolId } = use(params);
   const isInvestor = true;
 
   if (!isInvestor) {
     return (
       <div
         className="min-h-screen flex items-center justify-center p-8"
-        style={{ background: "var(--solana-dark)", color: "#E4E6EB" }}
+        style={{ background: "#FAFAFA", color: "#0A0A0B" }}
       >
-        <div className="glass-card p-10 max-w-md w-full text-center">
-          <Lock size={48} style={{ color: "#F59E0B" }} className="mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-2 font-[family-name:var(--font-orbitron)]">
-            Akses Terkunci
-          </h1>
-          <p className="text-sm text-gray-400 mb-6">
-            Hanya Investor Pool. Invest di Nemesis FI untuk akses.
+        <div
+          className="rounded-xl p-8 max-w-md w-full text-center"
+          style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
+        >
+          <div
+            className="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center"
+            style={{ background: "rgba(245,158,11,0.10)" }}
+          >
+            <Lock size={22} style={{ color: "#B45309" }} />
+          </div>
+          <h1 className="text-xl font-bold text-zinc-900 mb-2">Akses Terkunci</h1>
+          <p className="text-sm text-zinc-500 mb-6">
+            Halaman ini hanya bisa diakses oleh pemegang saham pool. Invest dulu di Nemesis FI untuk
+            membuka.
           </p>
-          <Link href="/fi" className="glow-btn inline-flex items-center gap-2">
+          <Link
+            href="/fi"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white transition-colors"
+            style={{ background: "#14B8A6" }}
+          >
             Ke Nemesis FI <ChevronRight size={16} />
           </Link>
         </div>
@@ -36,122 +71,118 @@ export default function PoolFleetMapPage({ params }: { params: { poolId: string 
     );
   }
 
-  // decorative dots for map
-  const dots = Array.from({ length: 40 }).map((_, i) => {
-    const colors = ["#22C55E", "#22C55E", "#22C55E", "#D1D5DB", "#F59E0B", "#EF4444"];
-    const c = colors[i % colors.length];
-    const top = Math.floor(Math.random() * 85) + 5;
-    const left = Math.floor(Math.random() * 90) + 5;
-    return { c, top, left };
-  });
-
   return (
-    <div
-      className="min-h-screen p-6 md:p-8"
-      style={{ background: "var(--solana-dark)", color: "#E4E6EB" }}
-    >
+    <div className="min-h-screen p-6 md:p-8" style={{ background: "#FAFAFA", color: "#0A0A0B" }}>
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-orbitron)] gradient-text mb-2">
-          Fleet Pool {params.poolId} — Jakarta
+        <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 mb-1">
+          Fleet Pool {poolId} — Jakarta
         </h1>
-        <p className="text-sm text-gray-400 mb-6">
-          Real-time monitoring armada dalam pool kamu
+        <p className="text-sm text-zinc-500 mb-6">
+          Monitoring real-time armada dalam pool kamu.
         </p>
 
         {/* Stats bar */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          <div className="glass-card p-4">
-            <p className="text-xs text-gray-400 uppercase">Total Unit</p>
-            <p className="text-2xl font-bold text-white mt-1">100</p>
+          <div
+            className="rounded-xl p-5"
+            style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
+          >
+            <p className="text-xs text-zinc-500">Total Unit</p>
+            <p className="text-2xl font-bold text-zinc-900 mt-1">{formatNumber(100)}</p>
           </div>
-          <div className="glass-card p-4">
-            <p className="text-xs text-gray-400 uppercase">Km Hari Ini</p>
-            <p className="text-2xl font-bold text-white mt-1">47.291</p>
+          <div
+            className="rounded-xl p-5"
+            style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
+          >
+            <p className="text-xs text-zinc-500">Km Hari Ini</p>
+            <p className="text-2xl font-bold text-zinc-900 mt-1">
+              {formatNumber(47291)} km
+            </p>
           </div>
-          <div className="glass-card p-4">
-            <p className="text-xs text-gray-400 uppercase">Utilisasi</p>
-            <p className="text-2xl font-bold mt-1" style={{ color: "#5EEAD4" }}>
+          <div
+            className="rounded-xl p-5"
+            style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
+          >
+            <p className="text-xs text-zinc-500">Utilisasi</p>
+            <p className="text-2xl font-bold mt-1" style={{ color: "#0F766E" }}>
               71%
             </p>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap gap-3 mb-4 text-sm">
-          <span className="badge">🟢 Aktif (71)</span>
-          <span className="badge">⚪ Idle (12)</span>
-          <span className="badge">🟡 Servis (5)</span>
-          <span className="badge">🔴 Offline (12)</span>
+        <div className="flex flex-wrap gap-2 mb-4 text-xs">
+          {(
+            [
+              { label: "Aktif", count: 71, color: STATUS_COLOR.Aktif },
+              { label: "Idle", count: 12, color: STATUS_COLOR.Idle },
+              { label: "Servis", count: 5, color: STATUS_COLOR.Servis },
+              { label: "Offline", count: 12, color: STATUS_COLOR.Offline },
+            ] as const
+          ).map((s) => (
+            <span
+              key={s.label}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
+              style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
+            >
+              <span
+                className="w-2 h-2 rounded-full"
+                style={{ background: s.color }}
+              />
+              <span className="text-zinc-700 font-medium">{s.label}</span>
+              <span className="text-zinc-500">({formatNumber(s.count)})</span>
+            </span>
+          ))}
         </div>
 
-        {/* Map placeholder with decorative dots */}
+        {/* Map placeholder */}
         <div
-          className="glass-card mb-6 relative overflow-hidden"
+          className="rounded-xl mb-6 flex flex-col items-center justify-center text-center p-6"
           style={{
-            height: "450px",
-            background:
-              "radial-gradient(circle at center, rgba(94,234,212,0.1) 0%, rgba(34,38,46,0.8) 70%)",
+            height: "420px",
+            background: "#FFFFFF",
+            border: "1px dashed rgba(20,184,166,0.4)",
           }}
         >
-          {dots.map((d, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full animate-pulse"
-              style={{
-                top: `${d.top}%`,
-                left: `${d.left}%`,
-                width: "10px",
-                height: "10px",
-                background: d.c,
-                boxShadow: `0 0 8px ${d.c}`,
-              }}
-            />
-          ))}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="text-center">
-              <MapPin size={56} style={{ color: "#5EEAD4" }} className="mx-auto mb-3 opacity-60" />
-              <p className="text-lg font-bold text-white">Peta Armada Pool</p>
-              <p className="text-sm text-gray-400">Real-time — Jakarta region</p>
-            </div>
-          </div>
+          <MapPin size={48} style={{ color: "#14B8A6" }} className="mb-3" />
+          <p className="text-base font-semibold text-zinc-900">Peta Armada Pool</p>
+          <p className="text-sm text-zinc-500 mt-2">Real-time — wilayah Jakarta</p>
         </div>
 
         {/* Unit detail table */}
-        <h3 className="text-lg font-bold text-white mb-4">Detail Unit</h3>
+        <h3 className="text-base font-semibold text-zinc-900 mb-4">Detail Unit</h3>
         <div
-          className="rounded-2xl overflow-hidden mb-6"
-          style={{
-            background: "rgba(34,38,46,0.7)",
-            border: "1px solid rgba(94,234,212,0.25)",
-          }}
+          className="rounded-xl overflow-hidden mb-6"
+          style={{ background: "#FFFFFF", border: "1px solid rgba(15,23,42,0.08)" }}
         >
-          <table className="w-full data-table text-sm">
+          <table className="w-full text-sm">
             <thead>
-              <tr
-                style={{
-                  background: "rgba(94,234,212,0.08)",
-                  color: "#5EEAD4",
-                }}
-              >
-                <th className="text-left py-3 px-4">Unit</th>
-                <th className="text-left py-3 px-4">Status</th>
-                <th className="text-right py-3 px-4">Node Score</th>
-                <th className="text-right py-3 px-4">Km Today</th>
-                <th className="text-right py-3 px-4">Health</th>
+              <tr style={{ background: "#F4F4F5", color: "#52525B" }}>
+                <th className="text-left py-3 px-4 font-medium">Unit</th>
+                <th className="text-left py-3 px-4 font-medium">Status</th>
+                <th className="text-right py-3 px-4 font-medium">Node Score</th>
+                <th className="text-right py-3 px-4 font-medium">Km Hari Ini</th>
+                <th className="text-right py-3 px-4 font-medium">Health</th>
               </tr>
             </thead>
             <tbody>
               {units.map((u, idx) => (
-                <tr
-                  key={idx}
-                  className="border-t"
-                  style={{ borderColor: "rgba(94,234,212,0.1)" }}
-                >
-                  <td className="py-3 px-4 font-mono text-white">{u.unit}</td>
-                  <td className="py-3 px-4">{u.status}</td>
-                  <td className="py-3 px-4 text-right text-white">{u.nodeScore}</td>
-                  <td className="py-3 px-4 text-right text-gray-300">{u.kmToday} km</td>
-                  <td className="py-3 px-4 text-right font-bold" style={{ color: "#5EEAD4" }}>
+                <tr key={idx} style={{ borderTop: "1px solid rgba(15,23,42,0.06)" }}>
+                  <td className="py-3 px-4 font-mono text-zinc-900">{u.unit}</td>
+                  <td className="py-3 px-4">
+                    <span className="inline-flex items-center gap-1.5 text-xs text-zinc-700">
+                      <span
+                        className="w-2 h-2 rounded-full"
+                        style={{ background: STATUS_COLOR[u.status] }}
+                      />
+                      {u.status}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-right text-zinc-900">{u.nodeScore}</td>
+                  <td className="py-3 px-4 text-right text-zinc-700">
+                    {formatNumber(u.kmToday)} km
+                  </td>
+                  <td className="py-3 px-4 text-right font-semibold" style={{ color: "#0F766E" }}>
                     {u.health}/100
                   </td>
                 </tr>
@@ -162,16 +193,13 @@ export default function PoolFleetMapPage({ params }: { params: { poolId: string 
 
         {/* Aggregate */}
         <div
-          className="glass-card p-6"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(94,234,212,0.15) 0%, rgba(34,38,46,0.8) 100%)",
-            border: "1px solid rgba(94,234,212,0.4)",
-          }}
+          className="rounded-xl p-6"
+          style={{ background: "#FFFFFF", border: "1px solid rgba(20,184,166,0.25)" }}
         >
-          <p className="text-xs text-gray-400 uppercase">Estimasi Yield</p>
-          <p className="text-2xl md:text-3xl font-bold mt-1" style={{ color: "#5EEAD4" }}>
-            192.000 IDRX <span className="text-sm text-gray-400 font-normal">minggu ini</span>
+          <p className="text-xs text-zinc-500">Estimasi Yield</p>
+          <p className="text-2xl md:text-3xl font-bold mt-1" style={{ color: "#0F766E" }}>
+            {formatNumber(192000)} IDRX{" "}
+            <span className="text-sm text-zinc-500 font-normal">minggu ini</span>
           </p>
         </div>
       </div>

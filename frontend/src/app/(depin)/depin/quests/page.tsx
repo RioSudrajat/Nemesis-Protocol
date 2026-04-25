@@ -1,16 +1,53 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Twitter, Send, MessageCircle, Wallet, Handshake, Trophy, PiggyBank, Star } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { formatNumber, truncateWallet } from "@/lib/yield";
+import { DepinStatsBar } from "@/components/ui/DepinStatsBar";
+import { WorkshopRevenueChart } from "@/components/ui/WorkshopRevenueChart";
 
-const quests = [
-  { id: "q1", title: "Follow Twitter @NemesisProtocol", desc: "Ikuti akun resmi kami", reward: 100, icon: "🐦" },
-  { id: "q2", title: "Join Telegram Nemesis", desc: "Gabung komunitas Telegram", reward: 100, icon: "📱" },
-  { id: "q3", title: "Join Discord", desc: "Gabung server Discord kami", reward: 100, icon: "💬" },
-  { id: "q4", title: "Connect Wallet", desc: "Hubungkan wallet Solana", reward: 100, icon: "👛" },
-  { id: "q5", title: "Refer 1 Operator Baru", desc: "Ajak fleet operator bergabung", reward: 500, icon: "🤝" },
-  { id: "q6", title: "Participate in Pool Batch #1", desc: "Invest minimal 30.000 IDRX", reward: 1000, icon: "💰" },
-  { id: "q7", title: "Hold ≥1.000 poin selama 30 hari", desc: "Jaga saldo poin kamu", reward: 200, icon: "🏆" },
+interface Quest {
+  id: string;
+  title: string;
+  desc: string;
+  reward: number;
+  Icon: LucideIcon;
+  cta: string;
+}
+
+const quests: Quest[] = [
+  { id: "q1", title: "Follow Twitter @NemesisProtocol", desc: "Follow our official account", reward: 100, Icon: Twitter, cta: "Follow" },
+  { id: "q2", title: "Join Telegram Nemesis", desc: "Join Telegram community", reward: 100, Icon: Send, cta: "Join" },
+  { id: "q3", title: "Join Discord", desc: "Join our Discord server", reward: 100, Icon: MessageCircle, cta: "Join" },
+  { id: "q4", title: "Connect Wallet", desc: "Connect Solana wallet", reward: 100, Icon: Wallet, cta: "Connect" },
+  { id: "q5", title: "Refer 1 New Operator", desc: "Invite fleet operator to join", reward: 500, Icon: Handshake, cta: "Start" },
+  { id: "q6", title: "Join Pool Batch #1", desc: "Invest min 30,000 IDRX", reward: 1000, Icon: PiggyBank, cta: "View Pool" },
+  { id: "q7", title: "Hold 1,000 points for 30 days", desc: "Maintain your points balance", reward: 200, Icon: Trophy, cta: "Start" },
+];
+
+const weeklyPoints = [
+  { name: "Apr 1", value: 100 },
+  { name: "Apr 5", value: 240 },
+  { name: "Apr 10", value: 380 },
+  { name: "Apr 15", value: 520 },
+  { name: "Apr 20", value: 780 },
+  { name: "Apr 25", value: 940 },
+];
+
+const recentActivity = [
+  { avatar: "B", wallet: "BLo...1Tu", action: "100.0000 decharge points", pts: "+100.0000", time: "1d ago" },
+  { avatar: "3", wallet: "39G...cNj", action: "120.0000 decharge points", pts: "+120.0000", time: "1d ago" },
+  { avatar: "K", wallet: "kryptdou_", action: "60.0000 decharge points", pts: "+60.0000", time: "1d ago" },
+];
+
+const leaderboard = [
+  { rank: 1, wallet: "8EM.....peC", points: 1942861747 },
+  { rank: 2, wallet: "Ht5.....EpE", points: 1021850 },
+  { rank: 3, wallet: "91h.....PDi", points: 1017030 },
+  { rank: 4, wallet: "EnE.....hQC", points: 503160 },
+  { rank: 5, wallet: "4EK.....b7u", points: 502950 },
+  { rank: 6, wallet: "2xw.....A4m", points: 407400 },
 ];
 
 export default function QuestsPage() {
@@ -22,99 +59,149 @@ export default function QuestsPage() {
 
   const completedCount = completedIds.length;
   const total = quests.length;
-  const pct = (completedCount / total) * 100;
 
   return (
-    <div
-      className="min-h-screen p-6 md:p-8"
-      style={{ background: "var(--solana-dark)", color: "#E4E6EB" }}
-    >
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold font-[family-name:var(--font-orbitron)] gradient-text mb-2">
-          Quests — Kumpulkan Poin
-        </h1>
-        <p className="text-sm text-gray-400 mb-6">
-          Selesaikan quest dan dapatkan poin yang akan bisa ditukar $NMS saat IDO 2027
-        </p>
+    <div className="text-zinc-900 pb-8 w-full max-w-7xl mx-auto px-4 md:px-0">
+      <DepinStatsBar />
+      <div className="space-y-6">
 
-        {/* Progress */}
-        <div className="glass-card p-5 mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-300">
-              Progress: <span className="text-white font-bold">{completedCount}/{total}</span> quests
-            </span>
-            <span className="text-sm font-bold" style={{ color: "#5EEAD4" }}>
-              {pct.toFixed(1)}%
-            </span>
+        {/* Stats row */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+          <div className="md:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-zinc-100 relative overflow-hidden">
+            <p className="text-xs text-zinc-500 font-semibold mb-2 flex items-center gap-2">
+              <Trophy size={16} className="text-teal-600" /> All Points
+            </p>
+            <p className="text-3xl font-bold text-zinc-900">{formatNumber(18077472)}</p>
           </div>
-          <div
-            className="w-full h-3 rounded-full overflow-hidden"
-            style={{ background: "rgba(94,234,212,0.1)" }}
-          >
-            <div
-              className="h-full transition-all"
-              style={{
-                width: `${pct}%`,
-                background: "linear-gradient(90deg, #5EEAD4 0%, #8B5CF6 100%)",
-                boxShadow: "0 0 10px rgba(94,234,212,0.5)",
-              }}
-            />
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+            <p className="text-xs text-zinc-500 font-semibold mb-2 flex items-center gap-2">
+              <Wallet size={16} className="text-teal-600" /> My Points
+            </p>
+            <p className="text-3xl font-bold text-zinc-900">50</p>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+            <p className="text-xs text-zinc-500 font-semibold mb-2 flex items-center gap-2">
+              <Star size={16} className="text-teal-600" /> Global Rank
+            </p>
+            <p className="text-3xl font-bold text-zinc-900">#5,394</p>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+            <p className="text-xs text-zinc-500 font-semibold mb-2 flex items-center gap-2">
+              <CheckCircle2 size={16} className="text-teal-600" /> Progress
+            </p>
+            <p className="text-3xl font-bold text-zinc-900">{completedCount}/{total}</p>
           </div>
         </div>
 
-        {/* Quest grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {quests.map((q) => {
-            const done = completedIds.includes(q.id);
-            return (
-              <div
-                key={q.id}
-                className="glass-card p-5 relative flex flex-col"
-                style={{
-                  border: done
-                    ? "1px solid rgba(94,234,212,0.6)"
-                    : "1px solid rgba(94,234,212,0.25)",
-                  background: done
-                    ? "linear-gradient(135deg, rgba(94,234,212,0.1) 0%, rgba(34,38,46,0.7) 100%)"
-                    : "rgba(34,38,46,0.7)",
-                }}
-              >
-                <div className="flex items-start gap-3 mb-3">
-                  <span className="text-4xl">{q.icon}</span>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-white">{q.title}</h3>
-                    <p className="text-xs text-gray-400 mt-1">{q.desc}</p>
+        {/* Middle row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Chart */}
+          <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-zinc-900">Points</h3>
+              <div className="flex bg-zinc-100 rounded-lg p-1">
+                <button className="px-3 py-1.5 text-xs font-semibold bg-white shadow-sm rounded-md text-zinc-900">All Points</button>
+                <button className="px-3 py-1.5 text-xs font-semibold text-zinc-500 hover:text-zinc-900">Your Points</button>
+              </div>
+            </div>
+            <div className="h-[250px]">
+              <WorkshopRevenueChart data={weeklyPoints} suffix="" />
+            </div>
+          </div>
+          
+          {/* Recent Activity */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+            <h3 className="text-lg font-bold text-zinc-900 mb-6">Recent Activity</h3>
+            <div className="space-y-4">
+              {recentActivity.map((a, idx) => (
+                <div key={idx} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-lg">
+                      {a.avatar}
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-zinc-900">{a.wallet}</p>
+                      <p className="text-xs text-zinc-500">{a.action}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-green-500">{a.pts}</p>
+                    <p className="text-xs text-zinc-400">{a.time}</p>
                   </div>
                 </div>
-                <div className="flex items-center justify-between mt-auto pt-3">
-                  <span className="badge badge-green text-sm">+{q.reward} pts</span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Quest Grid */}
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {quests.slice(0, 4).map((q) => {
+              const done = completedIds.includes(q.id);
+              return (
+                <div key={q.id} className="bg-white rounded-2xl p-5 border border-zinc-100 shadow-sm flex flex-col justify-between h-[160px]">
+                  <div className="flex justify-between items-start">
+                    <div className="flex gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600">
+                        <q.Icon size={18} />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-zinc-900 text-sm">{q.title}</h4>
+                        <p className="text-xs text-zinc-500">{q.desc}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-green-500">+{q.reward} pts</p>
+                      <p className="text-[10px] text-zinc-400 font-semibold uppercase">Reward</p>
+                    </div>
+                  </div>
+                  
                   {done ? (
-                    <button
-                      disabled
-                      className="px-4 py-2 text-sm rounded-lg flex items-center gap-1"
-                      style={{
-                        background: "rgba(100,100,100,0.3)",
-                        color: "#888",
-                        cursor: "not-allowed",
-                      }}
-                    >
-                      <CheckCircle2 size={14} style={{ color: "#5EEAD4" }} />
-                      Selesai
+                    <button disabled className="w-full py-2.5 rounded-xl bg-zinc-100 text-zinc-500 font-bold text-sm flex justify-center items-center gap-2">
+                      <CheckCircle2 size={16} /> Completed
                     </button>
                   ) : (
-                    <button
-                      onClick={() => handleStart(q.id)}
-                      className="glow-btn-outline text-sm px-4 py-2"
-                    >
-                      Mulai
+                    <button onClick={() => handleStart(q.id)} className="w-full py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 transition-colors text-white font-bold text-sm shadow-sm">
+                      {q.cta}
                     </button>
                   )}
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+
+          {/* Leaderboard */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
+            <h3 className="text-lg font-bold text-zinc-900 mb-4">Leaderboard</h3>
+            <div className="space-y-4">
+              {leaderboard.map((row) => (
+                <div key={row.rank} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {row.rank === 1 ? (
+                      <span className="text-xl">🏆</span>
+                    ) : row.rank === 2 ? (
+                      <span className="text-xl">🥈</span>
+                    ) : row.rank === 3 ? (
+                      <span className="text-xl">🥉</span>
+                    ) : (
+                      <span className="text-xs font-semibold text-zinc-400 w-5 text-center">#{row.rank}</span>
+                    )}
+                    <div className="w-8 h-8 rounded-full bg-teal-900 text-white flex items-center justify-center font-bold text-xs">
+                      {row.wallet.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="font-bold text-zinc-900 text-sm">{row.wallet}</span>
+                  </div>
+                  <span className="text-sm font-bold text-green-500">+{formatNumber(row.points)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
   );
 }
+

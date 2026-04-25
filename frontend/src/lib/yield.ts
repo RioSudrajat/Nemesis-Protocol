@@ -60,11 +60,19 @@ export function formatNumber(n: number): string {
   return new Intl.NumberFormat('id-ID').format(n)
 }
 
-/** Format km */
+/** Format km — full number, no abbreviations */
 export function formatKm(km: number): string {
-  if (km >= 1_000_000) return `${(km / 1_000_000).toFixed(1)} jt km`
-  if (km >= 1_000) return `${(km / 1_000).toFixed(1)} rb km`
-  return `${km} km`
+  return `${formatNumber(km)} km`
+}
+
+/** Format IDRX amount — full number, no abbreviations. Example: 2.400.000.000 IDRX */
+export function formatIDRXFull(amount: number): string {
+  return `${formatNumber(amount)} IDRX`
+}
+
+/** Format Rupiah amount — full, no abbreviation. Example: Rp 50.000 */
+export function formatRupiah(amount: number): string {
+  return `Rp ${formatNumber(amount)}`
 }
 
 /** Truncate wallet address */
