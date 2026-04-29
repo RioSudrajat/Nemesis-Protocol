@@ -36,11 +36,11 @@ interface Activity {
 }
 
 const recentActivity: Activity[] = [
-  { Icon: CheckCircle2, label: "Quest selesai: Follow Twitter", pts: 100, time: "2 jam lalu" },
-  { Icon: Coins, label: "Pool distribution minggu ini", pts: 200, time: "1 hari lalu" },
-  { Icon: Handshake, label: "Bonus referral operator", pts: 500, time: "3 hari lalu" },
-  { Icon: Medal, label: "Weekly top 500", pts: 150, time: "5 hari lalu" },
-  { Icon: Send, label: "Quest selesai: Join Telegram", pts: 100, time: "6 hari lalu" },
+  { Icon: CheckCircle2, label: "Quest completed: Follow Twitter", pts: 100, time: "2 hours ago" },
+  { Icon: Coins, label: "Pool distribution this week", pts: 200, time: "1 day ago" },
+  { Icon: Handshake, label: "Operator referral bonus", pts: 500, time: "3 days ago" },
+  { Icon: Medal, label: "Weekly top 500", pts: 150, time: "5 days ago" },
+  { Icon: Send, label: "Quest completed: Join Telegram", pts: 100, time: "6 days ago" },
 ];
 
 const leaderboard = [
@@ -75,9 +75,9 @@ export default function PersonalDashboardPage() {
           >
             <Zap size={22} style={{ color: "#0F766E" }} />
           </div>
-          <h1 className="text-xl font-bold text-zinc-900 mb-2">Dashboard Personal</h1>
+          <h1 className="text-xl font-bold text-zinc-900 mb-2">Personal Dashboard</h1>
           <p className="text-sm text-zinc-500 mb-6">
-            Hubungkan wallet untuk melihat poin, rank, dan aktivitas kamu.
+            Connect your wallet to see your points, rank, and activities.
           </p>
           <ConnectWalletButton />
         </div>
@@ -94,7 +94,7 @@ export default function PersonalDashboardPage() {
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-zinc-900">Dashboard</h1>
             <p className="text-sm text-zinc-500 mt-1">
-              Overview poin, rank, dan aktivitas kamu di Nemesis DePIN.
+              Overview of your points, rank, and activities on Nemesis DePIN.
             </p>
           </div>
         </div>
@@ -125,17 +125,17 @@ export default function PersonalDashboardPage() {
 
         {/* Points chart */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
-          <h3 className="text-lg font-bold text-zinc-900 mb-1">Poin Mingguan</h3>
-          <p className="text-sm text-zinc-500 mb-6">5 minggu terakhir</p>
+          <h3 className="text-lg font-bold text-zinc-900 mb-1">Weekly Points</h3>
+          <p className="text-sm text-zinc-500 mb-6">Last 5 weeks</p>
           <div className="h-[250px]">
-            <WorkshopRevenueChart data={weeklyPoints} suffix="poin" />
+            <WorkshopRevenueChart data={weeklyPoints} suffix="points" />
           </div>
         </div>
 
         {/* Recent activity + Leaderboard */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100 flex flex-col">
-            <h3 className="text-lg font-bold text-zinc-900 mb-4">Aktivitas Terbaru</h3>
+            <h3 className="text-lg font-bold text-zinc-900 mb-4">Recent Activity</h3>
             <div className="space-y-2 flex-1">
               {recentActivity.map((a, idx) => (
                 <div
@@ -210,7 +210,7 @@ export default function PersonalDashboardPage() {
               </div>
               <div>
                 <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Quests</p>
-                <p className="text-base font-bold text-zinc-900 mt-0.5">Kumpulkan poin</p>
+                <p className="text-base font-bold text-zinc-900 mt-0.5">Collect points</p>
               </div>
             </div>
             <ChevronRight size={20} className="text-zinc-300 group-hover:text-teal-500 transition-colors" />
@@ -242,7 +242,7 @@ export default function PersonalDashboardPage() {
                 <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">FI Portfolio</p>
                 <p className="text-base font-bold text-zinc-900 mt-0.5 flex items-center gap-1.5">
                   <TrendingUp size={16} className="text-teal-600" />
-                  Lihat Investasi
+                  View Investments
                 </p>
               </div>
             </div>

@@ -15,11 +15,11 @@ export function RwaHeroSection() {
           </div>
 
           <h1 className="max-w-4xl font-[family-name:var(--font-fraunces)] text-6xl font-medium tracking-tighter text-zinc-950 sm:text-7xl lg:text-8xl">
-            Tokenisasi Infrastruktur EV Lo
+            Tokenisasi Aset Infrastruktur Lo
           </h1>
 
           <p className="mt-7 max-w-2xl text-lg leading-8 text-zinc-600 md:text-xl">
-            Ubah armada EV produktif menjadi aset on-chain yang dapat diverifikasi, didanai, dan menghasilkan distribusi IDRX dari revenue operasional nyata.
+            Ubah armada produktif dan aset infrastruktur fisik menjadi aset on-chain yang dapat diverifikasi, didanai, dan menghasilkan distribusi IDRX dari revenue operasional nyata.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -57,7 +57,7 @@ export function RwaHeroSection() {
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-zinc-950">
               <Image
                 src="/ev_logistics_bandung_1777118107682.png"
-                alt="EV fleet infrastructure operated by Nemesis RWA"
+                alt="Productive infrastructure operated by Nemesis RWA"
                 fill
                 sizes="(min-width: 1024px) 44vw, 92vw"
                 className="object-cover opacity-90"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CheckCircle2, Twitter, Send, MessageCircle, Wallet, Handshake, Trophy, PiggyBank, Star } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { formatNumber, truncateWallet } from "@/lib/yield";
@@ -35,10 +35,10 @@ const weeklyPoints = [
   { name: "Apr 25", value: 940 },
 ];
 
-const recentActivity = [
-  { avatar: "B", wallet: "BLo...1Tu", action: "100.0000 decharge points", pts: "+100.0000", time: "1d ago" },
-  { avatar: "3", wallet: "39G...cNj", action: "120.0000 decharge points", pts: "+120.0000", time: "1d ago" },
-  { avatar: "K", wallet: "kryptdou_", action: "60.0000 decharge points", pts: "+60.0000", time: "1d ago" },
+const initialRecentActivity = [
+  { avatar: "B", wallet: "BLo...1Tu", action: "100.0000 Nemesis points", pts: "+100.0000", time: "just now" },
+  { avatar: "3", wallet: "39G...cNj", action: "120.0000 Nemesis points", pts: "+120.0000", time: "1m ago" },
+  { avatar: "K", wallet: "kryptdou_", action: "60.0000 Nemesis points", pts: "+60.0000", time: "2m ago" },
 ];
 
 const leaderboard = [
@@ -52,6 +52,30 @@ const leaderboard = [
 
 export default function QuestsPage() {
   const [completedIds, setCompletedIds] = useState<string[]>(["q4", "q1", "q2"]);
+  const [activities, setActivities] = useState(initialRecentActivity);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const randomChar = () => chars[Math.floor(Math.random() * chars.length)];
+      const wallet = `${randomChar()}${randomChar()}${randomChar()}...${randomChar()}${randomChar()}${randomChar()}`;
+      const ptsVal = Math.floor(Math.random() * 50) * 10 + 50;
+      const newActivity = {
+        avatar: wallet[0].toUpperCase(),
+        wallet: wallet,
+        action: `${ptsVal}.0000 Nemesis points`,
+        pts: `+${ptsVal}.0000`,
+        time: "just now",
+      };
+      
+      setActivities(prev => {
+        const updated = [newActivity, ...prev].slice(0, 4);
+        return updated.map((a, i) => i === 0 ? a : { ...a, time: i === 1 ? "1m ago" : i === 2 ? "3m ago" : "5m ago" });
+      });
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleStart = (id: string) => {
     setCompletedIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
@@ -113,8 +137,8 @@ export default function QuestsPage() {
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
             <h3 className="text-lg font-bold text-zinc-900 mb-6">Recent Activity</h3>
             <div className="space-y-4">
-              {recentActivity.map((a, idx) => (
-                <div key={idx} className="flex items-center justify-between">
+              {activities.map((a, idx) => (
+                <div key={a.wallet + idx} className="flex items-center justify-between animate-in fade-in slide-in-from-top-2 duration-500">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-lg">
                       {a.avatar}

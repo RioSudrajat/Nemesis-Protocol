@@ -4,7 +4,7 @@ import { BatteryCharging, CarFront, SunMedium } from 'lucide-react'
 const MODULES = [
   {
     number: '01',
-    title: 'Armada EV Produktif',
+    title: 'Armada Produktif (EV)',
     status: 'Aktif',
     description: 'Motor, mobil, van, dan fleet logistik yang menghasilkan revenue dari operasi harian.',
     details: ['Ojol', 'Kurir', 'Logistik'],
@@ -38,7 +38,7 @@ export function RwaAssetModulesSection() {
         <div className="mb-12 max-w-3xl">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-teal-700">Asset modules</p>
           <h2 className="font-[family-name:var(--font-fraunces)] text-4xl font-medium tracking-tighter text-zinc-950 md:text-6xl">
-            Satu protocol untuk aset EV yang benar-benar bekerja.
+            Satu protocol untuk aset infrastruktur yang benar-benar bekerja.
           </h2>
         </div>
 

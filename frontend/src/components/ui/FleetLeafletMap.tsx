@@ -2,11 +2,14 @@
 
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
+import { useState } from "react";
 import "leaflet/dist/leaflet.css";
 import { FleetVehicle } from "@/context/EnterpriseContext";
+import { ActivityTripMap } from "@/components/depin/ActivityTripMap";
 
 interface FleetLeafletMapProps {
-  vehicles: FleetVehicle[];
+  vehicles?: any[];
+  pools?: any[];
 }
 
 // Region coordinates for approximate vehicle placement
@@ -42,7 +45,10 @@ function createVehicleMarkerIcon(health: number) {
   });
 }
 
-export default function FleetLeafletMap({ vehicles }: FleetLeafletMapProps) {
+export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProps) {
+  const [activeTripVehicle, setActiveTripVehicle] = useState<any>(null);
+  const isPoolMode = !!pools;
+  const items = pools || vehicles || [];
   return (
     <>
       <style>{`
@@ -86,49 +92,107 @@ export default function FleetLeafletMap({ vehicles }: FleetLeafletMapProps) {
       <MapContainer
         center={[-2.5, 118]}
         zoom={5}
+        minZoom={3}
+        maxBounds={[[-90, -180], [90, 180]]}
+        maxBoundsViscosity={1.0}
         scrollWheelZoom={true}
         style={{ height: "100%", width: "100%", borderRadius: "16px" }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          noWrap={true}
         />
-        {vehicles.map((v, idx) => {
-          const coords = regionCoordinates[v.region] || regionCoordinates.Other;
+        {items.map((item, idx) => {
+          const coords = regionCoordinates[item.region] || regionCoordinates.Other;
           // Offset slightly so vehicles in the same region don't overlap
           const offset = idx * 0.015;
           return (
             <Marker
-              key={`${v.vin}-${idx}`}
+              key={`${item.vin || item.id}-${idx}`}
               position={[coords.lat + offset * Math.sin(idx), coords.lng + offset * Math.cos(idx)]}
-              icon={createVehicleMarkerIcon(v.health)}
+              icon={createVehicleMarkerIcon(isPoolMode ? (item.status === 'Active' ? 100 : 60) : item.health)}
             >
               <Popup>
-                <div style={{ minWidth: 200 }}>
-                  <p style={{ fontWeight: 700, fontSize: 14, marginBottom: 2 }}>{v.name}</p>
-                  <p style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", fontFamily: "monospace", marginBottom: 8 }}>{v.vin}</p>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Health Score</span>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: getHealthColor(v.health) }}>{v.health}</span>
+                {isPoolMode ? (
+                  <div style={{ minWidth: 200 }}>
+                    <p style={{ fontWeight: 700, fontSize: 14, marginBottom: 2 }}>{item.name}</p>
+                    <p style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", fontFamily: "monospace", marginBottom: 8 }}>{item.id}</p>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Status</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: item.status === 'Active' ? "#86EFAC" : "#FCD34D" }}>{item.status}</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Region</span>
+                      <span style={{ fontSize: 12, fontWeight: 600 }}>{item.region}</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>EV Units</span>
+                      <span style={{ fontSize: 12, fontWeight: 600 }}>{item.units}</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Est. APY</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: "var(--solana-purple)" }}>{item.apy}</span>
+                    </div>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Region</span>
-                    <span style={{ fontSize: 12, fontWeight: 600 }}>{v.region}</span>
+                ) : (
+                  <div style={{ minWidth: 200 }}>
+                    <p style={{ fontWeight: 700, fontSize: 14, marginBottom: 2 }}>{item.name}</p>
+                    <p style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", fontFamily: "monospace", marginBottom: 8 }}>{item.vin}</p>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Health Score</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: getHealthColor(item.health) }}>{item.health}</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Region</span>
+                      <span style={{ fontSize: 12, fontWeight: 600 }}>{item.region}</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Mileage</span>
+                      <span style={{ fontSize: 12, fontWeight: 600 }}>{item.odometer.toLocaleString("id-ID")} km</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Owner</span>
+                      <span style={{ fontSize: 10, fontFamily: "monospace", color: "var(--solana-purple)" }}>{item.owner.slice(0, 8)}...</span>
+                    </div>
+                    
+                    <button
+                      onClick={() => setActiveTripVehicle(item)}
+                      style={{
+                        width: "100%",
+                        padding: "8px 0",
+                        background: "rgba(20, 184, 166, 0.1)",
+                        border: "1px solid rgba(20, 184, 166, 0.3)",
+                        borderRadius: "8px",
+                        color: "#14B8A6",
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                        cursor: "pointer",
+                        marginTop: "4px"
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = "rgba(20, 184, 166, 0.2)";
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = "rgba(20, 184, 166, 0.1)";
+                      }}
+                    >
+                      View Today's Activity
+                    </button>
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Mileage</span>
-                    <span style={{ fontSize: 12, fontWeight: 600 }}>{v.odometer.toLocaleString("id-ID")} km</span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Owner</span>
-                    <span style={{ fontSize: 10, fontFamily: "monospace", color: "var(--solana-purple)" }}>{v.owner.slice(0, 8)}...</span>
-                  </div>
-                </div>
+                )}
               </Popup>
             </Marker>
           );
         })}
       </MapContainer>
+      
+      {activeTripVehicle && (
+        <ActivityTripMap 
+          isModal={true} 
+          onClose={() => setActiveTripVehicle(null)} 
+        />
+      )}
     </>
   );
 }

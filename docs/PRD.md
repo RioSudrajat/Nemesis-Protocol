@@ -6,13 +6,13 @@
 
 ## 1. Context & Background
 
-NOC ID (vehicle identity & service history platform on Solana) is being fully rebranded and repurposed into **Nemesis Protocol** — a DePIN protocol that serves as the universal financial layer for Indonesia's productive EV infrastructure ecosystem. The existing NOC ID codebase at `D:\Projekan\NOC ID\frontend` is the starting point.
+NOC ID (vehicle identity & service history platform on Solana) is being fully rebranded and repurposed into **Nemesis Protocol** — a DePIN protocol that serves as the universal financial layer for Indonesia's productive EV infrastructure ecosystem (starting with EV fleets). The existing NOC ID codebase at `D:\Projekan\NOC ID\frontend` is the starting point.
 
-**The core thesis:** Every productive EV asset in Indonesia — fleet vehicles, charging stations, solar installations — that generates verifiable cash flow can be tokenized, invested in, and distributed as on-chain yield through Nemesis Protocol.
+**The core thesis:** Every productive EV infrastructure asset in Indonesia — fleet vehicles, charging stations, solar installations, IoT networks — that generates verifiable cash flow can be tokenized, invested in, and distributed as on-chain yield through Nemesis Protocol.
 
 **Three trustless proofs** form the protocol backbone:
 
-1. **Proof of Asset** (Nemesis RWA) — physical EV asset exists, registered, tokenized as SPL shares
+1. **Proof of Asset** (Nemesis RWA) — physical EV infrastructure asset exists, registered, tokenized as SPL shares
 2. **Proof of Activity** (Nemesis DePIN) — asset is actively operating, GPS-verified on-chain
 3. **Proof of Revenue** (Nemesis FI) — activity generates real revenue, auto-distributed to investors
 
@@ -20,7 +20,7 @@ NOC ID (vehicle identity & service history platform on Solana) is being fully re
 
 | NOC ID                              | Nemesis Protocol                                           |
 | ----------------------------------- | ---------------------------------------------------------- |
-| Vehicle identity & service passport | EV fleet tokenization + yield infrastructure               |
+| Vehicle identity & service passport | Productive EV infrastructure tokenization + yield framework (Phase 1: EV Fleets) |
 | `/dapp` — personal car owner        | Deprecated for now (Phase 2+ as Nemesis Owner)             |
 | `/enterprise` — OEM manufacturer    | `/rwa/operator` — fleet operator portal                    |
 | `/workshop` — service center        | `/workshop` — Nemesis partner workshop (mostly repurposed) |
@@ -395,7 +395,7 @@ src/data/enterprise-models.ts        ← renamed to operators.ts
 **Sections:**
 
 1. **Navbar** — Logo (`noc_logo.png`) + "Nemesis Protocol" text, links to DePIN / FI / RWA, CTA buttons ("Invest" → /fi, "Operators" → /rwa)
-2. **Hero** — Headline: _"Protokol Infrastruktur EV Indonesia"_, subline with tagline from pitch, two CTAs: "Mulai Invest (IDRX)" + "Tokenisasi Armada Lo", animated background (orbs or abstract map network, no 3D model)
+2. **Hero** — Headline: _"Protokol Infrastruktur EV Produktif Indonesia"_, subline with tagline from pitch, two CTAs: "Mulai Invest (IDRX)" + "Tokenisasi Aset Lo", animated background (orbs or abstract map network, no 3D model)
 3. **Live Network Stats** — Animated counters: Total fleet aktif, km driven today, total yield distributed, investors
 4. **3 Proof Layers** — Cards explaining DePIN / FI / RWA with icon, title, 1-sentence description, CTA per card
 5. **How It Works** — 3-step flow: (1) Aset EV Didaftarkan & Ditokenisasi, (2) GPS Verifikasi Aktivitas On-chain, (3) Yield Otomatis ke Investor Setiap Senin
@@ -675,7 +675,7 @@ APY saat ini:      33,2%
 
 - **Hero:** "Tokenisasi Infrastruktur EV Lo" — tagline, CTA "Daftar Sebagai Operator"
 - **Asset Module Cards** — 3 cards:
-  - **Modul 1 — Armada EV Produktif** ✅ AKTIF — ojol, kurir, logistik, semua kendaraan listrik
+  - **Modul 1 — Armada Produktif (EV)** ✅ AKTIF — ojol, kurir, logistik, semua kendaraan listrik
   - **Modul 2 — Jaringan Pengisian EV** 🔜 Berikutnya — SPKLU, charging station
   - **Modul 3 — Energi Surya + P2P** 🔮 Masa Depan — solar panel + battery storage
 - **How to tokenize:** 4-step process (Daftar → Pasang GPS → Mint Token → Terima Modal)

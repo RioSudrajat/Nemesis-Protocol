@@ -80,7 +80,7 @@ export default function NetworkDashboardPage() {
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-zinc-900">Network DePIN</h1>
             <p className="text-sm text-zinc-500">
-              On-chain verified EV fleet activity — real-time, anonymized.
+              On-chain verified EV infrastructure asset activity — real-time, anonymized.
             </p>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function NetworkDashboardPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-zinc-900 flex items-center gap-2">
               <MapPin size={20} className="text-teal-500" />
-              Fleet Activity Map
+              EV Infrastructure Activity Map
             </h2>
             <div className="text-sm font-semibold text-teal-600 bg-teal-50 px-3 py-1 rounded-full flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
@@ -243,7 +243,7 @@ export default function NetworkDashboardPage() {
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-200 bg-gradient-to-br from-white to-teal-50 flex flex-col gap-4">
               <div>
                 <h3 className="text-lg font-bold text-zinc-900 mb-1">
-                  Want to invest in this fleet?
+                  Want to invest in these EV infrastructure assets?
                 </h3>
                 <p className="text-sm text-zinc-600">
                   View open pools in Nemesis FI.

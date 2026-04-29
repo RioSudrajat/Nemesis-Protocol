@@ -9,7 +9,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/depin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/depin/quests", label: "Quests", icon: Trophy },
   { href: "/depin/earn", label: "Earn", icon: Zap },
-  { href: "/depin/transactions", label: "Riwayat Poin", icon: ArrowLeftRight },
+  { href: "/depin/transactions", label: "Points History", icon: ArrowLeftRight },
   { href: "/depin/referrals", label: "Referrals", icon: Users },
 ];
 

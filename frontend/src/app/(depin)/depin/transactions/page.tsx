@@ -6,7 +6,7 @@ import { DepinStatsBar } from "@/components/ui/DepinStatsBar";
 import { formatNumber } from "@/lib/yield";
 
 const filters = [
-  { id: "all", label: "Semua" },
+  { id: "all", label: "All" },
   { id: "Social", label: "Social" },
   { id: "Operator", label: "Operator" },
   { id: "Investor", label: "Investor" },
@@ -26,11 +26,11 @@ const rows: Row[] = [
   { date: "24 Apr 2026 13:10", activity: "Quest: Join Telegram", category: "Social", points: 100, status: "Confirmed" },
   { date: "23 Apr 2026 09:42", activity: "Pool distribution", category: "Investor", points: 200, status: "Confirmed" },
   { date: "22 Apr 2026 16:00", activity: "Connect Wallet", category: "Social", points: 100, status: "Confirmed" },
-  { date: "20 Apr 2026 11:15", activity: "Referral operator baru", category: "Referral", points: 500, status: "Pending" },
-  { date: "18 Apr 2026 10:00", activity: "Bonus hold 30 hari", category: "Social", points: 200, status: "Confirmed" },
+  { date: "20 Apr 2026 11:15", activity: "New operator referral", category: "Referral", points: 500, status: "Pending" },
+  { date: "18 Apr 2026 10:00", activity: "30-day hold bonus", category: "Social", points: 200, status: "Confirmed" },
   { date: "15 Apr 2026 14:20", activity: "Weekly top 500", category: "Social", points: 150, status: "Confirmed" },
   { date: "12 Apr 2026 08:45", activity: "Pool distribution", category: "Investor", points: 200, status: "Confirmed" },
-  { date: "10 Apr 2026 16:30", activity: "Referral operator baru", category: "Referral", points: 500, status: "Confirmed" },
+  { date: "10 Apr 2026 16:30", activity: "New operator referral", category: "Referral", points: 500, status: "Confirmed" },
   { date: "5 Apr 2026 09:00", activity: "Quest: Join Discord", category: "Social", points: 100, status: "Confirmed" },
 ];
 
@@ -48,9 +48,9 @@ export default function TransactionsPage() {
       <div className="space-y-6">
         {/* Page Header */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
-          <h1 className="text-xl md:text-2xl font-bold text-zinc-900">Riwayat Poin</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-zinc-900">Points History</h1>
           <p className="text-sm text-zinc-500 mt-1">
-            Transparan — setiap poin yang ditambahkan dicatat on-chain.
+            Transparent — every point added is recorded on-chain.
           </p>
         </div>
 
@@ -80,10 +80,10 @@ export default function TransactionsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-zinc-50 border-b border-zinc-100">
-                  <th className="text-left py-4 px-6 font-semibold text-zinc-500">Tanggal</th>
-                  <th className="text-left py-4 px-6 font-semibold text-zinc-500">Aktivitas</th>
-                  <th className="text-left py-4 px-6 font-semibold text-zinc-500">Kategori</th>
-                  <th className="text-right py-4 px-6 font-semibold text-zinc-500">Poin</th>
+                  <th className="text-left py-4 px-6 font-semibold text-zinc-500">Date</th>
+                  <th className="text-left py-4 px-6 font-semibold text-zinc-500">Activity</th>
+                  <th className="text-left py-4 px-6 font-semibold text-zinc-500">Category</th>
+                  <th className="text-right py-4 px-6 font-semibold text-zinc-500">Points</th>
                   <th className="text-left py-4 px-6 font-semibold text-zinc-500">Status</th>
                 </tr>
               </thead>
@@ -123,7 +123,7 @@ export default function TransactionsPage() {
 
         {/* Pagination */}
         <div className="flex items-center justify-between text-sm bg-white rounded-2xl p-4 shadow-sm border border-zinc-100">
-          <span className="text-zinc-500 font-medium px-2">Halaman 1 dari 3</span>
+          <span className="text-zinc-500 font-medium px-2">Page 1 of 3</span>
           <div className="flex gap-2">
             <button
               className="px-4 py-2 rounded-xl text-xs font-bold bg-zinc-50 text-zinc-400 border border-zinc-100 cursor-not-allowed"

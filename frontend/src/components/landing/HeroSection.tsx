@@ -22,7 +22,7 @@ export default function HeroSection() {
 
           <div className="mt-9 max-w-2xl">
             <p className="text-base font-medium leading-relaxed tracking-tight text-[#374151] md:text-lg">
-              Own revenue-generating EV fleets through a transparent protocol, settled in IDRX and verified by real-world activity.
+              Own revenue-generating EV infrastructure through a transparent protocol, settled in IDRX and verified by real-world activity.
             </p>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
@@ -33,10 +33,10 @@ export default function HeroSection() {
                 Start Investing
               </Link>
               <Link
-                href="/rwa/operator"
+                href="/rwa/onboard"
                 className="inline-flex items-center justify-center rounded-[14px] bg-[#B9F8D7] px-8 py-3.5 text-sm font-bold text-[#07140F] shadow-[0_10px_22px_rgba(20,184,166,0.18)] transition-colors hover:bg-[#A7F3D0] sm:min-w-44"
               >
-                Onboard Fleet
+                Onboard Infrastructure
               </Link>
             </div>
 

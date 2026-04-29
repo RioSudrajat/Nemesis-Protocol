@@ -39,13 +39,13 @@ export default function ReferralsPage() {
             Referrals
           </h1>
           <p className="text-sm text-zinc-500 mt-2">
-            Ajak orang lain bergabung — dapatkan {formatNumber(500)} poin untuk setiap referral yang aktif.
+            Invite others to join — get {formatNumber(500)} points for every active referral.
           </p>
         </div>
 
         {/* Link section */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
-          <label className="text-xs text-zinc-500 font-semibold uppercase tracking-wider mb-2 block">Link Referral Kamu</label>
+          <label className="text-xs text-zinc-500 font-semibold uppercase tracking-wider mb-2 block">Your Referral Link</label>
           <div className="flex flex-col md:flex-row gap-3">
             <input
               readOnly
@@ -58,11 +58,11 @@ export default function ReferralsPage() {
             >
               {copied ? (
                 <>
-                  <CheckCircle2 size={18} /> Tersalin
+                  <CheckCircle2 size={18} /> Copied
                 </>
               ) : (
                 <>
-                  <Copy size={18} /> Salin Link
+                  <Copy size={18} /> Copy Link
                 </>
               )}
             </button>
@@ -72,11 +72,11 @@ export default function ReferralsPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
-            <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Total Referral</p>
+            <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Total Referrals</p>
             <p className="text-2xl font-bold text-zinc-900 mt-2">{formatNumber(totalReferrals)}</p>
           </div>
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-teal-200 bg-teal-50/10">
-            <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Poin dari Referral</p>
+            <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold">Points from Referrals</p>
             <p className="text-2xl font-bold mt-2 text-teal-600">
               {formatNumber(totalPoints)}
             </p>
@@ -85,16 +85,16 @@ export default function ReferralsPage() {
 
         {/* Referred wallets */}
         <div>
-          <h3 className="text-lg font-bold text-zinc-900 mb-4">Wallet yang Direferensikan</h3>
+          <h3 className="text-lg font-bold text-zinc-900 mb-4">Referred Wallets</h3>
           <div className="bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-zinc-50 border-b border-zinc-100">
                     <th className="text-left py-4 px-6 font-semibold text-zinc-500">Wallet</th>
-                    <th className="text-left py-4 px-6 font-semibold text-zinc-500">Tipe</th>
-                    <th className="text-left py-4 px-6 font-semibold text-zinc-500">Bergabung</th>
-                    <th className="text-right py-4 px-6 font-semibold text-zinc-500">Poin</th>
+                    <th className="text-left py-4 px-6 font-semibold text-zinc-500">Type</th>
+                    <th className="text-left py-4 px-6 font-semibold text-zinc-500">Joined Date</th>
+                    <th className="text-right py-4 px-6 font-semibold text-zinc-500">Points</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -125,7 +125,7 @@ export default function ReferralsPage() {
         <div>
           <h3 className="text-lg font-bold text-zinc-900 mb-4 flex items-center gap-2">
             <Share2 size={20} className="text-teal-600" />
-            Bagikan Sekarang
+            Share Now
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <button

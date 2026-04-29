@@ -57,7 +57,7 @@ export default function HeroSectionCinematicDraft() {
               className="mt-7 max-w-2xl"
             >
               <p className="text-base font-medium leading-relaxed text-white/80 md:text-lg">
-                Fractional shares of real revenue-generating EV fleets. Settled in IDRX on Solana, verified by GPS activity, and designed for Indonesia&apos;s productive infrastructure economy.
+                Fractional shares of real revenue-generating EV infrastructure. Settled in IDRX on Solana, verified by GPS activity, and designed for Indonesia&apos;s productive infrastructure economy.
               </p>
 
               <div className="mt-7 flex flex-wrap gap-2.5">
@@ -79,10 +79,10 @@ export default function HeroSectionCinematicDraft() {
                   Invest Now
                 </Link>
                 <Link
-                  href="/rwa/operator"
+                  href="/rwa/onboard"
                   className="inline-flex items-center justify-center border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-bold text-white backdrop-blur-md transition-colors hover:border-[#5EEAD4]/60 hover:bg-[#5EEAD4]/10 sm:min-w-40"
                 >
-                  Onboard Fleet
+                  Onboard Infrastructure
                 </Link>
               </div>
             </MotionDiv>

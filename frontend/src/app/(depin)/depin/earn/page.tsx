@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { DepinStatsBar } from "@/components/ui/DepinStatsBar";
-import { Globe } from "@/components/ui/Globe";
+import dynamic from "next/dynamic";
 import { formatNumber } from "@/lib/yield";
+
+const FleetLeafletMap = dynamic(() => import("@/components/ui/FleetLeafletMap"), { ssr: false });
 import { Lock, Zap, TrendingUp } from "lucide-react";
 import Image from "next/image";
 
@@ -60,6 +62,12 @@ export default function EarnPage() {
       setViewedPools([...viewedPools, id]);
     }
   };
+  const mockPoolsForMap = [
+    { name: "Ekspansi Ojol SBY", id: "POOL-SBY", region: "Surabaya", apy: "43%", units: 19, status: "Active" },
+    { name: "Logistik EV Delivery", id: "POOL-BDO", region: "Bandung", apy: "22-45%", units: 12, status: "Active" },
+    { name: "Fleet Pool Batch #1", id: "POOL-CGK", region: "Jakarta", apy: "20-40%", units: 18, status: "Upcoming" },
+    { name: "Ride-hailing Fleet", id: "POOL-TNG", region: "Tangerang", apy: "20-40%", units: 6, status: "Upcoming" },
+  ] as any[];
 
   return (
     <div className="text-zinc-900 pb-8 w-full max-w-7xl mx-auto px-4 md:px-0">
@@ -69,9 +77,9 @@ export default function EarnPage() {
         {/* Hero Section */}
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16 py-8">
           <div className="flex-1 w-full flex justify-center">
-            {/* Globe Container */}
-            <div className="w-full max-w-[400px]">
-              <Globe />
+            {/* Map Container replacing Globe */}
+            <div className="w-full h-[300px] md:h-[400px] rounded-3xl overflow-hidden border border-zinc-100 shadow-sm relative z-0">
+              <FleetLeafletMap pools={mockPoolsForMap} />
             </div>
           </div>
           
@@ -81,7 +89,7 @@ export default function EarnPage() {
                 Earn with Tokenized<br />Productive EV Infrastructure
               </h1>
               <p className="text-zinc-500 text-lg">
-                Own your share of EV fleets to start earning daily yields.
+                Own your share of productive EV infrastructure to start earning periodic yields.
               </p>
             </div>
             
@@ -192,12 +200,12 @@ export default function EarnPage() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-bold text-zinc-900 flex items-center gap-2">
-                Fleet Pools
+                EV Asset Pools
                 <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded border border-green-100 flex items-center gap-1">
                   <TrendingUp size={12} /> High Yield
                 </span>
               </h2>
-              <p className="text-sm text-zinc-500 mt-1">Variable yields from productive EV fleets.</p>
+              <p className="text-sm text-zinc-500 mt-1">Variable yields from productive EV infrastructure assets.</p>
             </div>
             <button className="text-sm font-semibold text-zinc-900 flex items-center gap-2">
               APY (High &rarr; Low)
