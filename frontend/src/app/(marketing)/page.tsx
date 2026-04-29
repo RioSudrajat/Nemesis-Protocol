@@ -20,7 +20,7 @@ export const metadata = {
 
 export default function LandingPage() {
   return (
-    <main className="relative min-h-screen bg-white font-sans selection:bg-[#2DD4BF]/30 selection:text-white">
+    <main className="relative min-h-screen bg-white font-[family-name:var(--font-plus-jakarta)] selection:bg-[#2DD4BF]/30 selection:text-white">
       <MotionProvider>
         {/* ── Unified Seamless Background: Hero → Scale Transition ── */}
         {/* Kept here (server-side) so it renders instantly without any JS */}

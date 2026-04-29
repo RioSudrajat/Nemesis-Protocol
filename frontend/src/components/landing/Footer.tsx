@@ -61,7 +61,7 @@ export default function Footer() {
 
       {/* Huge Bottom Branding Text */}
       <div className="w-full flex justify-center items-end mt-auto pointer-events-none select-none relative z-10">
-        <h2 className="text-[28vw] md:text-[23vw] leading-[0.75] font-semibold tracking-tighter text-white opacity-95 translate-y-[12%]">
+        <h2 className="translate-y-[12%] font-[family-name:var(--font-fraunces)] text-[28vw] font-semibold leading-[0.75] tracking-tighter text-white opacity-95 md:text-[23vw]">
           NEMESIS
         </h2>
       </div>

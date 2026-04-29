@@ -20,7 +20,7 @@ export default function FinalCtaSection() {
 
           {/* Left Content */}
           <div className="relative z-10 flex flex-col items-start w-full lg:w-3/5">
-            <h2 className="text-[3rem] md:text-[4.5rem] font-medium leading-[1.05] tracking-tight text-white mb-8 max-w-2xl">
+            <h2 className="mb-8 max-w-2xl font-[family-name:var(--font-fraunces)] text-[3rem] font-medium leading-[1.05] tracking-tight text-white md:text-[4.5rem]">
               Own a Share of <br />
               Indonesia&apos;s Electric <br />
               Future.
@@ -46,7 +46,7 @@ export default function FinalCtaSection() {
                 />
               </div>
               <div className="px-3 pb-3">
-                <p className="text-[#111827] text-base font-semibold tracking-tight">NEMESIS Protocol</p>
+                <p className="font-[family-name:var(--font-fraunces)] text-base font-semibold tracking-tight text-[#111827]">NEMESIS Protocol</p>
                 <p className="text-gray-500 text-[13px] leading-relaxed mt-1">Bridging RWA and DePIN to create a new dimension of utility.</p>
               </div>
             </div>

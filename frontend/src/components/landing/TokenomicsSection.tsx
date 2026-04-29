@@ -23,7 +23,7 @@ export default function TokenomicsSection() {
 
       {/* Floating overlay text — top right, only desktop */}
       <div className="absolute top-10 right-[6%] text-right z-20 hidden lg:block">
-        <p className="text-[1.6rem] font-light leading-[1.15] tracking-tight text-[#BDBDBD] max-w-[250px]">
+        <p className="max-w-[250px] font-[family-name:var(--font-fraunces)] text-[1.6rem] font-light leading-[1.15] tracking-tight text-[#BDBDBD]">
           Governance.<br />Yield Multipliers.<br />Data Marketplace.
         </p>
       </div>
@@ -43,7 +43,7 @@ export default function TokenomicsSection() {
 
         {/* Bottom: big heading */}
         <div className="pt-16">
-          <h2 className="text-[2.75rem] md:text-[4.5rem] lg:text-[5.5rem] font-medium leading-[1.0] tracking-[-0.04em] text-[#111827]">
+          <h2 className="font-[family-name:var(--font-fraunces)] text-[2.75rem] font-medium leading-[1.0] tracking-[-0.04em] text-[#111827] md:text-[4.5rem] lg:text-[5.5rem]">
             $NMS aligns<br />incentives across<br />
             <span className="text-[#BDBDBD]">the entire network.</span>
           </h2>

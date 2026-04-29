@@ -11,7 +11,7 @@ export default function DecisionEasySection() {
 
           {/* Left Content */}
           <div className="flex flex-col pr-0 lg:pr-12">
-            <h2 className="text-[3rem] md:text-[4rem] font-medium leading-[1.05] tracking-tight text-[#111827] max-w-lg mb-12">
+            <h2 className="mb-12 max-w-lg font-[family-name:var(--font-fraunces)] text-[3rem] font-medium leading-[1.05] tracking-tight text-[#111827] md:text-[4rem]">
               Bridging the EV financing gap
             </h2>
 
@@ -49,7 +49,7 @@ export default function DecisionEasySection() {
               <div>
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-4 h-[1px] bg-gray-400"></div>
-                  <h3 className="text-[#111827] font-semibold text-lg">Fleet Operators</h3>
+                  <h3 className="font-[family-name:var(--font-fraunces)] text-lg font-semibold text-[#111827]">Fleet Operators</h3>
                 </div>
                 <p className="text-[#6B7280] text-[13px] md:text-sm leading-relaxed pl-7">
                   Scale your EV fleet without the burden of 15% bank interest. Tokenize your units and access global liquidity instantly.
@@ -60,7 +60,7 @@ export default function DecisionEasySection() {
               <div>
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-4 h-[1px] bg-gray-400"></div>
-                  <h3 className="text-[#111827] font-semibold text-lg">Retail Investors</h3>
+                  <h3 className="font-[family-name:var(--font-fraunces)] text-lg font-semibold text-[#111827]">Retail Investors</h3>
                 </div>
                 <p className="text-[#6B7280] text-[13px] md:text-sm leading-relaxed pl-7">
                   Earn 30–41% APY in Rupiah from real physical assets. No opaque P2P lending. Full GPS-verified transparency.

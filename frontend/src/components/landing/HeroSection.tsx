@@ -15,7 +15,7 @@ export default function HeroSection() {
         </div>
 
         <div className="max-w-5xl">
-          <h1 className="text-[4rem] font-medium leading-[0.95] tracking-tighter text-[#09111F] sm:text-[5.5rem] md:text-[7rem] lg:text-[8rem] xl:text-[8.75rem]">
+          <h1 className="font-[family-name:var(--font-fraunces)] text-[3.85rem] font-medium leading-[0.95] tracking-tighter text-[#09111F] sm:text-[5.25rem] md:text-[6.5rem] lg:text-[7.5rem] xl:text-[8.25rem]">
             <span className="block">Tokenized EV</span>
             <span className="block">Infrastructure</span>
           </h1>
