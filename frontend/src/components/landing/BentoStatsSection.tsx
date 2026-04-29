@@ -9,7 +9,7 @@ export default function BentoStatsSection() {
 
         {/* Header */}
         <div className="text-center mb-16 flex flex-col items-center">
-          <h2 className="text-[2.5rem] md:text-[3.5rem] font-medium leading-tight tracking-tight text-[#111827] mb-6">
+          <h2 className="mb-6 font-[family-name:var(--font-fraunces)] text-[2.5rem] font-medium leading-tight tracking-tight text-[#111827] md:text-[3.5rem]">
             The Scale of the Opportunity
           </h2>
           <p className="text-[#6B7280] text-[16px] md:text-[18px] max-w-2xl font-medium leading-relaxed">
@@ -36,7 +36,7 @@ export default function BentoStatsSection() {
                 />
               </div>
               <div className="text-right">
-                <h3 className="text-[3.5rem] leading-none font-medium text-[#111827] tracking-tighter mb-2">4.3M</h3>
+                <h3 className="mb-2 font-[family-name:var(--font-fraunces)] text-[3.5rem] font-medium leading-none tracking-tighter text-[#111827]">4.3M</h3>
                 <p className="text-[#6B7280] text-[13px] font-medium">Active Ojol Drivers</p>
               </div>
             </div>
@@ -51,10 +51,10 @@ export default function BentoStatsSection() {
             </div>
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow flex-1 flex flex-col justify-between min-h-[250px]">
               <div>
-                <h3 className="text-[3.5rem] leading-none font-medium text-[#111827] tracking-tighter mb-2">13M</h3>
+                <h3 className="mb-2 font-[family-name:var(--font-fraunces)] text-[3.5rem] font-medium leading-none tracking-tighter text-[#111827]">13M</h3>
                 <p className="text-[#6B7280] text-[13px] font-medium">Govt EV Target by 2030</p>
               </div>
-              <h4 className="text-[#111827] text-[1.25rem] leading-snug font-semibold mt-8">
+              <h4 className="mt-8 font-[family-name:var(--font-fraunces)] text-[1.35rem] font-semibold leading-snug text-[#111827]">
                 A massive transition requiring billions in decentralized capital.
               </h4>
             </div>
@@ -63,15 +63,15 @@ export default function BentoStatsSection() {
           {/* Right Column — 3 Small Cards */}
           <div className="flex flex-col md:flex-row lg:flex-col gap-6 lg:h-full md:col-span-2 lg:col-span-1">
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow flex-1 flex flex-col justify-center">
-              <h3 className="text-[3.5rem] leading-none font-medium text-[#111827] tracking-tighter mb-2">41<span className="text-[2rem]">%</span></h3>
+              <h3 className="mb-2 font-[family-name:var(--font-fraunces)] text-[3.5rem] font-medium leading-none tracking-tighter text-[#111827]">41<span className="text-[2rem]">%</span></h3>
               <p className="text-[#6B7280] text-[13px] font-medium">Max Verifiable APY</p>
             </div>
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow flex-1 flex flex-col justify-center">
-              <h3 className="text-[3.5rem] leading-none font-medium text-[#111827] tracking-tighter mb-2">$175<span className="text-[2rem]">M</span></h3>
+              <h3 className="mb-2 font-[family-name:var(--font-fraunces)] text-[3.5rem] font-medium leading-none tracking-tighter text-[#111827]">$175<span className="text-[2rem]">M</span></h3>
               <p className="text-[#6B7280] text-[13px] font-medium">IDRX On-Chain Vol.</p>
             </div>
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow flex-1 flex flex-col justify-center">
-              <h3 className="text-[3.5rem] leading-none font-medium text-[#111827] tracking-tighter mb-2">30<span className="text-[2rem]">K</span></h3>
+              <h3 className="mb-2 font-[family-name:var(--font-fraunces)] text-[3.5rem] font-medium leading-none tracking-tighter text-[#111827]">30<span className="text-[2rem]">K</span></h3>
               <p className="text-[#6B7280] text-[13px] font-medium">Min. Share Price (IDR)</p>
             </div>
           </div>

@@ -39,9 +39,9 @@ export default function RWALayout({ children }: { children: ReactNode }) {
     )
   }
 
-  // Public pages — minimal, no sidebar
+  // Public pages use the light product-marketing surface. Operator portal stays dark.
   return (
-    <div className="min-h-screen" style={{ background: 'var(--solana-dark)' }}>
+    <div className="theme-light min-h-screen font-[family-name:var(--font-plus-jakarta)]" style={{ background: '#F8FAF8', color: '#0A0A0B' }}>
       {children}
     </div>
   )

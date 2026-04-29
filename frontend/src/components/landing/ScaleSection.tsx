@@ -10,7 +10,7 @@ export default function ScaleSection() {
 
         {/* Left: Text Content */}
         <div className="w-full xl:w-5/12 flex flex-col items-start xl:pr-8">
-          <h2 className="text-[2.5rem] md:text-[3.5rem] lg:text-[4rem] font-medium leading-[1.05] tracking-tighter text-[#111827] mb-8">
+          <h2 className="mb-8 font-[family-name:var(--font-fraunces)] text-[2.5rem] font-medium leading-[1.05] tracking-tighter text-[#111827] md:text-[3.5rem] lg:text-[4rem]">
             Transforming productive EVs<br className="hidden md:block" />
             into yield-generating assets
           </h2>
@@ -43,7 +43,7 @@ export default function ScaleSection() {
             <span className="text-gray-400 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">75% Util.</span>
             <div className="relative z-10">
               <div className="text-[#6B7280] text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Base Fleet APY</div>
-              <h3 className="text-2xl sm:text-4xl lg:text-5xl font-medium tracking-tighter text-[#111827]">30.0%</h3>
+              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium tracking-tighter text-[#111827] sm:text-4xl lg:text-5xl">30.0%</h3>
             </div>
           </MotionDiv>
 
@@ -59,7 +59,7 @@ export default function ScaleSection() {
             <span className="text-gray-400 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">80% Util.</span>
             <div className="relative z-10">
               <div className="text-[#6B7280] text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Active Fleet</div>
-              <h3 className="text-2xl sm:text-4xl lg:text-5xl font-medium tracking-tighter text-[#111827]">33.3%</h3>
+              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium tracking-tighter text-[#111827] sm:text-4xl lg:text-5xl">33.3%</h3>
             </div>
           </MotionDiv>
 
@@ -75,7 +75,7 @@ export default function ScaleSection() {
             <span className="text-gray-400 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">90% Util.</span>
             <div className="relative z-10">
               <div className="text-[#6B7280] text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Optimized Fleet</div>
-              <h3 className="text-2xl sm:text-4xl lg:text-5xl font-medium tracking-tighter text-[#111827]">38.4%</h3>
+              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium tracking-tighter text-[#111827] sm:text-4xl lg:text-5xl">38.4%</h3>
             </div>
           </MotionDiv>
 
@@ -92,7 +92,7 @@ export default function ScaleSection() {
             <span className="text-teal-100 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">100% Util.</span>
             <div className="relative z-10">
               <div className="text-white/90 text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Max Efficiency</div>
-              <h3 className="text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tighter text-white">41.6%</h3>
+              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-bold tracking-tighter text-white sm:text-4xl lg:text-5xl">41.6%</h3>
             </div>
           </MotionDiv>
 

@@ -16,7 +16,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <nav className="fixed left-0 right-0 top-0 z-50 px-4 py-4 md:px-8">
+    <nav className="fixed left-0 right-0 top-0 z-50 px-4 py-4 font-[family-name:var(--font-plus-jakarta)] md:px-8">
       <div className="mx-auto max-w-[1400px]">
         <div className="flex items-center justify-between rounded-full border border-black/5 bg-[#F8FFFC]/75 px-4 py-3 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-xl md:px-5">
           <Link
@@ -34,7 +34,7 @@ export default function Navbar() {
                 className="object-contain"
               />
             </span>
-            <span className="font-sans text-xl font-semibold tracking-tight text-[#111827] transition-colors group-hover:text-black md:text-2xl">
+            <span className="font-[family-name:var(--font-plus-jakarta)] text-xl font-semibold tracking-tight text-[#111827] transition-colors group-hover:text-black md:text-2xl">
               NEMESIS<span className="text-[#14B8A6]">×</span>
             </span>
           </Link>
