@@ -6,15 +6,71 @@
 
 ## 1. Context & Background
 
-NOC ID (vehicle identity & service history platform on Solana) is being fully rebranded and repurposed into **Nemesis Protocol** — a DePIN protocol that serves as the universal financial layer for Indonesia's productive EV infrastructure ecosystem (starting with EV fleets). The existing NOC ID codebase at `D:\Projekan\NOC ID\frontend` is the starting point.
+NOC ID (vehicle identity & service history platform on Solana) is being fully rebranded and repurposed into **Nemesis Protocol**. The existing NOC ID codebase at `D:\Projekan\NOC ID\frontend` is the starting point.
 
-**The core thesis:** Every productive EV infrastructure asset in Indonesia — fleet vehicles, charging stations, solar installations, IoT networks — that generates verifiable cash flow can be tokenized, invested in, and distributed as on-chain yield through Nemesis Protocol.
+**Nemesis Protocol is a DePIN for productive EV infrastructure asset.**
 
-**Three trustless proofs** form the protocol backbone:
+Nemesis is not meant to be positioned as only a vehicle product. It is the protocol layer for EV infrastructure assets that:
 
-1. **Proof of Asset** (Nemesis RWA) — physical EV infrastructure asset exists, registered, tokenized as SPL shares
-2. **Proof of Activity** (Nemesis DePIN) — asset is actively operating, GPS-verified on-chain
-3. **Proof of Revenue** (Nemesis FI) — activity generates real revenue, auto-distributed to investors
+- generate real economic activity
+- can be verified through telemetry or metered usage
+- can be financed through on-chain capital
+- can distribute verified cashflows back to investors
+
+### Asset Scope
+
+Nemesis is designed to cover three EV infrastructure categories:
+
+1. **Mobility Assets**
+   - EV ride-hailing rental bikes
+   - EV delivery bikes
+   - EV cargo bikes
+   - EV taxis
+   - EV vans
+   - EV shuttles
+   - EV buses
+2. **Charging Assets**
+   - depot chargers
+   - public fast chargers
+   - swap stations
+   - corridor charging hubs
+3. **Energy Assets**
+   - solar for EV depots
+   - battery storage
+   - exportable surplus electricity assets
+
+**Phase 1 focus:** productive mobility assets, especially ride-hailing EV rental bikes and other productive EV fleet vehicles.
+
+### Nemesis Thesis
+
+Nemesis exists to turn productive EV infrastructure into investable, telemetry-verified, cashflow-generating on-chain products.
+
+The protocol has 3 layers:
+
+1. **Proof Layer**
+   - proves the asset exists
+   - proves the asset is active
+   - proves the asset is generate revenue
+   - proves the asset is maintained
+2. **Financing Layer**
+   - brings capital into productive EV infrastructure
+   - structures pool products
+   - routes verified cashflows to investors
+3. **Protocol Layer**
+   - ingests telemetry
+   - scores activity
+   - manages reserves
+   - coordinates distributions
+   - expands across asset classes over time
+
+### Four Protocol Proofs
+
+Nemesis should standardize every asset around four proofs:
+
+1. **Proof of Asset**
+2. **Proof of Activity**
+3. **Proof of Revenue**
+4. **Proof of Maintenance**
 
 ### What's Changing vs NOC ID
 
@@ -105,6 +161,26 @@ All styling from NOC ID is carried over exactly as-is to every portal in Nemesis
 - **GPS for MVP:** Browser Geolocation API on driver's phone (no hardware GPS yet)
 - **Auth:** Solana wallet connect (Phantom/Backpack) for all portals except Driver sub-portal
 - **Driver auth:** Phone number + OTP only — zero Web3 exposure
+
+### Phase 1 Product Strategy
+
+Nemesis should not force one financing structure across all EV assets.
+
+Phase 1 should ship with:
+
+1. **Mobility Credit Pools**
+   - for ride-hailing EV rental bikes, delivery bikes, cargo bikes
+   - rent-to-own or amortizing principal structure
+   - fixed recurring rental / remittance collections
+2. **Fleet Remittance Pools**
+   - for taxis, vans, shuttles, buses
+   - contracted remittance structure
+3. **Yield Pools** (Phase 2+)
+   - for chargers, swap stations, solar, storage
+
+For hackathon / MVP, the core financial product is:
+
+> **36-month rent-to-own mobility credit pool**
 
 ### Route Group → Sub-product Mapping
 
@@ -503,19 +579,19 @@ Mirip halaman Earn DeCharge TAPI kontennya berbeda:
 
 #### 6.2.6 Pool Fleet Map — `/depin/pool/[poolId]`
 
-**Auth:** Wallet connect + must hold shares in this pool | **Status:** NEW
+**Auth:** Wallet connect + must hold units in this pool | **Status:** NEW
 
-Investor-gated view (dikunci ke pemegang saham pool tersebut):
+Investor-gated view (dikunci ke pemegang unit pool tersebut):
 
-- Map dengan **hanya unit-unit pool ini** (misalnya 100 kendaraan Fleet Pool Batch #1)
+- Map dengan **hanya unit-unit pool ini** (misalnya 50 ride-hailing EV rental bikes atau 20 taxi unit dalam pool tertentu)
 - Tiap dot = 1 kendaraan nyata. Warna: Hijau (aktif) / Abu (idle) / Kuning (servis) / Merah (GPS offline)
 - Legend: X aktif, Y idle, Z servis
 - Klik unit → **UnitDetailModal:**
   - Foto kendaraan (dari registrasi)
   - Status: Online/Offline
-  - Stats: Total km lifetime, km kemarin, charging sessions
-  - **Rute Hari Ini (Strava-style)** — Leaflet map dengan polyline connected per trip
-  - Trip log hari ini: timestamp | asal → tujuan | km | on-chain hash [Verify ↗]
+  - Stats: Total km lifetime, km hari ini, active usage hours
+  - **Rute Hari Ini (Strava-style)** — Leaflet map dengan polyline connected dari GPS daily route logs
+  - Daily route log: timestamp | zona | km | active hours | on-chain hash [Verify ↗]
   - Node Score: 94/100
   - Health Score: 87/100
   - Next maintenance: ~300 km lagi
@@ -570,23 +646,60 @@ Jadwal sekarang →
 
 **Auth:** None (public listing). Invest requires wallet connect. | **Status:** NEW
 
-**Mirip halaman Earn DeCharge** (bukan Quests):
+Nemesis FI is the financing and distribution layer for productive EV infrastructure pools.
 
-- **Header stats:** Total Value Locked (IDRX) | Avg APY | Total Investors | Total Yield Distributed
-- **Upcoming pools** section — pool yang belum dibuka (status: "Waitlist")
-- **Active pools** sections, dikelompokkan per kategori:
-  - **Nemesis Native Pools** (dioperasikan Nemesis sendiri) — badge "Nemesis Native 🟢"
-  - **Partner Operated Pools** — badge "Partner Operated 🔵"
-- **Pool Card** per item:
-  - Foto lokasi/foto armada
-  - Nama pool (misal: "Fleet Pool Batch #1 — Jakarta")
-  - APY range (misal: "30–41%")
-  - Badge: "Energy Points Eligible" jika dapat DePIN points
-  - Progress bar: Total Supplied vs Target
-  - Tags: lock period (3yr/flexible), operator type
-  - Tombol: "Pool Details" (existing) atau "Waitlist" (upcoming)
-- **Fixed Income Pools** section — Coming Soon (render card placeholder)
-- **Filter/Sort:** APY (High→Low), Lock Period, Operator Type
+**Phase 1 priority:** **Mobility Credit Pools**
+
+- 36-month rent-to-own pools
+- ride-hailing EV rental bikes
+- delivery bikes
+- cargo bikes
+
+**Phase 1B:** **Fleet Remittance Pools**
+
+- taxis
+- vans
+- shuttles
+- buses
+
+**Future:** Charging / Energy Yield Pools
+
+**Header stats:**
+
+- Total Capital Deployed
+- Avg Cash Yield
+- Total Investors
+- Total Principal Recovered
+- Total Yield Distributed
+
+**Upcoming pools** section — pool yang belum dibuka (status: "Waitlist")
+
+**Active pools** sections, dikelompokkan per kategori:
+
+- **Mobility Credit Pools**
+- **Fleet Remittance Pools**
+- **Charging / Energy Pools** (coming soon)
+
+**Pool Card** per item:
+
+- Foto lokasi / armada
+- Nama pool
+- Asset type
+- Pool type: `Mobility Credit Pool` / `Fleet Remittance Pool`
+- Cash yield
+- Principal recovery rate
+- Total annual cash distribution
+- Operator type badge
+- Progress bar: Total Supplied vs Target
+- Tags: tenor, operator type, reserve health
+- Tombol: "Pool Details" atau "Waitlist"
+
+**Filter/Sort:**
+
+- Cash Yield
+- Pool Type
+- Tenor
+- Operator Type
 
 ---
 
@@ -594,44 +707,47 @@ Jadwal sekarang →
 
 **Auth:** None for viewing. Invest requires wallet. | **Status:** NEW
 
-**Tab navigation:** Overview | Report | Impact | Calculator
+**Tab navigation:** Overview | Report | Proofs | Calculator
 
 **Overview tab:**
 
-- Pool header: foto armada, nama pool, APY, TVL, status (Active/Filled/Coming Soon)
-- Stats grid: Total Supplied, Target, % filled, Investors, Lock Period, Next Distribution
+- Pool header: foto armada, nama pool, cash yield, status (Active/Filled/Coming Soon)
+- Stats grid: Total Supplied, Target, % filled, Investors, Tenor, Next Distribution
 - **Fleet Health Visualization:** PoolHealthBar — donut/bar: X aktif / Y idle / Z maintenance
-- **Unit breakdown:** berapa ojol, kurir, logistik dalam pool ini
-- **Recent yield distributions:** tabel 4 minggu terakhir — tanggal, total distributed, per-share amount
-- **GPS Activity preview:** mini heatmap dari aktivitas pool (anonymized)
-- Invest CTA: input jumlah saham, preview return, tombol "Invest IDRX" (wallet required)
+- **Unit breakdown:** ride-hailing / delivery / cargo / taxi / shuttle / bus sesuai komposisi pool
+- **Recent distributions:** tabel 4 periode terakhir — tanggal, yield paid, principal returned, reserve delta
+- **GPS Activity preview:** mini heatmap dan daily route-log preview dari aktivitas pool (anonymized)
+- Invest CTA: input jumlah investasi, preview return, tombol "Invest IDRX" (wallet required)
 - Link: "Lihat aktivitas fleet → " (ke /depin/pool/[poolId], gated)
 
 **Report tab:**
 
 - Monthly/quarterly report cards: download PDF atau view inline
-- Yield history chart (bar/line, per minggu, last 6 bulan)
-- Utilization rate chart (% unit aktif per hari)
+- Yield history chart
+- Principal recovery chart
+- Reserve balance chart
+- Collection health chart
 - Revenue vs distribution log (table)
 
-**Impact tab:**
+**Proofs tab:**
 
-- Emisi CO2 yang dikurangi vs motor BBM equivalent
-- Total km EV yang beroperasi via pool ini
-- Total drivers supported
-- Estimated economic value generated
+- Proof of Asset summary
+- Proof of Activity summary
+- Proof of Revenue summary
+- Proof of Maintenance summary
+- last anchored hashes / telemetry checkpoints
 
 **Calculator tab:**
 
 - Input: jumlah IDRX yang mau diinvest
-- Slider: utilisasi fleet (60%–100%)
-- Mode toggle: Liquid vs Locked (3/6/12 bulan)
+- Slider: collection / performance assumption
+- Mode label: 36-month credit pool or remittance pool
 - Output (real-time update):
   - Estimasi yield bulanan (IDRX)
-  - Estimasi yield tahunan (IDRX)
-  - APY efektif
-  - Break-even point (bulan ke berapa)
-  - 5-year projection table
+  - Estimasi principal recovery bulanan (IDRX)
+  - Estimasi total annual cash distribution
+  - Remaining principal over time
+  - Maturity settlement estimate
 
 ---
 
@@ -643,16 +759,17 @@ Jadwal sekarang →
 [ConnectWalletButton jika belum connect]
 
 Portofolio Anda
-Saham dimiliki:    10 / 100.000 pool
-Diinvestasikan:    300.000 IDRX
-Yield minggu ini:  1.920 IDRX  ✅ Diklaim otomatis
-Total diperoleh:   7.680 IDRX
-APY saat ini:      33,2%
+Diinvestasikan:          300.000 IDRX
+Yield periode ini:       3.600 IDRX
+Principal kembali:       8.100 IDRX
+Total cash diterima:     11.700 IDRX
+Cash yield saat ini:     14,4%
 ```
 
-- List semua pool yang lo ikuti + share count per pool
-- Yield history chart (akumulasi per minggu)
-- Transaction history: tiap distribusi Senin + on-chain hash
+- List semua pool yang lo ikuti + outstanding principal per pool
+- Yield history chart
+- Principal recovery chart
+- Transaction history: tiap distribusi + on-chain hash
 - Link ke pool detail + "Lihat Aktivitas Fleet →"
 
 ---
@@ -838,7 +955,7 @@ Nemesis Backend API (Next.js API route or dedicated service)
     ↓
 Store raw GPS: off-chain database (coordinates, timestamp, device_id)
     ↓
-End of day: aggregate (total km, trip count, activity hash)
+End of day: aggregate (total km, daily route logs, active usage hours, activity hash)
     ↓
 Submit hash on-chain → Solana (Proof of Activity transaction)
     ↓
@@ -858,7 +975,7 @@ Hash publicly queryable on Solana Explorer
 | Per-unit GPS route (Strava-style) | ❌     | ✅ (own pool only)       |
 | Per-unit real-time status         | ❌     | ✅ (own pool only)       |
 | Per-unit Node Score               | ❌     | ✅                       |
-| Pool yield distributions          | ❌     | ✅                       |
+| Pool yield + principal distributions | ❌  | ✅                       |
 
 ### Pool Operator Types
 
@@ -892,6 +1009,8 @@ interface AnonymizedActivityEntry {
   zonaKota: string;
   timestamp: string;
   kmLifetime: number;
+  activeHours: number;
+  routeLogHash: string;
   onChainHash: string;
   category: FleetCategory;
 }
@@ -920,17 +1039,21 @@ interface PointCampaign {
 ### `types/fi.ts`
 
 ```typescript
+type PoolProductType = "mobility_credit" | "fleet_remittance" | "charging_yield" | "energy_yield";
+
 interface StakingPool {
   id: string;
   name: string;
+  productType: PoolProductType;
   operatorType: OperatorType;
   category: FleetCategory[];
   unitCount: number;
-  apyMin: number;
-  apyMax: number;
+  cashYieldPct: number;
+  principalRecoveryPct: number;
+  totalAnnualCashDistributionPct: number;
   totalSupplied: number; // IDRX
   targetSupply: number; // IDRX
-  lockPeriodMonths: number | null; // null = flexible
+  tenorMonths: number;
   status: "upcoming" | "active" | "filled" | "closed";
   energyPointsEligible: boolean;
   imageUrl: string;
@@ -941,18 +1064,19 @@ interface StakingPool {
 interface YieldDistribution {
   poolId: string;
   date: string;
-  totalDistributed: number; // IDRX
-  perShare: number; // IDRX
+  yieldDistributed: number; // IDRX
+  principalReturned: number; // IDRX
   onChainHash: string;
   unitCount: number; // units that contributed
 }
 
 interface InvestorPosition {
   poolId: string;
-  sharesHeld: number;
   invested: number; // IDRX
   yieldEarned: number; // total IDRX received
-  currentApy: number;
+  principalRecovered: number; // total IDRX principal returned
+  cashYieldPct: number;
+  outstandingPrincipal: number;
 }
 ```
 
@@ -966,8 +1090,8 @@ interface RegisteredVehicle {
   category: FleetCategory;
   operatorId: string;
   gpsDeviceId: string;
-  sharesTotal: number; // always 1000
-  pricePerShare: number; // IDRX (30.000)
+  financedCost: number; // IDRX
+  productModel: "rent" | "rent_to_own" | "contracted_remittance";
   odometer: number; // km
   nodeScore: number; // 0-100
   healthScore: number; // 0-100
@@ -1011,8 +1135,8 @@ interface DriverDailyStatus {
   gpsActive: boolean;
   flatFeePaid: boolean;
   kmToday: number;
-  tripsToday: number;
   activeHours: number;
+  routeLogCount: number;
 }
 ```
 
@@ -1068,24 +1192,70 @@ State: {
 
 ---
 
-## 11. Revenue Model — Flat Fee (Updated from Pitch)
+## 11. Revenue Model — Mobility Credit Pool (Phase 1)
 
-Per kesepakatan, model pendapatan bukan % split dari pendapatan driver melainkan **flat fee harian** dengan dua opsi kontrak:
+Phase 1 no longer uses a generic percentage split from driver revenue. The default launch product is:
 
-| Mode          | Deskripsi                                                    | Untuk Investor                                                  |
-| ------------- | ------------------------------------------------------------ | --------------------------------------------------------------- |
-| **Rent**      | Bayar Rp X/hari, kendaraan tetap milik protokol              | "Rent Pool" — APY lebih stabil, exit lebih mudah                |
-| **Buy/Cicil** | Bayar flat fee + cicilan ownership, eventually milik sendiri | "Buy Pool" — locked, APY lebih tinggi, nilai residual kendaraan |
+> **36-month rent-to-own mobility credit pool**
 
-**Yield calculation for investors:**
+### Phase 1 Asset Focus
 
-```
-Daily revenue per unit = flat_fee_daily × utilization_rate
-Investor pool allocation = flat_fee_daily × investor_share_pct (tbd)
-APY = (investor_allocation × 365) / total_invested_IDRX × 100
-```
+- ride-hailing EV rental bikes
+- delivery bikes
+- cargo bikes
 
-Angka APY exact akan dihitung setelah pilot phase dengan data flat fee real. PRD ini menggunakan estimasi 30–41% dari pitch deck sebagai placeholder.
+### Base Planning Assumptions Per Unit
+
+- EV bike + telemetry + setup + onboarding = **Rp 25.000.000**
+- monthly gross collection per productive rental bike = **Rp 1.500.000**
+
+### Final Agreed Monthly Split Per Bike
+
+- **45% Principal Recovery** = `Rp 675.000`
+- **20% Investor Yield** = `Rp 300.000`
+- **10% Maintenance Reserve** = `Rp 150.000`
+- **5% Default Reserve** = `Rp 75.000`
+- **8% Operator Base Servicing Fee** = `Rp 120.000`
+- **2% Operator Performance Fee** = `Rp 30.000`
+- **10% Protocol Fee** = `Rp 150.000`
+
+### Investor Metrics
+
+- cash yield = **14,4% per year**
+- principal recovery per year = **Rp 8.100.000**
+- total annual cash distribution = **46,8% of invested principal**
+
+### 36-Month Outcome Per Unit
+
+- principal recovered = `Rp 24.300.000`
+- remaining principal = `Rp 700.000`
+- total yield paid = `Rp 10.800.000`
+
+### Default Reserve Purpose
+
+Default reserve protects the pool from:
+
+- late payments
+- temporary defaults
+- reassignment downtime
+- operator collection shortfalls
+
+### Operator Economics
+
+Operator receives:
+
+- 8% base fee
+- 2% performance fee if KPIs are achieved
+
+This is explicit and should not be hidden inside a vague top-line revenue split.
+
+### Phase 1B and Beyond
+
+After mobility credit pools are proven, Nemesis can add:
+
+- **Fleet Remittance Pools** for taxis / vans / shuttles / buses
+- **Charging Yield Pools**
+- **Energy Yield Pools**
 
 ---
 
@@ -1097,7 +1267,7 @@ Angka APY exact akan dihitung setelah pilot phase dengan data flat fee real. PRD
 - ✅ Nemesis DePIN public dashboard + network page
 - ✅ Nemesis DePIN quests + earn
 - ✅ Driver sub-portal (phone GPS via browser)
-- ✅ Nemesis FI pool listing + pool detail (with calculator)
+- ✅ Nemesis FI mobility credit pool listing + pool detail (with calculator)
 - ✅ Nemesis FI investor portfolio
 - ✅ Nemesis RWA landing + operator dashboard
 - ✅ Nemesis RWA fleet mint + fleet map
@@ -1105,7 +1275,7 @@ Angka APY exact akan dihitung setelah pilot phase dengan data flat fee real. PRD
 - ✅ Admin portal (repurposed)
 - ✅ Vehicle Pre-Visit Brief (replaces 3D viewer)
 - ✅ Point system (pre-token, manual/mock data)
-- ✅ Nemesis Native pool (Nemesis as own operator for demo)
+- ✅ Nemesis Native mobility credit pool (Nemesis as own operator for demo)
 - ✅ AI Fleet Insights panel (in RWA operator analytics)
 
 ### Parked / Phase 2+
@@ -1113,14 +1283,15 @@ Angka APY exact akan dihitung setelah pilot phase dengan data flat fee real. PRD
 - 🔜 $NMS token launch + real staking (2027)
 - 🔜 Gojek/Grab API integration (Phase 2)
 - 🔜 Hardware GPS tracker (post-MVP)
+- 🔜 Fleet remittance pools for taxis / vans / shuttles / buses
 - 🔜 Modul 2 — EV Charging Network
 - 🔜 Modul 3 — Solar + P2P Energy
 - 🔜 Nemesis Owner portal (individual vehicle tokenization for personal car owners)
 - 🔜 NFC/QR identity card (Nemesis Owner feature)
 - 🔜 Book service from user side (Nemesis Owner feature)
 - 🔜 Data Marketplace enterprise API
-- 🔜 Secondary market for pool shares
-- 🔜 Fixed Income Pools (FI page section — show Coming Soon)
+- 🔜 Transfer desk / limited secondary transfer rails
+- 🔜 Charging / Energy Yield Pools
 
 ---
 
@@ -1147,8 +1318,8 @@ After implementation, verify:
 3. **DePIN auth** — `/depin/quests` redirects to wallet connect if no wallet
 4. **Driver portal** — `/depin/driver` loads on mobile, GPS toggle works, NO wallet prompt
 5. **FI pools** — `/fi` shows pool cards, APY, progress bars
-6. **FI calculator** — `/fi/pools/[id]` Calculator tab updates projections live
-7. **FI gated** — `/depin/pool/[id]` shows "You don't hold shares in this pool" if not investor
+6. **FI calculator** — `/fi/pools/[id]` Calculator tab updates cash yield, principal recovery, and maturity estimates live
+7. **FI gated** — `/depin/pool/[id]` shows "You don't hold units in this pool" if not investor
 8. **RWA landing** — `/rwa` shows 3 module cards (1 active, 2 coming soon)
 9. **RWA operator** — `/rwa/operator` requires wallet + operator role, shows fleet dashboard
 10. **Workshop** — `/workshop` works, vehicle/[vin] shows Pre-Visit Brief (no 3D model)
