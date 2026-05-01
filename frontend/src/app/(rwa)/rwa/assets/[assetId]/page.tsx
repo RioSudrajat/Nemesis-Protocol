@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowRight, CheckCircle2, Gauge, Layers3, WalletCards } from 'lucide-react'
+import { ArrowRight, CheckCircle2, FileCheck2, Layers3, Route } from 'lucide-react'
 import { RWA_ASSET_CATALOG } from '@/components/rwa/public/assetCatalog'
 import { RwaPublicFooter } from '@/components/rwa/public/RwaPublicFooter'
 import { RwaPublicNav } from '@/components/rwa/public/RwaPublicNav'
@@ -37,19 +37,19 @@ export default function AssetDetailPage({ params }: { params: { assetId: string 
 
               <div className="mt-8 grid grid-cols-3 gap-3">
                 <div className="rounded-2xl border border-zinc-950/10 bg-white p-4 shadow-sm">
-                  <Gauge className="mb-3 h-5 w-5 text-teal-700" />
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">Projected APY</p>
-                  <p className="mt-2 font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-zinc-950">{asset.apy}</p>
-                </div>
-                <div className="rounded-2xl border border-zinc-950/10 bg-white p-4 shadow-sm">
-                  <WalletCards className="mb-3 h-5 w-5 text-teal-700" />
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">Share price</p>
-                  <p className="mt-2 font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-zinc-950">{asset.pricePerShare.toLocaleString('id-ID')}</p>
-                </div>
-                <div className="rounded-2xl border border-zinc-950/10 bg-white p-4 shadow-sm">
                   <Layers3 className="mb-3 h-5 w-5 text-teal-700" />
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">Min fleet</p>
-                  <p className="mt-2 font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-zinc-950">{asset.minFleet}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">Pool model</p>
+                  <p className="mt-2 font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-zinc-950">{asset.poolModel}</p>
+                </div>
+                <div className="rounded-2xl border border-zinc-950/10 bg-white p-4 shadow-sm">
+                  <Route className="mb-3 h-5 w-5 text-teal-700" />
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">Revenue model</p>
+                  <p className="mt-2 font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-zinc-950">{asset.revenueModel}</p>
+                </div>
+                <div className="rounded-2xl border border-zinc-950/10 bg-white p-4 shadow-sm">
+                  <FileCheck2 className="mb-3 h-5 w-5 text-teal-700" />
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500">Minimum deployment</p>
+                  <p className="mt-2 font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-zinc-950">{asset.minimumDeployment}</p>
                 </div>
               </div>
 
@@ -58,14 +58,14 @@ export default function AssetDetailPage({ params }: { params: { assetId: string 
                   href="/rwa/operator/mint"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-zinc-950 px-6 py-4 text-sm font-bold text-white shadow-[0_18px_40px_rgba(15,23,42,0.18)]"
                 >
-                  Tokenisasi Tipe Ini
+                  Start eligibility flow
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   href="/rwa/operator"
                   className="inline-flex items-center justify-center rounded-2xl border border-zinc-950/10 bg-white px-6 py-4 text-sm font-bold text-zinc-950"
                 >
-                  Masuk Operator Portal
+                  Enter Operator Portal
                 </Link>
               </div>
             </div>
@@ -102,7 +102,7 @@ export default function AssetDetailPage({ params }: { params: { assetId: string 
           </article>
 
           <article className="rounded-[2rem] border border-zinc-950/10 bg-[#F8FAF8] p-7 shadow-sm">
-            <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-teal-700">Tokenization requirements</p>
+            <p className="mb-5 text-sm font-semibold uppercase tracking-[0.22em] text-teal-700">Proof requirements</p>
             <div className="grid gap-3">
               {asset.requirements.map((requirement) => (
                 <div key={requirement} className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-zinc-700">
@@ -119,19 +119,19 @@ export default function AssetDetailPage({ params }: { params: { assetId: string 
         <div className="mx-auto max-w-6xl rounded-[2.5rem] bg-zinc-950 p-8 text-white shadow-[0_28px_90px_rgba(15,23,42,0.18)] md:p-12">
           <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
             <div>
-              <p className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-teal-300">Ready to mint</p>
+              <p className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-teal-300">Ready for funding review</p>
               <h2 className="max-w-3xl font-[family-name:var(--font-fraunces)] text-4xl font-medium tracking-tighter md:text-6xl">
-                Bawa asset ini ke operator portal.
+                Bring this asset into the operator portal.
               </h2>
               <p className="mt-5 max-w-2xl text-sm leading-6 text-zinc-300">
-                Data teknis, KYC, GPS proof, dan revenue model akan divalidasi di operator flow sebelum asset dibuka untuk investor.
+                Technical data, KYC, route proof, revenue model, and maintenance readiness are validated in the operator flow before the asset opens to investors.
               </p>
             </div>
             <Link
               href="/rwa/operator/mint"
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-teal-300 px-6 py-4 text-sm font-bold text-zinc-950"
             >
-              Start mint flow
+              Start onboarding flow
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

@@ -3,10 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Map, Clock, Navigation } from "lucide-react";
-import { ActivityTripMap } from "@/components/depin/ActivityTripMap";
+import { ActivityRouteMap } from "@/components/depin/ActivityRouteMap";
 
 export default function DriverTripsPage() {
-  const [selectedTrip, setSelectedTrip] = useState<boolean>(false);
+  const [selectedRouteLog, setSelectedRouteLog] = useState<boolean>(false);
 
   return (
     <div className="min-h-screen pb-24" style={{ background: "var(--solana-dark)", color: "#E4E6EB" }}>
@@ -16,20 +16,20 @@ export default function DriverTripsPage() {
           <Link href="/depin/driver" className="p-2 rounded-full hover:bg-white/10 transition-colors">
             <ArrowLeft size={20} className="text-white" />
           </Link>
-          <h1 className="text-xl font-bold text-white font-[family-name:var(--font-orbitron)]">Activity History</h1>
+          <h1 className="text-xl font-bold text-white font-[family-name:var(--font-orbitron)]">Daily Route Logs</h1>
         </div>
 
-        {/* Trips List */}
+        {/* Route Logs List */}
         <div className="space-y-4">
           <div 
-            onClick={() => setSelectedTrip(true)}
+            onClick={() => setSelectedRouteLog(true)}
             className="glass-card p-5 rounded-2xl cursor-pointer hover:bg-white/5 transition-colors border border-white/10 relative overflow-hidden group"
           >
             <div className="absolute right-0 top-0 w-32 h-32 bg-[#14B8A6]/5 rounded-full blur-2xl group-hover:bg-[#14B8A6]/10 transition-colors" />
             
             <div className="flex justify-between items-start mb-3 relative z-10">
               <div>
-                <p className="text-white font-bold text-lg">Sudirman - Kemang</p>
+                <p className="text-white font-bold text-lg">Central Jakarta route coverage</p>
                 <p className="text-xs text-gray-400">Today, 1:39 PM</p>
               </div>
               <div className="bg-[#14B8A6]/10 text-[#14B8A6] px-2.5 py-1 rounded-full text-[10px] font-bold border border-[#14B8A6]/20 uppercase tracking-wider">
@@ -48,7 +48,7 @@ export default function DriverTripsPage() {
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-[10px] text-[#14B8A6] uppercase font-bold flex items-center gap-1"><Map size={12}/> Map</span>
-                <span className="text-sm font-semibold text-white group-hover:text-[#14B8A6] transition-colors">View Route →</span>
+                <span className="text-sm font-semibold text-white group-hover:text-[#14B8A6] transition-colors">View Log →</span>
               </div>
             </div>
           </div>
@@ -56,7 +56,7 @@ export default function DriverTripsPage() {
           <div className="glass-card p-5 rounded-2xl opacity-60 border border-white/5">
             <div className="flex justify-between items-start mb-3">
               <div>
-                <p className="text-white font-bold text-lg">Kemang - SCBD</p>
+                <p className="text-white font-bold text-lg">South Jakarta movement segment</p>
                 <p className="text-xs text-gray-400">Yesterday, 9:15 AM</p>
               </div>
             </div>
@@ -75,10 +75,10 @@ export default function DriverTripsPage() {
       </div>
 
       {/* Map Modal */}
-      {selectedTrip && (
-        <ActivityTripMap 
+      {selectedRouteLog && (
+        <ActivityRouteMap 
           isModal={true} 
-          onClose={() => setSelectedTrip(false)} 
+          onClose={() => setSelectedRouteLog(false)} 
         />
       )}
     </div>

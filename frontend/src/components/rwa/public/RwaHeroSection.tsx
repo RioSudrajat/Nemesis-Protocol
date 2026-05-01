@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 
-const PROOFS = ['Proof of Asset', 'Proof of Activity', 'Proof of Revenue']
+import { PROTOCOL_PROOFS } from '@/content/nemesis/proofs'
 
 export function RwaHeroSection() {
   return (
@@ -11,25 +11,25 @@ export function RwaHeroSection() {
       <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.02fr_0.98fr]">
         <div>
           <div className="mb-7 inline-flex rounded-full border border-teal-700/15 bg-white/70 px-4 py-2 text-sm font-medium text-teal-800 shadow-sm backdrop-blur">
-            Nemesis RWA for physical asset tokenization
+            Nemesis RWA for verified infrastructure onboarding
           </div>
 
           <h1 className="max-w-4xl font-[family-name:var(--font-fraunces)] text-6xl font-medium tracking-tighter text-zinc-950 sm:text-7xl lg:text-8xl">
-            Tokenisasi Aset Infrastruktur Lo
+            Onboard Productive EV Infrastructure
           </h1>
 
           <p className="mt-7 max-w-2xl text-lg leading-8 text-zinc-600 md:text-xl">
-            Ubah armada produktif dan aset infrastruktur fisik menjadi aset on-chain yang dapat diverifikasi, didanai, dan menghasilkan distribusi IDRX dari revenue operasional nyata.
+            Bring mobility, charging, and energy assets into financing rails that require asset, activity, revenue, and maintenance proof before capital can flow.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            {PROOFS.map((proof) => (
+            {PROTOCOL_PROOFS.map((proof) => (
               <span
-                key={proof}
+                key={proof.id}
                 className="inline-flex items-center gap-2 rounded-full border border-zinc-950/10 bg-white px-4 py-2 text-sm font-semibold text-zinc-700 shadow-sm"
               >
                 <CheckCircle2 className="h-4 w-4 text-teal-600" />
-                {proof}
+                {proof.label}
               </span>
             ))}
           </div>
@@ -39,14 +39,14 @@ export function RwaHeroSection() {
               href="/rwa/operator"
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-zinc-950 px-6 py-4 text-sm font-bold text-white shadow-[0_18px_40px_rgba(15,23,42,0.18)] transition-transform hover:-translate-y-0.5"
             >
-              Daftar Sebagai Operator
+              Apply as Operator
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/rwa/assets"
               className="inline-flex items-center justify-center rounded-2xl border border-zinc-950/10 bg-white px-6 py-4 text-sm font-bold text-zinc-950 shadow-sm transition-colors hover:bg-zinc-50"
             >
-              Lihat Asset Catalog
+              Explore Asset Catalog
             </Link>
           </div>
         </div>
@@ -67,16 +67,16 @@ export function RwaHeroSection() {
               <div className="absolute bottom-5 left-5 right-5 rounded-[1.5rem] border border-white/25 bg-white/[0.82] p-5 shadow-2xl backdrop-blur-xl">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-teal-700">Verified pool template</p>
-                    <p className="mt-2 font-[family-name:var(--font-fraunces)] text-3xl font-semibold tracking-tight text-zinc-950">1.000 shares</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-teal-700">Verified onboarding rail</p>
+                    <p className="mt-2 font-[family-name:var(--font-fraunces)] text-3xl font-semibold tracking-tight text-zinc-950">Funding eligible</p>
                   </div>
-                  <p className="rounded-full bg-teal-600 px-3 py-1 text-xs font-bold text-white">IDRX</p>
+                  <p className="rounded-full bg-teal-600 px-3 py-1 text-xs font-bold text-white">Proof-ready</p>
                 </div>
                 <div className="mt-5 grid grid-cols-3 gap-3 text-sm">
                   {[
                     ['GPS', 'Active'],
                     ['KYC', 'Verified'],
-                    ['Revenue', 'Weekly'],
+                    ['Maintenance', 'Ready'],
                   ].map(([label, value]) => (
                     <div key={label} className="rounded-2xl bg-zinc-950/[0.04] p-3">
                       <p className="text-xs text-zinc-500">{label}</p>

@@ -4,12 +4,32 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { useState } from "react";
 import "leaflet/dist/leaflet.css";
-import { FleetVehicle } from "@/context/EnterpriseContext";
-import { ActivityTripMap } from "@/components/depin/ActivityTripMap";
+import { ActivityRouteMap } from "@/components/depin/ActivityRouteMap";
+
+type FleetMapVehicle = {
+  id?: string;
+  name: string;
+  vin?: string;
+  health: number;
+  region: string;
+  odometer: number;
+  owner?: string;
+  status?: string;
+};
+
+type FleetMapPool = {
+  id: string;
+  name: string;
+  region: string;
+  units: number;
+  status: string;
+  cashYield?: string;
+  apy?: string;
+};
 
 interface FleetLeafletMapProps {
-  vehicles?: any[];
-  pools?: any[];
+  vehicles?: FleetMapVehicle[];
+  pools?: FleetMapPool[];
 }
 
 // Region coordinates for approximate vehicle placement
@@ -46,8 +66,7 @@ function createVehicleMarkerIcon(health: number) {
 }
 
 export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProps) {
-  const [activeTripVehicle, setActiveTripVehicle] = useState<any>(null);
-  const isPoolMode = !!pools;
+  const [activeRouteVehicle, setActiveRouteVehicle] = useState<FleetMapVehicle | null>(null);
   const items = pools || vehicles || [];
   return (
     <>
@@ -107,14 +126,17 @@ export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProp
           const coords = regionCoordinates[item.region] || regionCoordinates.Other;
           // Offset slightly so vehicles in the same region don't overlap
           const offset = idx * 0.015;
+          const isPoolItem = "units" in item;
+          const markerKey = isPoolItem ? item.id : item.vin ?? item.id ?? item.name;
+          const health = isPoolItem ? (item.status === 'Active' ? 100 : 60) : item.health;
           return (
             <Marker
-              key={`${item.vin || item.id}-${idx}`}
+              key={`${markerKey}-${idx}`}
               position={[coords.lat + offset * Math.sin(idx), coords.lng + offset * Math.cos(idx)]}
-              icon={createVehicleMarkerIcon(isPoolMode ? (item.status === 'Active' ? 100 : 60) : item.health)}
+              icon={createVehicleMarkerIcon(health)}
             >
               <Popup>
-                {isPoolMode ? (
+                {isPoolItem ? (
                   <div style={{ minWidth: 200 }}>
                     <p style={{ fontWeight: 700, fontSize: 14, marginBottom: 2 }}>{item.name}</p>
                     <p style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", fontFamily: "monospace", marginBottom: 8 }}>{item.id}</p>
@@ -131,8 +153,8 @@ export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProp
                       <span style={{ fontSize: 12, fontWeight: 600 }}>{item.units}</span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Est. APY</span>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: "var(--solana-purple)" }}>{item.apy}</span>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Cash Yield</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: "var(--solana-purple)" }}>{item.cashYield ?? item.apy}</span>
                     </div>
                   </div>
                 ) : (
@@ -153,11 +175,11 @@ export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProp
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
                       <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Owner</span>
-                      <span style={{ fontSize: 10, fontFamily: "monospace", color: "var(--solana-purple)" }}>{item.owner.slice(0, 8)}...</span>
+                      <span style={{ fontSize: 10, fontFamily: "monospace", color: "var(--solana-purple)" }}>{(item.owner ?? "operator").slice(0, 8)}...</span>
                     </div>
                     
                     <button
-                      onClick={() => setActiveTripVehicle(item)}
+                      onClick={() => setActiveRouteVehicle(item)}
                       style={{
                         width: "100%",
                         padding: "8px 0",
@@ -177,7 +199,7 @@ export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProp
                         e.currentTarget.style.background = "rgba(20, 184, 166, 0.1)";
                       }}
                     >
-                      View Today's Activity
+                      View Daily Route Log
                     </button>
                   </div>
                 )}
@@ -187,10 +209,10 @@ export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProp
         })}
       </MapContainer>
       
-      {activeTripVehicle && (
-        <ActivityTripMap 
+      {activeRouteVehicle && (
+        <ActivityRouteMap 
           isModal={true} 
-          onClose={() => setActiveTripVehicle(null)} 
+          onClose={() => setActiveRouteVehicle(null)} 
         />
       )}
     </>

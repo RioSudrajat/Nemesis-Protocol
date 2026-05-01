@@ -5,15 +5,15 @@ const OPERATOR_TYPES = [
   {
     title: 'Enterprise Fleet',
     label: 'PT / CV / UD',
-    body: 'Untuk operator dengan armada terstruktur, SLA operasional, dan laporan revenue bulanan.',
-    requirements: ['Min. 10 unit', 'KYC bisnis', 'SLA uptime 85%+', 'Laporan investor bulanan'],
+    body: 'For operators with structured fleets, operational SLAs, and recurring revenue reporting.',
+    requirements: ['Min. 10 units', 'Business KYC', '85%+ uptime SLA', 'Monthly investor reporting'],
     Icon: Building2,
   },
   {
     title: 'Individual Operator',
     label: 'Independent',
-    body: 'Untuk pemilik kendaraan produktif yang ingin masuk ke pool komunitas dengan GPS aktif.',
-    requirements: ['Min. 1 unit', 'KYC perorangan', 'Node score aktif', 'Yield proporsional per unit'],
+    body: 'For productive vehicle owners who want to join community pools with active GPS proof.',
+    requirements: ['Min. 1 unit', 'Individual KYC', 'Active node score', 'Unit-level cashflow tracking'],
     Icon: UserRound,
   },
 ]

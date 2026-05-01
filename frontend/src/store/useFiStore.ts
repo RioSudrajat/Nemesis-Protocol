@@ -9,7 +9,6 @@ import type {
   PoolReport,
   PoolImpact,
   ReturnCalculation,
-  LockPeriod,
 } from '@/types/fi'
 import { MOCK_POOLS, MOCK_YIELD_DISTRIBUTIONS } from '@/data/pools'
 import { calculateReturn } from '@/lib/yield'
@@ -24,8 +23,8 @@ interface FiState {
 }
 
 interface FiActions {
-  investInPool: (poolId: string, sharesCount: number, lockPeriod: LockPeriod, walletAddress: string) => void
-  calculatePoolReturn: (poolId: string, investedIDRX: number, utilizationPct: number, lockPeriod: LockPeriod) => ReturnCalculation | null
+  investInPool: (poolId: string, investedIDRX: number, walletAddress: string) => void
+  calculatePoolReturn: (poolId: string, investedIDRX: number, performancePct: number) => ReturnCalculation | null
   setHydrated: () => void
 }
 
@@ -39,18 +38,22 @@ export const useFiStore = create<FiState & FiActions>()(
       poolImpacts: {},
       _hydrated: false,
 
-      investInPool: (poolId, sharesCount, lockPeriod, walletAddress) => {
+      investInPool: (poolId, investedIDRX) => {
         const { pools, myPositions } = get()
         const pool = pools.find((p) => p.id === poolId)
         if (!pool) return
 
-        const invested = sharesCount * pool.pricePerShare
+        const calc = calculateReturn(pool, investedIDRX, 100)
         const existing = myPositions.find((p) => p.poolId === poolId)
         if (existing) {
           set({
             myPositions: myPositions.map((p) =>
               p.poolId === poolId
-                ? { ...p, sharesHeld: p.sharesHeld + sharesCount, invested: p.invested + invested }
+                ? {
+                    ...p,
+                    invested: p.invested + investedIDRX,
+                    outstandingPrincipal: p.outstandingPrincipal + investedIDRX,
+                  }
                 : p
             ),
           })
@@ -58,12 +61,13 @@ export const useFiStore = create<FiState & FiActions>()(
           const newPosition: InvestorPosition = {
             poolId,
             poolName: pool.name,
-            sharesHeld: sharesCount,
-            totalShares: pool.sharesTotal,
-            invested,
-            yieldEarned: 0,
-            currentApy: (pool.apyMin + pool.apyMax) / 2,
-            lockPeriodMonths: lockPeriod,
+            invested: investedIDRX,
+            cashYieldReceived: 0,
+            principalRecovered: 0,
+            outstandingPrincipal: investedIDRX,
+            cashYieldPct: calc.cashYieldPct,
+            tenorMonths: pool.tenorMonths,
+            maturityDate: new Date(Date.now() + pool.tenorMonths * 30 * 24 * 3600 * 1000).toISOString(),
             investedAt: new Date().toISOString(),
             nextDistribution: pool.nextDistribution,
           }
@@ -74,17 +78,17 @@ export const useFiStore = create<FiState & FiActions>()(
         set({
           pools: pools.map((p) =>
             p.id === poolId
-              ? { ...p, totalSupplied: p.totalSupplied + invested }
+              ? { ...p, totalSupplied: p.totalSupplied + investedIDRX }
               : p
           ),
         })
       },
 
-      calculatePoolReturn: (poolId, investedIDRX, utilizationPct, lockPeriod) => {
+      calculatePoolReturn: (poolId, investedIDRX, performancePct) => {
         const { pools } = get()
         const pool = pools.find((p) => p.id === poolId)
         if (!pool) return null
-        return calculateReturn(pool, investedIDRX, utilizationPct, lockPeriod)
+        return calculateReturn(pool, investedIDRX, performancePct)
       },
 
       setHydrated: () => set({ _hydrated: true }),

@@ -49,8 +49,9 @@ const MOCK_TODAY_STATUS: DriverDailyStatus = {
   flatFeePaid: true,
   flatFeeAmount: 50000,
   kmToday: 0,
-  tripsToday: 0,
+  routeLogCount: 0,
   activeHours: 0,
+  movementSegments: 0,
 }
 
 export const useDriverStore = create<DriverState & DriverActions>()(

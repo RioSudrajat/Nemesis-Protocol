@@ -28,10 +28,10 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "NOC ID — Trustless Vehicle Identity on Solana",
+  title: "Nemesis Protocol — DePIN for Productive EV Infrastructure",
   description:
-    "Decentralized vehicle passport system. On-chain service history, AI predictive maintenance, and interactive 3D Digital Twins — all powered by Solana blockchain.",
-  keywords: ["NOC ID", "Solana", "blockchain", "vehicle", "digital passport", "NFT", "Web3", "automotive"],
+    "Nemesis Protocol turns productive EV infrastructure into telemetry-verified, cashflow-generating on-chain financing products.",
+  keywords: ["Nemesis Protocol", "DePIN", "EV infrastructure", "Solana", "IDRX", "mobility credit pools", "RWA"],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

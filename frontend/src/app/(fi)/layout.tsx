@@ -6,7 +6,7 @@ import { Layers, Wallet, Zap } from "lucide-react";
 const NAV_ITEMS: NavItem[] = [
   { href: "/fi", label: "Pools", icon: Layers },
   { href: "/fi/portfolio", label: "Portfolio", icon: Wallet },
-  { href: "/fi/stake", label: "Stake $NMS", icon: Zap },
+  { href: "/fi/stake", label: "Future $NMS", icon: Zap },
 ];
 
 export default function FiLayout({ children }: { children: React.ReactNode }) {

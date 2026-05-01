@@ -4,50 +4,53 @@ import { useState } from "react";
 import Link from "next/link";
 import { ConnectWalletButton } from "@/components/ui/ConnectWalletButton";
 import { WorkshopRevenueChart } from "@/components/ui/WorkshopRevenueChart";
-import { Wallet, ExternalLink, CheckCircle2 } from "lucide-react";
-import { formatNumber, formatIDRXFull } from "@/lib/yield";
+import { CheckCircle2, ExternalLink, Wallet } from "lucide-react";
+import { formatIDRXFull } from "@/lib/yield";
 
 const POSITIONS = [
   {
     poolId: "pool-batch-1",
-    poolName: "Fleet Pool Batch #1 — Jakarta",
-    shares: 10,
-    value: 300_000,
-    yieldEarned: 7_680,
-    apy: 33.2,
+    poolName: "Jakarta Ride-Hailing Credit Pool",
+    invested: 1_000_000,
+    cashYieldReceived: 12_000,
+    principalRecovered: 27_000,
+    outstandingPrincipal: 973_000,
+    cashYieldPct: 14.4,
+    tenorMonths: 36,
+    maturity: "Mar 2029",
   },
   {
-    poolId: "pool-bandung",
-    poolName: "Bandung Kurir Network",
-    shares: 5,
-    value: 150_000,
-    yieldEarned: 2_410,
-    apy: 30.5,
+    poolId: "pool-batch-3",
+    poolName: "Bandung Cargo Mobility Pool",
+    invested: 750_000,
+    cashYieldReceived: 9_000,
+    principalRecovered: 20_250,
+    outstandingPrincipal: 729_750,
+    cashYieldPct: 14.4,
+    tenorMonths: 36,
+    maturity: "Jan 2029",
   },
 ];
 
-const YIELD_HISTORY = [
-  { name: "W1", value: 1680 },
-  { name: "W2", value: 1760 },
-  { name: "W3", value: 1840 },
-  { name: "W4", value: 1920 },
+const CASH_HISTORY = [
+  { name: "Feb", value: 8_400 },
+  { name: "Mar", value: 10_100 },
+  { name: "Apr", value: 11_500 },
+  { name: "May", value: 12_000 },
 ];
 
-interface Tx {
-  date: string;
-  type: string;
-  pool: string;
-  amount: number;
-  hash: string;
-}
+const PRINCIPAL_HISTORY = [
+  { name: "Feb", value: 18_900 },
+  { name: "Mar", value: 22_700 },
+  { name: "Apr", value: 25_900 },
+  { name: "May", value: 27_000 },
+];
 
-const TXS: Tx[] = [
-  { date: "28 Apr 2026", type: "Distribusi Yield", pool: "Batch #1", amount: 1920, hash: "4xK9...mR2p" },
-  { date: "21 Apr 2026", type: "Distribusi Yield", pool: "Batch #1", amount: 1840, hash: "7yL3...nS4q" },
-  { date: "14 Apr 2026", type: "Distribusi Yield", pool: "Batch #1", amount: 1970, hash: "9zM5...pT6r" },
-  { date: "7 Apr 2026", type: "Distribusi Yield", pool: "Batch #1", amount: 1760, hash: "2wN7...qU8s" },
-  { date: "15 Mar 2026", type: "Investment", pool: "Batch #1", amount: -300_000, hash: "5aB8...vW9t" },
-  { date: "10 Mar 2026", type: "Investment", pool: "Bandung", amount: -150_000, hash: "6cD4...xY1u" },
+const TXS = [
+  { date: "28 Mei 2026", type: "Cash yield", pool: "Jakarta", amount: 12_000, hash: "4xK9...mR2p" },
+  { date: "28 Mei 2026", type: "Principal recovery", pool: "Jakarta", amount: 27_000, hash: "7yL3...nS4q" },
+  { date: "28 Apr 2026", type: "Cash yield", pool: "Bandung", amount: 9_000, hash: "9zM5...pT6r" },
+  { date: "15 Mar 2026", type: "Investment", pool: "Jakarta", amount: -1_000_000, hash: "5aB8...vW9t" },
 ];
 
 const CARD_STYLE = {
@@ -60,168 +63,105 @@ export default function PortfolioPage() {
 
   if (!isConnected) {
     return (
-      <div
-        className="min-h-screen flex flex-col items-center justify-center p-8"
-        style={{ background: "#FAFAFA", color: "#0A0A0B" }}
-      >
-        <div className="rounded-xl p-8 max-w-md w-full text-center" style={CARD_STYLE}>
-          <div
-            className="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center"
-            style={{ background: "rgba(20,184,166,0.10)" }}
-          >
-            <Wallet size={22} style={{ color: "#0F766E" }} />
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FAFAFA] p-8 text-zinc-950">
+        <div className="w-full max-w-md rounded-xl p-8 text-center" style={CARD_STYLE}>
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50">
+            <Wallet size={22} className="text-teal-700" />
           </div>
-          <h2 className="text-xl font-bold text-zinc-900 mb-2">Portfolio Investor</h2>
-          <p className="text-sm text-zinc-500 mb-6">
-            Hubungkan wallet untuk melihat portfolio kamu.
-          </p>
+          <h2 className="mb-2 text-xl font-bold text-zinc-900">Portfolio Investor</h2>
+          <p className="mb-6 text-sm text-zinc-500">Hubungkan wallet untuk melihat portfolio kamu.</p>
           <ConnectWalletButton />
         </div>
       </div>
     );
   }
 
+  const totalInvested = POSITIONS.reduce((sum, item) => sum + item.invested, 0);
+  const totalCashYield = POSITIONS.reduce((sum, item) => sum + item.cashYieldReceived, 0);
+  const totalPrincipalRecovered = POSITIONS.reduce((sum, item) => sum + item.principalRecovered, 0);
+  const totalOutstanding = POSITIONS.reduce((sum, item) => sum + item.outstandingPrincipal, 0);
+
   return (
-    <div className="min-h-screen p-6 md:p-8" style={{ background: "#FAFAFA", color: "#0A0A0B" }}>
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 mb-1">Portfolio Investor</h1>
-        <p className="text-sm text-zinc-500 mb-8">Ringkasan semua posisi investasi kamu di Nemesis FI.</p>
+    <div className="min-h-screen bg-[#FAFAFA] p-6 text-zinc-950 md:p-8">
+      <div className="mx-auto max-w-7xl">
+        <h1 className="mb-1 text-3xl font-bold text-zinc-950">Investor Portfolio</h1>
+        <p className="mb-8 text-sm text-zinc-500">Position size, cash yield received, and remaining principal exposure.</p>
 
-        {/* Portfolio summary hero */}
-        <div className="rounded-xl p-6 md:p-8 mb-10" style={CARD_STYLE}>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
-            <div>
-              <p className="text-xs text-zinc-500 mb-1">Saham Dimiliki</p>
-              <p className="text-2xl font-bold text-zinc-900">{formatNumber(15)}</p>
-              <p className="text-xs text-zinc-500">dari {formatNumber(100000)} saham total</p>
-            </div>
-            <div>
-              <p className="text-xs text-zinc-500 mb-1">Diinvestasikan</p>
-              <p className="text-xl font-bold text-zinc-900 break-all">
-                {formatIDRXFull(450_000)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-zinc-500 mb-1">Yield Minggu Ini</p>
-              <p className="text-xl font-bold break-all" style={{ color: "#0F766E" }}>
-                {formatIDRXFull(1920)}
-              </p>
-              <p className="text-xs flex items-center gap-1 mt-1" style={{ color: "#0F766E" }}>
-                <CheckCircle2 size={12} /> Diklaim otomatis
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-zinc-500 mb-1">Total Diperoleh</p>
-              <p className="text-xl font-bold text-zinc-900 break-all">
-                {formatIDRXFull(10_090)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-zinc-500 mb-1">APY Saat Ini</p>
-              <p className="text-2xl font-bold text-zinc-900">33,2%</p>
-            </div>
+        <section className="mb-10 rounded-2xl p-6 shadow-sm md:p-8" style={CARD_STYLE}>
+          <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
+            <Summary label="Position size" value={formatIDRXFull(totalInvested)} />
+            <Summary label="Cash yield received" value={formatIDRXFull(totalCashYield)} accent />
+            <Summary label="Principal recovered" value={formatIDRXFull(totalPrincipalRecovered)} />
+            <Summary label="Remaining exposure" value={formatIDRXFull(totalOutstanding)} />
           </div>
-        </div>
+        </section>
 
-        {/* Positions */}
-        <h2 className="text-base font-semibold text-zinc-900 mb-4">Posisi Aktif</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
-          {POSITIONS.map((pos) => (
-            <div key={pos.poolId} className="rounded-xl p-6" style={CARD_STYLE}>
-              <h3 className="text-base font-semibold text-zinc-900 mb-4">{pos.poolName}</h3>
-              <div className="grid grid-cols-2 gap-4 mb-5">
-                <div>
-                  <p className="text-xs text-zinc-500 mb-1">Saham</p>
-                  <p className="text-lg font-bold text-zinc-900">{formatNumber(pos.shares)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-500 mb-1">Nilai Sekarang</p>
-                  <p className="text-lg font-bold text-zinc-900 break-all">
-                    {formatIDRXFull(pos.value)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-500 mb-1">Yield Terkumpul</p>
-                  <p className="text-lg font-bold break-all" style={{ color: "#0F766E" }}>
-                    {formatIDRXFull(pos.yieldEarned)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-500 mb-1">APY</p>
-                  <p className="text-lg font-bold text-zinc-900">{pos.apy}%</p>
-                </div>
+        <h2 className="mb-4 text-base font-semibold text-zinc-900">Active positions</h2>
+        <div className="mb-10 grid grid-cols-1 gap-5 md:grid-cols-2">
+          {POSITIONS.map((position) => (
+            <div key={position.poolId} className="rounded-2xl p-6 shadow-sm" style={CARD_STYLE}>
+              <h3 className="mb-4 text-lg font-bold text-zinc-950">{position.poolName}</h3>
+              <div className="mb-5 grid grid-cols-2 gap-4">
+                <Summary label="Invested" value={formatIDRXFull(position.invested)} />
+                <Summary label="Cash yield" value={`${position.cashYieldPct}%`} />
+                <Summary label="Principal recovered" value={formatIDRXFull(position.principalRecovered)} />
+                <Summary label="Outstanding principal" value={formatIDRXFull(position.outstandingPrincipal)} />
+                <Summary label="Tenor" value={`${position.tenorMonths} months`} />
+                <Summary label="Maturity" value={position.maturity} />
               </div>
-              <div className="flex gap-2 flex-wrap">
-                <Link
-                  href={`/fi/pools/${pos.poolId}`}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold transition-colors"
-                  style={{
-                    background: "#14B8A6",
-                    color: "#FFFFFF",
-                  }}
-                >
-                  Lihat Detail
+              <div className="flex flex-wrap gap-2">
+                <Link href={`/fi/pools/${position.poolId}`} className="rounded-lg bg-teal-500 px-4 py-2 text-xs font-semibold text-white">
+                  Pool detail
                 </Link>
-                <Link
-                  href={`/depin/pool/${pos.poolId}`}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold transition-colors"
-                  style={{
-                    background: "#FFFFFF",
-                    color: "#0F766E",
-                    border: "1px solid rgba(20,184,166,0.4)",
-                  }}
-                >
-                  Lihat Aktivitas Fleet
+                <Link href={`/depin/pool/${position.poolId}`} className="rounded-lg border border-teal-500/40 bg-white px-4 py-2 text-xs font-semibold text-teal-700">
+                  View route proofs
                 </Link>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Yield chart */}
-        <div className="rounded-xl p-5 mb-10" style={CARD_STYLE}>
-          <h3 className="text-base font-semibold text-zinc-900 mb-1">Yield History</h3>
-          <p className="text-sm text-zinc-500 mb-2">4 minggu terakhir (IDRX)</p>
-          <WorkshopRevenueChart data={YIELD_HISTORY} suffix="IDRX" />
+        <div className="mb-10 grid gap-5 lg:grid-cols-2">
+          <div className="rounded-2xl p-5 shadow-sm" style={CARD_STYLE}>
+            <h3 className="mb-1 text-base font-semibold text-zinc-900">Cash yield history</h3>
+            <p className="mb-2 text-sm text-zinc-500">Monthly IDRX yield only, excluding returned principal.</p>
+            <WorkshopRevenueChart data={CASH_HISTORY} suffix="IDRX" />
+          </div>
+          <div className="rounded-2xl p-5 shadow-sm" style={CARD_STYLE}>
+            <h3 className="mb-1 text-base font-semibold text-zinc-900">Principal recovery history</h3>
+            <p className="mb-2 text-sm text-zinc-500">Principal returned from pool collections.</p>
+            <WorkshopRevenueChart data={PRINCIPAL_HISTORY} suffix="IDRX" />
+          </div>
         </div>
 
-        {/* TX history */}
-        <div className="rounded-xl overflow-hidden" style={CARD_STYLE}>
+        <div className="overflow-hidden rounded-2xl shadow-sm" style={CARD_STYLE}>
           <div className="p-5 pb-3">
-            <h3 className="text-base font-semibold text-zinc-900">Riwayat Transaksi</h3>
+            <h3 className="text-base font-semibold text-zinc-900">Transaction history</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr style={{ background: "#F4F4F5", color: "#52525B" }}>
-                  <th className="text-left py-3 px-4 font-medium">Tanggal</th>
-                  <th className="text-left py-3 px-4 font-medium">Jenis</th>
-                  <th className="text-left py-3 px-4 font-medium">Pool</th>
-                  <th className="text-right py-3 px-4 font-medium">Jumlah</th>
-                  <th className="text-left py-3 px-4 font-medium">Hash</th>
+                <tr className="bg-zinc-100 text-zinc-600">
+                  <th className="px-4 py-3 text-left font-medium">Date</th>
+                  <th className="px-4 py-3 text-left font-medium">Type</th>
+                  <th className="px-4 py-3 text-left font-medium">Pool</th>
+                  <th className="px-4 py-3 text-right font-medium">Amount</th>
+                  <th className="px-4 py-3 text-left font-medium">Hash</th>
                 </tr>
               </thead>
               <tbody>
-                {TXS.map((tx, i) => {
+                {TXS.map((tx) => {
                   const isIn = tx.amount >= 0;
                   return (
-                    <tr key={i} style={{ borderTop: "1px solid rgba(15,23,42,0.06)" }}>
-                      <td className="py-3 px-4 text-zinc-700">{tx.date}</td>
-                      <td className="py-3 px-4 text-zinc-900">{tx.type}</td>
-                      <td className="py-3 px-4 text-zinc-700">{tx.pool}</td>
-                      <td
-                        className="py-3 px-4 text-right font-semibold whitespace-nowrap"
-                        style={{ color: isIn ? "#0F766E" : "#B91C1C" }}
-                      >
-                        {isIn ? "+" : "-"}
-                        {formatIDRXFull(Math.abs(tx.amount))}
+                    <tr key={`${tx.date}-${tx.type}`} className="border-t border-zinc-950/5">
+                      <td className="px-4 py-3 text-zinc-700">{tx.date}</td>
+                      <td className="px-4 py-3 text-zinc-900">{tx.type}</td>
+                      <td className="px-4 py-3 text-zinc-700">{tx.pool}</td>
+                      <td className="whitespace-nowrap px-4 py-3 text-right font-semibold" style={{ color: isIn ? "#0F766E" : "#B91C1C" }}>
+                        {isIn ? "+" : "-"}{formatIDRXFull(Math.abs(tx.amount))}
                       </td>
-                      <td className="py-3 px-4">
-                        <a
-                          href="#"
-                          className="font-mono text-xs inline-flex items-center gap-1 hover:underline"
-                          style={{ color: "#0F766E" }}
-                        >
+                      <td className="px-4 py-3">
+                        <a href="#" className="inline-flex items-center gap-1 text-teal-700 hover:underline">
                           {tx.hash} <ExternalLink size={12} />
                         </a>
                       </td>
@@ -233,6 +173,22 @@ export default function PortfolioPage() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function Summary({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div>
+      <p className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-500">{label}</p>
+      <p className="break-all text-xl font-bold" style={{ color: accent ? "#0F766E" : "#18181B" }}>
+        {value}
+      </p>
+      {accent && (
+        <p className="mt-1 flex items-center gap-1 text-xs text-teal-700">
+          <CheckCircle2 size={12} /> separated from principal recovery
+        </p>
+      )}
     </div>
   );
 }

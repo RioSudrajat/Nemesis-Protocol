@@ -4,27 +4,27 @@ import { BatteryCharging, CarFront, SunMedium } from 'lucide-react'
 const MODULES = [
   {
     number: '01',
-    title: 'Armada Produktif (EV)',
-    status: 'Aktif',
-    description: 'Motor, mobil, van, dan fleet logistik yang menghasilkan revenue dari operasi harian.',
-    details: ['Ojol', 'Kurir', 'Logistik'],
+    title: 'Productive EV Fleets',
+    status: 'Active',
+    description: 'Motorbikes, cars, vans, and logistics fleets that generate revenue through daily operations.',
+    details: ['Ride-hailing', 'Delivery', 'Logistics'],
     href: '/rwa/assets',
     Icon: CarFront,
   },
   {
     number: '02',
-    title: 'Jaringan Pengisian EV',
-    status: 'Berikutnya',
-    description: 'SPKLU, charging station, dan battery swap dengan revenue dari biaya pengisian.',
+    title: 'EV Charging Networks',
+    status: 'Next',
+    description: 'Charging stations and battery swap infrastructure with revenue from usage fees.',
     details: ['SPKLU', 'Charging', 'Battery swap'],
     href: '/rwa/assets',
     Icon: BatteryCharging,
   },
   {
     number: '03',
-    title: 'Energi Surya + P2P',
-    status: 'Masa depan',
-    description: 'Solar panel dan storage yang membuka P2P energy trading untuk aset produktif.',
+    title: 'Solar + P2P Energy',
+    status: 'Future',
+    description: 'Solar and storage assets that unlock P2P energy trading for productive infrastructure.',
     details: ['Solar', 'Storage', 'P2P energy'],
     href: '/rwa/assets',
     Icon: SunMedium,
@@ -38,7 +38,7 @@ export function RwaAssetModulesSection() {
         <div className="mb-12 max-w-3xl">
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-teal-700">Asset modules</p>
           <h2 className="font-[family-name:var(--font-fraunces)] text-4xl font-medium tracking-tighter text-zinc-950 md:text-6xl">
-            Satu protocol untuk aset infrastruktur yang benar-benar bekerja.
+            One protocol for infrastructure assets that actually work.
           </h2>
         </div>
 

@@ -1,23 +1,23 @@
 const STEPS = [
   {
     number: '01',
-    title: 'Daftar & KYC',
-    body: 'Operator memasukkan identitas bisnis, dokumen armada, dan profil revenue operasional.',
+    title: 'Register & KYC',
+    body: 'Operators submit business identity, fleet documents, and operating revenue profiles.',
   },
   {
     number: '02',
-    title: 'Pasang GPS',
-    body: 'Unit dihubungkan ke phone-based GPS atau telematics untuk Proof of Activity.',
+    title: 'Attach GPS',
+    body: 'Each unit connects to phone-based GPS or telematics for Proof of Activity.',
   },
   {
     number: '03',
-    title: 'Mint shares',
-    body: 'Kendaraan dibuat menjadi pool dengan 1.000 SPL shares dan settlement IDRX.',
+    title: 'Submit proof readiness',
+    body: 'Assets are packaged as pool candidates with auditable asset, activity, revenue, and maintenance proof.',
   },
   {
     number: '04',
-    title: 'Terima modal',
-    body: 'Investor mendanai pool, revenue dibaca on-chain, distribusi dilakukan otomatis.',
+    title: 'Open funding eligibility',
+    body: 'Pools that pass readiness review can open on FI for cash yield and principal recovery distribution.',
   },
 ]
 
@@ -27,12 +27,12 @@ export function RwaTokenizationFlowSection() {
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           <div>
-            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-teal-700">How it tokenizes</p>
+            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-teal-700">How assets qualify</p>
             <h2 className="font-[family-name:var(--font-fraunces)] text-4xl font-medium tracking-tighter text-zinc-950 md:text-6xl">
-              Dari armada fisik ke pool yang siap didanai.
+              From physical assets to funding-ready pools.
             </h2>
             <p className="mt-6 text-lg leading-8 text-zinc-600">
-              RWA bukan sekadar upload data kendaraan. Setiap asset harus punya dokumen, aktivitas, dan revenue trail yang bisa dipertanggungjawabkan.
+              RWA is not just vehicle data upload. Every asset needs documents, activity trails, and revenue records that investors can verify.
             </p>
           </div>
 

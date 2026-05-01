@@ -1,9 +1,9 @@
-import { CircleDollarSign, FileCheck2, MapPinned } from 'lucide-react'
+import { CircleDollarSign, FileCheck2, MapPinned, Wrench } from 'lucide-react'
 
 const REQUIREMENTS = [
   {
     title: 'Physical asset registry',
-    body: 'VIN, registration, ownership, insurance, and operator identity are captured before tokenization.',
+    body: 'VIN, registration, insurance, and operator identity are captured before funding eligibility.',
     metric: 'Proof of Asset',
     Icon: FileCheck2,
   },
@@ -19,6 +19,12 @@ const REQUIREMENTS = [
     metric: 'Proof of Revenue',
     Icon: CircleDollarSign,
   },
+  {
+    title: 'Maintenance readiness',
+    body: 'Service intervals, workshop access, and reserve logic are reviewed before assets enter an investor pool.',
+    metric: 'Proof of Maintenance',
+    Icon: Wrench,
+  },
 ]
 
 export function RwaTrustRequirementsSection() {
@@ -29,7 +35,7 @@ export function RwaTrustRequirementsSection() {
           <div>
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-teal-300">Trust requirements</p>
             <h2 className="font-[family-name:var(--font-fraunces)] text-4xl font-medium tracking-tighter md:text-6xl">
-              Investor trust starts before minting.
+              Investor trust starts before funding.
             </h2>
             <p className="mt-6 text-lg leading-8 text-zinc-300">
               RWA assets only matter when the protocol can prove the asset exists, works, and produces revenue.

@@ -1,26 +1,26 @@
 'use client'
 
 import Link from 'next/link'
-import { LayoutDashboard, Map, Plus, Wrench, ArrowRight, Activity, Zap, TrendingUp } from 'lucide-react'
+import { Map, Plus, Wrench, ArrowRight, TrendingUp } from 'lucide-react'
 import { MOCK_VEHICLES } from '@/data/vehicles'
 import { MOCK_OPERATOR_PROFILE } from '@/data/operators'
 import { AIFleetInsights } from '@/components/rwa/AIFleetInsights'
 import { OperatorPoolBadge } from '@/components/rwa/OperatorPoolBadge'
 import type { AIFleetInsight } from '@/types/rwa'
-import { formatIDRX, formatKm } from '@/lib/yield'
+import { formatKm } from '@/lib/yield'
 import { getHealthColor } from '@/lib/health'
 
 const KPI_CARDS = [
   { label: 'Total Unit Terdaftar', value: '83 unit', icon: '🚗', color: '#5EEAD4', sub: `Pool: ${MOCK_OPERATOR_PROFILE.poolId}` },
   { label: 'Unit Aktif Hari Ini', value: '71 unit', icon: '⚡', color: '#86EFAC', sub: '85.5% utilisasi' },
-  { label: 'Yield Didistribusikan', value: 'Rp 28.4M', icon: '💰', color: '#FCD34D', sub: 'Total kumulatif IDRX' },
+  { label: 'Cashflow Didistribusikan', value: 'Rp 28.4M', icon: '💰', color: '#FCD34D', sub: 'Total kumulatif IDRX' },
   { label: 'Fleet Health Avg', value: '83/100', icon: '❤️', color: '#FCA5A5', sub: 'Di atas target 80' },
 ]
 
 const RECENT_ACTIVITY = [
   { icon: '🔧', text: 'Unit #NMS-0042 masuk maintenance', time: '2 jam lalu', color: '#FCD34D' },
-  { icon: '💰', text: 'Yield didistribusikan: 192.000 IDRX', time: '6 jam lalu', color: '#86EFAC' },
-  { icon: '🆕', text: 'Unit #NMS-0073 berhasil di-mint', time: '1 hari lalu', color: '#5EEAD4' },
+  { icon: '💰', text: 'Cashflow didistribusikan: 192.000 IDRX', time: '6 jam lalu', color: '#86EFAC' },
+  { icon: '🆕', text: 'Unit #NMS-0073 berhasil didaftarkan', time: '1 hari lalu', color: '#5EEAD4' },
   { icon: '📍', text: 'Unit #NMS-0018 odometer 22.341 km', time: '1 hari lalu', color: '#A1A1AA' },
   { icon: '✅', text: 'KYC bisnis terverifikasi', time: '3 hari lalu', color: '#86EFAC' },
 ]
@@ -73,7 +73,7 @@ export default function OperatorOverviewPage() {
         </div>
         <div className="flex gap-3">
           <Link href="/rwa/operator/mint" className="glow-btn text-sm flex items-center gap-2">
-            <Plus className="w-4 h-4" /> Mint Kendaraan
+            <Plus className="w-4 h-4" /> Onboard Unit
           </Link>
         </div>
       </div>
@@ -205,7 +205,7 @@ export default function OperatorOverviewPage() {
         </h2>
         <div className="flex flex-wrap gap-3">
           <Link href="/rwa/operator/mint" className="glow-btn text-sm flex items-center gap-2">
-            <Plus className="w-4 h-4" /> Mint Kendaraan Baru
+            <Plus className="w-4 h-4" /> Onboard Unit Baru
           </Link>
           <Link href="/rwa/operator/fleet" className="glow-btn-outline text-sm flex items-center gap-2">
             <Map className="w-4 h-4" /> Lihat Fleet Map

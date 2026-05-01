@@ -6,7 +6,7 @@ export interface NetworkStats {
   activeNodes: number
   kmToday: number
   onChainSubmissions: number
-  sessionStartTime: string // ISO date — for live elapsed counter
+  sessionStartTime: string
 }
 
 export interface FleetCategoryStat {
@@ -25,10 +25,12 @@ export interface DrivingDistanceStat {
 }
 
 export interface AnonymizedActivityEntry {
-  unitAnonymId: string   // e.g. "#NMS-A**"
+  unitAnonymId: string
   zonaKota: string
-  timestamp: string      // ISO date
+  timestamp: string
   kmLifetime: number
+  activeHours: number
+  routeLogHash: string
   onChainHash: string
   category: FleetCategory
 }
@@ -37,11 +39,11 @@ export interface QuestItem {
   id: string
   title: string
   description: string
-  reward: number         // points
+  reward: number
   actionUrl: string
   actionLabel: string
   completed: boolean
-  icon: string           // lucide icon name
+  icon: string
 }
 
 export interface PointCampaign {
@@ -66,9 +68,9 @@ export interface CampaignReward {
 
 export interface LeaderboardEntry {
   rank: number
-  walletAddress: string  // truncated: "8EM....peC"
+  walletAddress: string
   points: number
-  change: number         // +/- vs yesterday
+  change: number
 }
 
 export interface PointActivity {
@@ -79,21 +81,20 @@ export interface PointActivity {
   timestamp: string
 }
 
-// For investor-gated pool view
 export interface PoolUnit {
-  unitId: string         // full ID visible to pool investor
+  unitId: string
   vehicleType: string
   category: FleetCategory
   status: NodeStatus
   kmLifetime: number
-  kmYesterday: number
-  chargingSessionsTotal: number
+  kmToday: number
+  activeHoursToday: number
   nodeScore: number
   healthScore: number
   nextServiceKm: number
   imageUrl?: string
-  todayRouteCoords: RoutePoint[][]  // array of trips, each trip = array of coords
-  todayTripLog: TripLogEntry[]
+  dailyRouteCoords: RoutePoint[][]
+  dailyRouteLogs: RouteLogEntry[]
 }
 
 export interface RoutePoint {
@@ -101,11 +102,11 @@ export interface RoutePoint {
   lng: number
 }
 
-export interface TripLogEntry {
+export interface RouteLogEntry {
   timestamp: string
-  fromZona: string
-  toZona: string
+  zone: string
   km: number
+  activeHours: number
   onChainHash: string
 }
 
@@ -116,15 +117,18 @@ export interface PoolActivitySummary {
   maintenanceUnits: number
   offlineUnits: number
   totalKmToday: number
+  activeHoursToday: number
+  routeLogsToday: number
+  movementSegments: number
   utilizationPct: number
-  estimatedYieldThisWeek: number  // IDRX per share
+  proofHashStatus: 'pending' | 'anchored' | 'failed'
 }
 
-// Driver portal (phone-only, no Web3)
 export interface DriverGPSState {
   isActive: boolean
   activeMinutesToday: number
   kmToday: number
-  tripsToday: number
+  routeLogsToday: number
+  movementSegments: number
   lastCoords?: { lat: number; lng: number }
 }

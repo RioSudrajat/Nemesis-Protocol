@@ -2,8 +2,8 @@
 
 export const NEMESIS = {
   name: 'Nemesis Protocol',
-  tagline: 'Protokol Infrastruktur EV Indonesia',
-  description: 'Lapisan protokol untuk seluruh ekosistem infrastruktur EV produktif Indonesia — setiap aset EV yang menghasilkan pendapatan dapat ditokenisasi, diinvestasikan, dan didistribusikan imbal hasilnya on-chain.',
+  tagline: 'DePIN for productive EV infrastructure assets',
+  description: 'Protocol layer for productive EV infrastructure assets that generate measurable activity, verified cashflows, and financing-ready proof data.',
   chain: 'Solana',
   yieldCurrency: 'IDRX',
   protocolToken: '$NMS',
@@ -26,7 +26,7 @@ export const SUB_PRODUCTS = {
   fi: {
     name: 'Nemesis FI',
     slug: 'fi',
-    description: 'Lapisan finansial — tokenisasi imbal hasil dari armada EV produktif ke investor',
+    description: 'Financing layer for mobility credit pools, fleet remittance pools, and future infrastructure yield pools',
     path: '/fi',
     color: '#34D399',
     icon: 'TrendingUp',
@@ -34,19 +34,19 @@ export const SUB_PRODUCTS = {
   rwa: {
     name: 'Nemesis RWA',
     slug: 'rwa',
-    description: 'Lapisan aset — tokenisasi kepemilikan fraksional infrastruktur EV fisik',
+    description: 'Asset onboarding layer for productive EV infrastructure and proof readiness',
     path: '/rwa',
     color: '#60A5FA',
     icon: 'Layers',
   },
 } as const
 
-export const SHARES_PER_VEHICLE = 1000
-export const PRICE_PER_SHARE_IDRX = 30_000         // IDRX (= Rp 30.000)
+export const FINANCED_COST_PER_EV_BIKE_IDRX = 25_000_000
 export const FLAT_FEE_DAILY_IDR = 50_000            // IDR — default rent fee
-export const MAINTENANCE_FUND_PCT = 0.03            // 3% of daily fee to maintenance fund
-export const PROTOCOL_FEE_PCT = 0.04               // 4% to treasury
-export const FLEET_MANAGER_FEE_PCT = 0.03           // 3% to fleet manager
+export const MAINTENANCE_FUND_PCT = 0.10
+export const DEFAULT_RESERVE_PCT = 0.05
+export const PROTOCOL_FEE_PCT = 0.10
+export const FLEET_MANAGER_FEE_PCT = 0.10
 
 export const MAINTENANCE_THRESHOLDS_KM = [2500, 5000, 10000, 20000] as const
 
@@ -81,6 +81,6 @@ export const VEHICLE_TYPE_LABELS: Record<string, string> = {
 
 export const CITIES = ['Jakarta', 'Surabaya', 'Bandung', 'Medan', 'Semarang', 'Yogyakarta'] as const
 
-export const DISTRIBUTION_DAY = 'Senin' // every Monday
+export const DISTRIBUTION_CADENCE = 'Periodic monthly distribution'
 
 export const SOLANA_EXPLORER_BASE = 'https://explorer.solana.com/tx'

@@ -38,7 +38,7 @@ export function RwaPublicNav() {
           href="/rwa/operator"
           className="rounded-full bg-zinc-950 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(15,23,42,0.18)] transition-transform hover:-translate-y-0.5 md:px-5"
         >
-          Tokenize Fleet
+          Onboard Assets
         </Link>
       </nav>
     </header>

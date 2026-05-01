@@ -3,10 +3,15 @@
 import { useState } from 'react'
 import { Plus, FileSpreadsheet, Cpu, Loader2 } from 'lucide-react'
 
+const FINANCED_COST_PER_UNIT = 25_000_000
+
 type TabKey = 'single' | 'csv'
 
 const VEHICLE_TYPES = ['Motor Listrik', 'Motor Kargo', 'Mobil Listrik', 'Van Listrik', 'Truk Listrik', 'Bus Listrik']
-const CONTRACT_TYPES = [{ value: 'rent', label: 'Rent — Flat Fee Harian' }, { value: 'cicil', label: 'Cicil — Cicilan Kepemilikan' }]
+const CONTRACT_TYPES = [
+  { value: 'rent_to_own', label: 'Rent-to-own — Mobility Credit Pool' },
+  { value: 'contracted_remittance', label: 'Contracted Remittance — Fleet Remittance Pool' },
+]
 
 interface RWAVehicleEntry {
   vin: string
@@ -26,15 +31,15 @@ const BLANK_VEHICLE: RWAVehicleEntry = {
   brand: '',
   model: '',
   gpsDeviceId: '',
-  contractType: 'rent',
+  contractType: 'rent_to_own',
   flatFeeDaily: '50000',
 }
 
-export default function MintPage() {
+export default function AssetOnboardingPage() {
   const [tab, setTab] = useState<TabKey>('single')
   const [vehicles, setVehicles] = useState<RWAVehicleEntry[]>([{ ...BLANK_VEHICLE }])
-  const [minting, setMinting] = useState(false)
-  const [mintDone, setMintDone] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitDone, setSubmitDone] = useState(false)
   const [csvFile, setCsvFile] = useState<string | null>(null)
 
   function updateVehicle(i: number, patch: Partial<RWAVehicleEntry>) {
@@ -49,22 +54,22 @@ export default function MintPage() {
     setVehicles((prev) => prev.filter((_, idx) => idx !== i))
   }
 
-  async function handleMint() {
-    setMinting(true)
+  async function handleSubmitReadiness() {
+    setSubmitting(true)
     await new Promise((r) => setTimeout(r, 2000))
-    setMinting(false)
-    setMintDone(true)
+    setSubmitting(false)
+    setSubmitDone(true)
   }
 
-  if (mintDone) {
+  if (submitDone) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center max-w-md mx-auto">
         <div className="text-6xl">✅</div>
         <h2 className="text-xl font-black gradient-text" style={{ fontFamily: 'var(--font-orbitron, Orbitron, sans-serif)' }}>
-          Kendaraan Berhasil Di-Mint!
+          Asset Readiness Submitted
         </h2>
         <p className="text-sm" style={{ color: 'var(--solana-text-muted)' }}>
-          {vehicles.length} unit kendaraan telah ditokenisasi ke pool. Share akan tersedia untuk investor segera.
+          {vehicles.length} unit kendaraan sudah masuk antrean proof readiness. Tim operator dapat lanjut validasi telemetry, revenue model, dan maintenance path.
         </p>
         <div
           className="w-full p-4 rounded-xl text-left"
@@ -75,8 +80,8 @@ export default function MintPage() {
             3xR7mNkP2vWqJzLfDhUiCbEtYsXaGpOnV5wM9jKcHrT1eAdNFBSQZul6oIvmyW4
           </p>
         </div>
-        <button onClick={() => { setMintDone(false); setVehicles([{ ...BLANK_VEHICLE }]) }} className="glow-btn-outline">
-          Mint Unit Lagi
+        <button onClick={() => { setSubmitDone(false); setVehicles([{ ...BLANK_VEHICLE }]) }} className="glow-btn-outline">
+          Submit Unit Lagi
         </button>
       </div>
     )
@@ -87,10 +92,10 @@ export default function MintPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black gradient-text" style={{ fontFamily: 'var(--font-orbitron, Orbitron, sans-serif)' }}>
-          Daftarkan Kendaraan Baru
+          Daftarkan Asset Produktif Baru
         </h1>
         <p className="text-sm mt-1" style={{ color: 'var(--solana-text-muted)' }}>
-          Tokenisasi kendaraan listrik ke dalam pool
+          Register asset, configure revenue model, attach telemetry, dan buka funding eligibility setelah proof readiness lengkap.
         </p>
       </div>
 
@@ -177,7 +182,7 @@ export default function MintPage() {
             <Plus className="w-4 h-4" /> Tambah Unit Lagi
           </button>
 
-          {/* Mint Summary */}
+          {/* Onboarding Summary */}
           <div className="glass-card rounded-2xl p-6" style={{ border: '1px solid rgba(94,234,212,0.2)' }}>
             <h3 className="font-bold text-sm mb-4">Ringkasan Pendaftaran</h3>
             <div className="flex flex-col gap-3 mb-5">
@@ -186,12 +191,16 @@ export default function MintPage() {
                 <span className="font-bold">{vehicles.length} unit</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span style={{ color: 'var(--solana-text-muted)' }}>Total Shares</span>
-                <span className="font-bold gradient-text">{(vehicles.length * 1000).toLocaleString('id-ID')} shares</span>
+                <span style={{ color: 'var(--solana-text-muted)' }}>Workflow</span>
+                <span className="font-bold gradient-text">Register → Telemetry → Proof readiness</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span style={{ color: 'var(--solana-text-muted)' }}>Total Modal Dibutuhkan</span>
-                <span className="font-bold gradient-text">Rp {(vehicles.length * 30_000_000).toLocaleString('id-ID')} IDRX</span>
+                <span style={{ color: 'var(--solana-text-muted)' }}>Financed Cost Assumption</span>
+                <span className="font-bold gradient-text">Rp {(vehicles.length * FINANCED_COST_PER_UNIT).toLocaleString('id-ID')} IDRX</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span style={{ color: 'var(--solana-text-muted)' }}>Funding Eligibility</span>
+                <span className="font-bold">Pending proof review</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span style={{ color: 'var(--solana-text-muted)' }}>Estimasi Biaya On-chain</span>
@@ -205,14 +214,14 @@ export default function MintPage() {
               </div>
             </div>
             <button
-              onClick={handleMint}
-              disabled={minting}
+              onClick={handleSubmitReadiness}
+              disabled={submitting}
               className="glow-btn w-full gap-3 py-3.5 font-bold disabled:opacity-50"
             >
-              {minting ? (
+              {submitting ? (
                 <><Loader2 className="w-5 h-5 animate-spin" /> Anchoring ke Solana...</>
               ) : (
-                <><Cpu className="w-5 h-5" /> Daftar Kendaraan</>
+                <><Cpu className="w-5 h-5" /> Submit Proof Readiness</>
               )}
             </button>
           </div>
@@ -227,7 +236,7 @@ export default function MintPage() {
           <div>
             <h3 className="font-bold text-lg mb-2">Import Batch CSV</h3>
             <p className="text-sm" style={{ color: 'var(--solana-text-muted)' }}>
-              Upload file CSV dengan format: VIN, Tipe, Brand, Model, Tahun, GPS ID, Kontrak, Flat Fee
+              Upload file CSV dengan format: VIN, Tipe, Brand, Model, Tahun, GPS ID, Revenue Model, Flat Fee
             </p>
           </div>
           {csvFile ? (
@@ -247,8 +256,8 @@ export default function MintPage() {
             </label>
           )}
           {csvFile && (
-            <button onClick={handleMint} disabled={minting} className="glow-btn w-full max-w-xs gap-2 disabled:opacity-50">
-              {minting ? <><Loader2 className="w-4 h-4 animate-spin" /> Memproses...</> : <><Cpu className="w-4 h-4" /> Mint Semua Unit</>}
+            <button onClick={handleSubmitReadiness} disabled={submitting} className="glow-btn w-full max-w-xs gap-2 disabled:opacity-50">
+              {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Memproses...</> : <><Cpu className="w-4 h-4" /> Submit Semua Unit</>}
             </button>
           )}
           <a href="#" className="text-xs" style={{ color: 'var(--solana-text-muted)' }}>

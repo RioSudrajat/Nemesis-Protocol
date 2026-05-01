@@ -22,7 +22,7 @@ export default function OnboardInfrastructurePage() {
           <div className="w-20 h-20 bg-[#F5FFF9] rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 size={40} className="text-[#14B8A6]" />
           </div>
-          <h1 className="text-2xl font-bold text-zinc-900 mb-3">You're on the waitlist!</h1>
+          <h1 className="text-2xl font-bold text-zinc-900 mb-3">You&apos;re on the waitlist!</h1>
           <p className="text-zinc-500 mb-8 leading-relaxed">
             Thank you for your interest in onboarding your infrastructure to Nemesis Protocol. Our team will review your details and contact you via email shortly.
           </p>

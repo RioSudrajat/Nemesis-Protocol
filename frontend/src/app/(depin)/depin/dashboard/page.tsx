@@ -39,7 +39,7 @@ const recentActivity: Activity[] = [
   { Icon: CheckCircle2, label: "Quest completed: Follow Twitter", pts: 100, time: "2 hours ago" },
   { Icon: Coins, label: "Pool distribution this week", pts: 200, time: "1 day ago" },
   { Icon: Handshake, label: "Operator referral bonus", pts: 500, time: "3 days ago" },
-  { Icon: Medal, label: "Weekly top 500", pts: 150, time: "5 days ago" },
+  { Icon: Medal, label: "Season top 500", pts: 150, time: "5 days ago" },
   { Icon: Send, label: "Quest completed: Join Telegram", pts: 100, time: "6 days ago" },
 ];
 
@@ -125,7 +125,7 @@ export default function PersonalDashboardPage() {
 
         {/* Points chart */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-zinc-100">
-          <h3 className="text-lg font-bold text-zinc-900 mb-1">Weekly Points</h3>
+          <h3 className="text-lg font-bold text-zinc-900 mb-1">Season Points</h3>
           <p className="text-sm text-zinc-500 mb-6">Last 5 weeks</p>
           <div className="h-[250px]">
             <WorkshopRevenueChart data={weeklyPoints} suffix="points" />

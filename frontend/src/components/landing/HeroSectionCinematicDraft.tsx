@@ -7,10 +7,11 @@ const proofChips = [
   "Proof of Asset",
   "Proof of Activity",
   "Proof of Revenue",
+  "Proof of Maintenance",
 ];
 
 const heroMetrics = [
-  { label: "Target APY", value: "30-41%" },
+  { label: "Cash Yield", value: "14.4%" },
   { label: "Settlement", value: "IDRX" },
   { label: "Verification", value: "GPS" },
 ];
@@ -57,7 +58,7 @@ export default function HeroSectionCinematicDraft() {
               className="mt-7 max-w-2xl"
             >
               <p className="text-base font-medium leading-relaxed text-white/80 md:text-lg">
-                Fractional shares of real revenue-generating EV infrastructure. Settled in IDRX on Solana, verified by GPS activity, and designed for Indonesia&apos;s productive infrastructure economy.
+                Cashflow products for productive EV infrastructure. Settled in IDRX on Solana, verified by GPS activity, and designed for Indonesia&apos;s productive infrastructure economy.
               </p>
 
               <div className="mt-7 flex flex-wrap gap-2.5">

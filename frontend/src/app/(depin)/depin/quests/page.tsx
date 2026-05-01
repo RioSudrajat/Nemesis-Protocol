@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { CheckCircle2, Twitter, Send, MessageCircle, Wallet, Handshake, Trophy, PiggyBank, Star } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { formatNumber, truncateWallet } from "@/lib/yield";
+import { formatNumber } from "@/lib/yield";
 import { DepinStatsBar } from "@/components/ui/DepinStatsBar";
 import { WorkshopRevenueChart } from "@/components/ui/WorkshopRevenueChart";
 
@@ -228,4 +228,3 @@ export default function QuestsPage() {
     </div>
   );
 }
-

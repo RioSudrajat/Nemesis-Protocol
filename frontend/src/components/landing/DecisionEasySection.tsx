@@ -52,7 +52,7 @@ export default function DecisionEasySection() {
                   <h3 className="font-[family-name:var(--font-fraunces)] text-lg font-semibold text-[#111827]">Fleet Operators</h3>
                 </div>
                 <p className="text-[#6B7280] text-[13px] md:text-sm leading-relaxed pl-7">
-                  Scale your EV fleet without the burden of 15% bank interest. Tokenize your units and access global liquidity instantly.
+                  Register productive EV assets, attach telemetry, and qualify for verified financing rails without defaulting to bank debt.
                 </p>
               </div>
 
@@ -63,7 +63,7 @@ export default function DecisionEasySection() {
                   <h3 className="font-[family-name:var(--font-fraunces)] text-lg font-semibold text-[#111827]">Retail Investors</h3>
                 </div>
                 <p className="text-[#6B7280] text-[13px] md:text-sm leading-relaxed pl-7">
-                  Earn 30–41% APY in Rupiah from real physical assets. No opaque P2P lending. Full GPS-verified transparency.
+                  Back verified cashflow products with clear monthly cash yield, principal recovery, and reserve protection.
                 </p>
               </div>
 

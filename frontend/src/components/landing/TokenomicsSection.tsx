@@ -24,7 +24,7 @@ export default function TokenomicsSection() {
       {/* Floating overlay text — top right, only desktop */}
       <div className="absolute top-10 right-[6%] text-right z-20 hidden lg:block">
         <p className="max-w-[250px] font-[family-name:var(--font-fraunces)] text-[1.6rem] font-light leading-[1.15] tracking-tight text-[#BDBDBD]">
-          Governance.<br />Yield Multipliers.<br />Data Marketplace.
+          Governance.<br />Protocol Fees.<br />Data Rails.
         </p>
       </div>
 
@@ -34,18 +34,18 @@ export default function TokenomicsSection() {
         {/* Top: body text + CTA */}
         <div className="max-w-[340px]">
           <p className="text-[#6B7280] text-[15px] leading-relaxed mb-8 font-medium">
-            The native $NMS token enables protocol governance, unlocks 2.0x IDRX yield multipliers, provides enterprise fleet data access, and ensures economic alignment through continuous buybacks.
+            $NMS is a future protocol layer for governance, fee alignment, and network coordination after the core mobility credit pool demo is proven.
           </p>
           <Link href="#tokenomics" className="bg-[#111827] hover:bg-black text-white px-8 py-3.5 rounded-[14px] font-bold text-sm transition-colors shadow-lg shadow-black/10 inline-block cursor-pointer">
-            Learn Tokenomics
+            Future Protocol Layer
           </Link>
         </div>
 
         {/* Bottom: big heading */}
         <div className="pt-16">
           <h2 className="font-[family-name:var(--font-fraunces)] text-[2.75rem] font-medium leading-[1.0] tracking-[-0.04em] text-[#111827] md:text-[4.5rem] lg:text-[5.5rem]">
-            $NMS aligns<br />incentives across<br />
-            <span className="text-[#BDBDBD]">the entire network.</span>
+            $NMS comes later.<br />Proof and cashflow<br />
+            <span className="text-[#BDBDBD]">come first.</span>
           </h2>
         </div>
 

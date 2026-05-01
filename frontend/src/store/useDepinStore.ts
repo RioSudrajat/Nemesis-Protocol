@@ -7,7 +7,6 @@ import type {
   FleetCategoryStat,
   DrivingDistanceStat,
   AnonymizedActivityEntry,
-  QuestItem,
   PointCampaign,
   LeaderboardEntry,
   PointActivity,
@@ -15,7 +14,7 @@ import type {
   PoolActivitySummary,
   DriverGPSState,
 } from '@/types/depin'
-import { MOCK_NETWORK_STATS, MOCK_FLEET_CATEGORIES, MOCK_DRIVING_STATS, MOCK_ACTIVITY_FEED, MOCK_QUESTS, MOCK_CAMPAIGNS, MOCK_LEADERBOARD } from '@/data/depin'
+import { MOCK_NETWORK_STATS, MOCK_FLEET_CATEGORIES, MOCK_DRIVING_STATS, MOCK_ACTIVITY_FEED, MOCK_CAMPAIGNS, MOCK_LEADERBOARD } from '@/data/depin'
 
 interface DepinState {
   // Network (public)
@@ -62,7 +61,8 @@ const initialDriverGPS: DriverGPSState = {
   isActive: false,
   activeMinutesToday: 0,
   kmToday: 0,
-  tripsToday: 0,
+  routeLogsToday: 0,
+  movementSegments: 0,
 }
 
 export const useDepinStore = create<DepinState & DepinActions>()(
