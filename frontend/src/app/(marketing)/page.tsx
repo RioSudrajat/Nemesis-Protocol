@@ -13,9 +13,9 @@ import FinalCtaSection from "@/components/landing/FinalCtaSection";
 import Footer from "@/components/landing/Footer";
 
 export const metadata = {
-  title: "NEMESIS Protocol — Tokenized EV Infrastructure",
+  title: "NEMESIS Protocol — Productive EV Infrastructure DePIN",
   description:
-    "The universal financial layer for Indonesia's EV productive infrastructure. Earn 30–41% APY from real, GPS-verified fleet revenue, settled in IDRX on Solana.",
+    "A DePIN protocol for productive EV infrastructure assets, verified by telemetry and financed through cashflow products on Solana.",
 };
 
 export default function LandingPage() {
@@ -36,13 +36,13 @@ export default function LandingPage() {
         {/* ── Hero ── Client Component (framer-motion animations + static visual) */}
         <HeroSection />
 
-        {/* ── Yield Progression (Scale) ── Client Component (whileInView cards) */}
+        {/* ── Productive Infrastructure Scale ── Client Component (whileInView cards) */}
         <ScaleSection />
 
         {/* ── Feature Cards ── Server Component */}
         <DecisionSection />
 
-        {/* ── $NMS Tokenomics ── Client Component (floating image animation) */}
+        {/* ── Future Protocol Layer ── Client Component (floating image animation) */}
         <TokenomicsSection />
 
         {/* ── EV Financing Gap ── Server Component */}

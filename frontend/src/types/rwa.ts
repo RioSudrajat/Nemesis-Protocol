@@ -1,5 +1,5 @@
 import { FleetCategory, NodeStatus } from './depin'
-import { OperatorType } from './fi'
+import { OperatorType, PoolProductType } from './fi'
 
 export type VehicleType =
   | 'motor_listrik'
@@ -10,33 +10,32 @@ export type VehicleType =
   | 'bus_listrik'
   | 'pikap_listrik'
 
-export type ContractType = 'rent' | 'cicil'
-
+export type ContractType = 'rent' | 'rent_to_own' | 'contracted_remittance'
 export type AssetModuleStatus = 'active' | 'coming_soon' | 'future'
 
 export interface RegisteredVehicle {
   id: string
   vin: string
-  unitId: string             // e.g. "#NMS-0042"
+  unitId: string
   type: VehicleType
   category: FleetCategory
   brand: string
   model: string
   year: number
   operatorId: string
-  gpsDeviceId: string        // phone IMEI or hardware GPS ID (MVP = phone)
-  sharesTotal: number        // always 1000
-  pricePerShare: number      // IDRX (30,000)
-  odometer: number           // km
-  nodeScore: number          // 0-100
-  healthScore: number        // 0-100
+  gpsDeviceId: string
+  financedCost: number
+  productModel: ContractType
+  poolProductType: PoolProductType
+  odometer: number
+  nodeScore: number
+  healthScore: number
   healthBreakdown: VehicleHealthBreakdown
   status: NodeStatus
-  maintenanceFundBalance: number  // IDRX
+  maintenanceFundBalance: number
   lastServiceKm: number
   nextServiceKm: number
-  contractType: ContractType
-  flatFeeDaily: number       // IDR
+  flatFeeDaily: number
   poolId?: string
   onChainAddress?: string
   imageUrl?: string
@@ -45,7 +44,7 @@ export interface RegisteredVehicle {
 }
 
 export interface VehicleHealthBreakdown {
-  rem: number        // 0-100
+  rem: number
   ban: number
   baterai: number
   lampu: number
@@ -57,8 +56,8 @@ export interface MaintenanceFundEntry {
   vehicleId: string
   unitId: string
   type: 'deposit' | 'release'
-  amount: number             // IDRX
-  triggeredAtKm?: number     // odometer when triggered
+  amount: number
+  triggeredAtKm?: number
   workshopId?: string
   workshopName?: string
   serviceProofHash?: string
@@ -73,17 +72,17 @@ export interface MaintenanceAlert {
   severity: 'info' | 'warning' | 'critical'
   type: 'scheduled' | 'predictive'
   message: string
-  dueSinceKm?: number        // km overdue (negative = still ahead)
+  dueSinceKm?: number
   component?: string
 }
 
 export interface AIFleetInsight {
-  vehicleId?: string         // if unit-specific, else fleet-wide
+  vehicleId?: string
   unitId?: string
   severity: 'info' | 'warning' | 'critical'
   message: string
   prediction: string
-  confidence: number         // 0-100
+  confidence: number
   category: 'maintenance' | 'performance' | 'utilization' | 'battery'
 }
 

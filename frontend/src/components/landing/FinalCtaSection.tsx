@@ -21,12 +21,12 @@ export default function FinalCtaSection() {
           {/* Left Content */}
           <div className="relative z-10 flex flex-col items-start w-full lg:w-3/5">
             <h2 className="mb-8 max-w-2xl font-[family-name:var(--font-fraunces)] text-[3rem] font-medium leading-[1.05] tracking-tight text-white md:text-[4.5rem]">
-              Own a Share of <br />
+              Finance the Proof Layer of <br />
               Indonesia&apos;s Electric <br />
-              Future.
+              Infrastructure.
             </h2>
             <p className="text-gray-400 text-[15px] md:text-[17px] max-w-xl leading-relaxed mb-10 font-medium">
-              Join the first DePIN protocol in Southeast Asia providing direct weekly yield from physical EV infrastructure.
+              Join the first Nemesis pools built around verified activity, cash yield, principal recovery, and productive EV infrastructure.
             </p>
             <Link href="/fi" className="bg-[#2DD4BF] hover:bg-[#14B8A6] text-[#050505] px-8 py-4 rounded-[14px] font-bold text-sm md:text-base transition-colors shadow-[0_0_20px_rgba(45,212,191,0.3)] inline-block text-center">
               Invest in Fleet Pools

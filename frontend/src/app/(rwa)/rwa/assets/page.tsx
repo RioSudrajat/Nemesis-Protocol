@@ -1,11 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, Gauge, Layers3, WalletCards } from 'lucide-react'
+import { ArrowRight, FileCheck2, Layers3, Route } from 'lucide-react'
 import { RWA_ASSET_CATALOG } from '@/components/rwa/public/assetCatalog'
 import { RwaPublicFooter } from '@/components/rwa/public/RwaPublicFooter'
 import { RwaPublicNav } from '@/components/rwa/public/RwaPublicNav'
 
-const CATEGORIES = ['All assets', 'Urban Mobility', 'Last-mile Delivery', 'Corporate Fleet', 'Distribution']
+const CATEGORIES = ['All assets', 'Phase 1 eligible', 'Mobility', 'Charging', 'Energy']
 
 export default function AssetsPage() {
   return (
@@ -22,11 +22,11 @@ export default function AssetsPage() {
             <div>
               <p className="mb-4 text-sm font-semibold uppercase tracking-[0.22em] text-teal-700">Asset catalog</p>
               <h1 className="font-[family-name:var(--font-fraunces)] text-5xl font-medium tracking-tighter text-zinc-950 md:text-7xl">
-                Aset yang bisa ditokenisasi.
+                Asset classes for verified financing rails.
               </h1>
             </div>
             <p className="max-w-xl text-lg leading-8 text-zinc-600">
-              Pilih tipe kendaraan listrik yang cocok dengan operasi lo. Setiap kategori dirancang untuk punya asset proof, activity proof, dan revenue proof sebelum masuk ke pool.
+              Phase 1 focuses on mobility credit pools. Charging and energy are shown as future infrastructure classes so Nemesis stays larger than fleet financing alone.
             </p>
           </div>
 
@@ -68,30 +68,30 @@ export default function AssetsPage() {
               </div>
 
               <div className="p-6">
-                <p className="text-sm font-semibold text-teal-700">{asset.category}</p>
+                <p className="text-sm font-semibold text-teal-700">{asset.assetClass}</p>
                 <h2 className="mt-2 font-[family-name:var(--font-fraunces)] text-2xl font-semibold tracking-tight text-zinc-950">{asset.name}</h2>
                 <p className="mt-3 min-h-[4.5rem] text-sm leading-6 text-zinc-600">{asset.description}</p>
 
                 <div className="mt-6 grid grid-cols-3 gap-2">
                   <div className="rounded-2xl bg-zinc-950/[0.04] p-3">
-                    <Gauge className="mb-2 h-4 w-4 text-teal-700" />
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-500">APY</p>
-                    <p className="mt-1 font-[family-name:var(--font-fraunces)] font-bold text-zinc-950">{asset.apy}</p>
-                  </div>
-                  <div className="rounded-2xl bg-zinc-950/[0.04] p-3">
-                    <WalletCards className="mb-2 h-4 w-4 text-teal-700" />
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-500">Share</p>
-                    <p className="mt-1 font-[family-name:var(--font-fraunces)] font-bold text-zinc-950">{asset.pricePerShare.toLocaleString('id-ID')}</p>
-                  </div>
-                  <div className="rounded-2xl bg-zinc-950/[0.04] p-3">
                     <Layers3 className="mb-2 h-4 w-4 text-teal-700" />
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-500">Min</p>
-                    <p className="mt-1 font-[family-name:var(--font-fraunces)] font-bold text-zinc-950">{asset.minFleet} unit</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-500">Pool model</p>
+                    <p className="mt-1 font-[family-name:var(--font-fraunces)] font-bold text-zinc-950">{asset.poolModel}</p>
+                  </div>
+                  <div className="rounded-2xl bg-zinc-950/[0.04] p-3">
+                    <Route className="mb-2 h-4 w-4 text-teal-700" />
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-500">Revenue</p>
+                    <p className="mt-1 font-[family-name:var(--font-fraunces)] font-bold text-zinc-950">{asset.revenueModel}</p>
+                  </div>
+                  <div className="rounded-2xl bg-zinc-950/[0.04] p-3">
+                    <FileCheck2 className="mb-2 h-4 w-4 text-teal-700" />
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-500">Proofs</p>
+                    <p className="mt-1 font-[family-name:var(--font-fraunces)] font-bold text-zinc-950">4 required</p>
                   </div>
                 </div>
 
                 <div className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-zinc-950">
-                  Detail & persyaratan
+                  Details & requirements
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </div>

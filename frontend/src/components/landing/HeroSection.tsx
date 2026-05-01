@@ -10,7 +10,7 @@ export default function HeroSection() {
       <div className="relative z-20 mx-auto flex min-h-screen max-w-[1400px] flex-col justify-center px-6 pb-16 pt-32 md:px-12 md:pb-20 md:pt-36">
         <div className="max-w-[760px]">
           <p className="mb-10 max-w-sm text-[15px] font-medium leading-relaxed tracking-tight text-[#4B5563] md:text-base">
-            Real-world EV infrastructure, tokenized into transparent on-chain ownership.
+            Real-world EV infrastructure transformed into transparent on-chain cashflow products.
           </p>
         </div>
 
@@ -22,7 +22,7 @@ export default function HeroSection() {
 
           <div className="mt-9 max-w-2xl">
             <p className="text-base font-medium leading-relaxed tracking-tight text-[#374151] md:text-lg">
-              Own revenue-generating EV infrastructure through a transparent protocol, settled in IDRX and verified by real-world activity.
+              Back revenue-generating EV infrastructure through a transparent protocol, settled in IDRX and verified by real-world activity.
             </p>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">

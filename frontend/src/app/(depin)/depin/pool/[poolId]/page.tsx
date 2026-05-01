@@ -56,7 +56,7 @@ export default function PoolFleetMapPage({
           </div>
           <h1 className="text-xl font-bold text-zinc-900 mb-2">Access Locked</h1>
           <p className="text-sm text-zinc-500 mb-6">
-            This page is restricted to pool shareholders. Invest in Nemesis FI first to unlock access.
+            This page is restricted to verified pool participants. Invest in Nemesis FI first to unlock route-level access.
           </p>
           <Link
             href="/fi"
@@ -77,7 +77,7 @@ export default function PoolFleetMapPage({
           Fleet Pool {poolId} — Jakarta
         </h1>
         <p className="text-sm text-zinc-500 mb-6">
-          Real-time monitoring for your pool's assets.
+          Route-log monitoring for units attached to this financing pool.
         </p>
 
         {/* Stats bar */}
@@ -195,10 +195,10 @@ export default function PoolFleetMapPage({
           className="rounded-xl p-6"
           style={{ background: "#FFFFFF", border: "1px solid rgba(20,184,166,0.25)" }}
         >
-          <p className="text-xs text-zinc-500">Estimated Yield</p>
+          <p className="text-xs text-zinc-500">Projected Monthly Cash Yield</p>
           <p className="text-2xl md:text-3xl font-bold mt-1" style={{ color: "#0F766E" }}>
             {formatNumber(192000)} IDRX{" "}
-            <span className="text-sm text-zinc-500 font-normal">this week</span>
+            <span className="text-sm text-zinc-500 font-normal">this period</span>
           </p>
         </div>
       </div>

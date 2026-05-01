@@ -2,34 +2,43 @@ import { FleetCategory } from './depin'
 
 export type OperatorType = 'nemesis_native' | 'verified_partner' | 'independent'
 export type PoolStatus = 'upcoming' | 'active' | 'filled' | 'closed'
-export type LockPeriod = 3 | 6 | 12 | 24 | 36 | null  // months; null = flexible
+export type PoolProductType = 'mobility_credit' | 'fleet_remittance' | 'charging_yield' | 'energy_yield'
+export type ProofStatus = 'pending' | 'partial' | 'verified'
 
 export interface StakingPool {
   id: string
   name: string
   slug: string
   description: string
+  productType: PoolProductType
+  productLabel: string
+  revenueModel: string
   operatorType: OperatorType
-  managedBy: string              // "Nemesis Protocol" | partner name
+  managedBy: string
   category: FleetCategory[]
   unitCount: number
-  apyMin: number
-  apyMax: number
-  totalSupplied: number          // IDRX
-  targetSupply: number           // IDRX
-  sharesTotal: number            // total shares in pool
-  pricePerShare: number          // IDRX
-  lockPeriodMonths: LockPeriod
+  cashYieldPct: number
+  principalRecoveryPct: number
+  totalAnnualCashDistributionPct: number
+  tenorMonths: number
+  totalSupplied: number
+  targetSupply: number
+  minInvestment: number
+  defaultReservePct: number
+  maintenanceReservePct: number
+  operatorBaseFeePct: number
+  operatorPerformanceFeePct: number
+  protocolFeePct: number
+  proofStatus: ProofStatus
+  reserveHealth: string
   status: PoolStatus
   energyPointsEligible: boolean
   imageUrl: string
-  locationLabel: string          // e.g. "Jakarta Selatan"
-  nextDistribution: string       // ISO date (next Monday)
+  locationLabel: string
+  nextDistribution: string
   createdAt: string
-  tags: string[]                 // e.g. ["3 Years", "Decharge Managed"]
-  // Breakdown
+  tags: string[]
   unitBreakdown: { category: FleetCategory; label: string; count: number }[]
-  // Health
   activeUnits: number
   idleUnits: number
   maintenanceUnits: number
@@ -38,37 +47,40 @@ export interface StakingPool {
 export interface YieldDistribution {
   id: string
   poolId: string
-  date: string                   // ISO date (Monday)
-  totalDistributed: number       // IDRX
-  perShare: number               // IDRX
+  date: string
+  yieldDistributed: number
+  principalReturned: number
+  reserveDelta: number
   onChainHash: string
   activeUnitsContributed: number
-  utilizationPct: number
+  collectionHealthPct: number
 }
 
 export interface InvestorPosition {
   poolId: string
   poolName: string
-  sharesHeld: number
-  totalShares: number            // pool's total shares
-  invested: number               // IDRX
-  yieldEarned: number            // total IDRX received to date
-  currentApy: number
-  lockPeriodMonths: LockPeriod
-  investedAt: string             // ISO date
-  nextDistribution: string       // ISO date
+  invested: number
+  cashYieldReceived: number
+  principalRecovered: number
+  outstandingPrincipal: number
+  cashYieldPct: number
+  tenorMonths: number
+  maturityDate: string
+  investedAt: string
+  nextDistribution: string
 }
 
 export interface PoolReport {
   poolId: string
-  period: string                 // e.g. "April 2026"
+  period: string
   type: 'monthly' | 'quarterly'
-  avgUtilization: number
-  totalYieldDistributed: number  // IDRX
-  avgApy: number
+  avgCollectionHealth: number
+  yieldDistributed: number
+  principalReturned: number
+  reserveBalance: number
   highlights: string[]
   downloadUrl?: string
-  weeklyData: { week: string; yield: number; utilization: number }[]
+  periodData: { period: string; yield: number; principal: number; reserve: number }[]
 }
 
 export interface PoolImpact {
@@ -82,12 +94,17 @@ export interface PoolImpact {
 
 export interface ReturnCalculation {
   investedIDRX: number
-  sharesCount: number
-  utilizationPct: number
-  lockPeriodMonths: LockPeriod
-  monthlyYieldIDRX: number
-  annualYieldIDRX: number
-  effectiveApy: number
-  breakEvenMonths: number
-  fiveYearProjection: { year: number; cumulativeYield: number }[]
+  performancePct: number
+  tenorMonths: number
+  monthlyCashYieldIDRX: number
+  monthlyPrincipalRecoveryIDRX: number
+  annualCashYieldIDRX: number
+  annualPrincipalRecoveryIDRX: number
+  annualCashDistributionIDRX: number
+  remainingPrincipalAfterYearOne: number
+  maturitySettlementIDRX: number
+  cashYieldPct: number
+  principalRecoveryPct: number
+  totalAnnualCashDistributionPct: number
+  principalSchedule: { month: number; outstandingPrincipal: number }[]
 }

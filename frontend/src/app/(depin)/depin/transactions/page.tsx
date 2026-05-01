@@ -28,7 +28,7 @@ const rows: Row[] = [
   { date: "22 Apr 2026 16:00", activity: "Connect Wallet", category: "Social", points: 100, status: "Confirmed" },
   { date: "20 Apr 2026 11:15", activity: "New operator referral", category: "Referral", points: 500, status: "Pending" },
   { date: "18 Apr 2026 10:00", activity: "30-day hold bonus", category: "Social", points: 200, status: "Confirmed" },
-  { date: "15 Apr 2026 14:20", activity: "Weekly top 500", category: "Social", points: 150, status: "Confirmed" },
+  { date: "15 Apr 2026 14:20", activity: "Season top 500", category: "Social", points: 150, status: "Confirmed" },
   { date: "12 Apr 2026 08:45", activity: "Pool distribution", category: "Investor", points: 200, status: "Confirmed" },
   { date: "10 Apr 2026 16:30", activity: "New operator referral", category: "Referral", points: 500, status: "Confirmed" },
   { date: "5 Apr 2026 09:00", activity: "Quest: Join Discord", category: "Social", points: 100, status: "Confirmed" },

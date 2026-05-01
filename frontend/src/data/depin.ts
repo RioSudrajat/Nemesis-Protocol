@@ -51,6 +51,8 @@ export const MOCK_ACTIVITY_FEED: AnonymizedActivityEntry[] = Array.from({ length
   zonaKota: KOTA_LIST[i % KOTA_LIST.length],
   timestamp: new Date(Date.now() - i * 47000).toISOString(),
   kmLifetime: 5000 + Math.floor(Math.random() * 70000),
+  activeHours: Math.round((2 + Math.random() * 6) * 10) / 10,
+  routeLogHash: `route-${genHash()}`,
   onChainHash: `0x${genHash()}...${genHash()}`,
   category: CATEGORIES[i % 3],
 }))

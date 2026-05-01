@@ -11,11 +11,11 @@ export default function ScaleSection() {
         {/* Left: Text Content */}
         <div className="w-full xl:w-5/12 flex flex-col items-start xl:pr-8">
           <h2 className="mb-8 font-[family-name:var(--font-fraunces)] text-[2.5rem] font-medium leading-[1.05] tracking-tighter text-[#111827] md:text-[3.5rem] lg:text-[4rem]">
-            Transforming productive EVs<br className="hidden md:block" />
-            into yield-generating assets
+            Turning measured EV activity<br className="hidden md:block" />
+            into financing-ready infrastructure
           </h2>
           <p className="text-[#4B5563] text-lg md:text-xl max-w-xl leading-relaxed mb-10 font-medium tracking-tight">
-            NEMESIS is the universal protocol layer for Indonesia&apos;s EV infrastructure ecosystem. Any physical asset that generates revenue can be tokenized, invested in, and yield-distributed on-chain.
+            NEMESIS is the protocol layer for mobility, charging, and energy assets whose work can be verified through telemetry, route logs, metering, and collection records.
           </p>
           <Link
             href="/fi"
@@ -31,7 +31,7 @@ export default function ScaleSection() {
         {/* Right: Yield Progression Cards */}
         <div className="w-full xl:w-7/12 flex flex-row items-end gap-3 sm:gap-4 h-[350px] sm:h-[450px]">
 
-          {/* Card 1 — 75% */}
+          {/* Card 1 */}
           <MotionDiv
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -40,10 +40,10 @@ export default function ScaleSection() {
             className="w-1/4 bg-[#FAFAFA] rounded-t-[20px] sm:rounded-t-[32px] rounded-b-[12px] p-4 sm:p-6 lg:p-8 border border-gray-100 h-[55%] flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-gray-100/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <span className="text-gray-400 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">75% Util.</span>
+            <span className="text-gray-400 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">Phase 1</span>
             <div className="relative z-10">
-              <div className="text-[#6B7280] text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Base Fleet APY</div>
-              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium tracking-tighter text-[#111827] sm:text-4xl lg:text-5xl">30.0%</h3>
+              <div className="text-[#6B7280] text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Cash Yield</div>
+              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium tracking-tighter text-[#111827] sm:text-4xl lg:text-5xl">14.4%</h3>
             </div>
           </MotionDiv>
 
@@ -56,10 +56,10 @@ export default function ScaleSection() {
             className="w-1/4 bg-[#FAFAFA] rounded-t-[20px] sm:rounded-t-[32px] rounded-b-[12px] p-4 sm:p-6 lg:p-8 border border-gray-100 h-[70%] flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-gray-100/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <span className="text-gray-400 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">80% Util.</span>
+            <span className="text-gray-400 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">Credit Pool</span>
             <div className="relative z-10">
-              <div className="text-[#6B7280] text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Active Fleet</div>
-              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium tracking-tighter text-[#111827] sm:text-4xl lg:text-5xl">33.3%</h3>
+              <div className="text-[#6B7280] text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Principal Recovery</div>
+              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium tracking-tighter text-[#111827] sm:text-4xl lg:text-5xl">32.4%</h3>
             </div>
           </MotionDiv>
 
@@ -72,10 +72,10 @@ export default function ScaleSection() {
             className="w-1/4 bg-[#FAFAFA] rounded-t-[20px] sm:rounded-t-[32px] rounded-b-[12px] p-4 sm:p-6 lg:p-8 border border-gray-100 h-[85%] flex flex-col justify-between group hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-gray-100/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <span className="text-gray-400 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">90% Util.</span>
+            <span className="text-gray-400 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">Proof Layer</span>
             <div className="relative z-10">
-              <div className="text-[#6B7280] text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Optimized Fleet</div>
-              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium tracking-tighter text-[#111827] sm:text-4xl lg:text-5xl">38.4%</h3>
+              <div className="text-[#6B7280] text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Protocol Proofs</div>
+              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-medium tracking-tighter text-[#111827] sm:text-4xl lg:text-5xl">4</h3>
             </div>
           </MotionDiv>
 
@@ -89,10 +89,10 @@ export default function ScaleSection() {
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/3" />
             <div className="absolute bottom-0 left-0 w-32 h-32 bg-black/10 rounded-full blur-xl translate-y-1/3 -translate-x-1/4" />
-            <span className="text-teal-100 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">100% Util.</span>
+            <span className="text-teal-100 font-semibold tracking-tight text-[10px] sm:text-xs uppercase relative z-10">36 Months</span>
             <div className="relative z-10">
-              <div className="text-white/90 text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Max Efficiency</div>
-              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-bold tracking-tighter text-white sm:text-4xl lg:text-5xl">41.6%</h3>
+              <div className="text-white/90 text-[11px] sm:text-[13px] font-medium tracking-tight leading-tight mb-1">Total Cash Distribution</div>
+              <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-bold tracking-tighter text-white sm:text-4xl lg:text-5xl">46.8%</h3>
             </div>
           </MotionDiv>
 

@@ -13,7 +13,7 @@ export default function BentoStatsSection() {
             The Scale of the Opportunity
           </h2>
           <p className="text-[#6B7280] text-[16px] md:text-[18px] max-w-2xl font-medium leading-relaxed">
-            NEMESIS Protocol is built to tokenize one of the largest physical infrastructure transitions in Southeast Asia.
+            NEMESIS Protocol is built around one of the largest productive infrastructure transitions in Southeast Asia.
           </p>
         </div>
 
@@ -46,7 +46,7 @@ export default function BentoStatsSection() {
           <div className="flex flex-col gap-6 lg:h-full">
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
               <p className="text-[#111827] text-[15px] font-medium leading-relaxed">
-                Indonesia processes over 100 million e-commerce packages daily. Every single delivery depends on a physical vehicle making a trip.
+                Indonesia processes over 100 million e-commerce packages daily. Every single delivery depends on a physical vehicle generating measurable route activity.
               </p>
             </div>
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow flex-1 flex flex-col justify-between min-h-[250px]">
@@ -63,16 +63,16 @@ export default function BentoStatsSection() {
           {/* Right Column — 3 Small Cards */}
           <div className="flex flex-col md:flex-row lg:flex-col gap-6 lg:h-full md:col-span-2 lg:col-span-1">
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow flex-1 flex flex-col justify-center">
-              <h3 className="mb-2 font-[family-name:var(--font-fraunces)] text-[3.5rem] font-medium leading-none tracking-tighter text-[#111827]">41<span className="text-[2rem]">%</span></h3>
-              <p className="text-[#6B7280] text-[13px] font-medium">Max Verifiable APY</p>
+              <h3 className="mb-2 font-[family-name:var(--font-fraunces)] text-[3.5rem] font-medium leading-none tracking-tighter text-[#111827]">46.8<span className="text-[2rem]">%</span></h3>
+              <p className="text-[#6B7280] text-[13px] font-medium">Annual Cash Distribution</p>
             </div>
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow flex-1 flex flex-col justify-center">
               <h3 className="mb-2 font-[family-name:var(--font-fraunces)] text-[3.5rem] font-medium leading-none tracking-tighter text-[#111827]">$175<span className="text-[2rem]">M</span></h3>
               <p className="text-[#6B7280] text-[13px] font-medium">IDRX On-Chain Vol.</p>
             </div>
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow flex-1 flex flex-col justify-center">
-              <h3 className="mb-2 font-[family-name:var(--font-fraunces)] text-[3.5rem] font-medium leading-none tracking-tighter text-[#111827]">30<span className="text-[2rem]">K</span></h3>
-              <p className="text-[#6B7280] text-[13px] font-medium">Min. Share Price (IDR)</p>
+              <h3 className="mb-2 font-[family-name:var(--font-fraunces)] text-[3.5rem] font-medium leading-none tracking-tighter text-[#111827]">300<span className="text-[2rem]">K</span></h3>
+              <p className="text-[#6B7280] text-[13px] font-medium">Min. Investment (IDR)</p>
             </div>
           </div>
 

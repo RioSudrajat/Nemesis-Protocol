@@ -1,45 +1,46 @@
-import type { StakingPool } from '@/types/fi'
-import type { LockPeriod, ReturnCalculation } from '@/types/fi'
+import type { StakingPool, ReturnCalculation } from '@/types/fi'
 
 /**
- * Calculate projected investment return for a staking pool
+ * Calculate projected cash distribution for a Nemesis FI pool.
+ * This is intentionally split between yield and principal recovery so it is
+ * never presented as pure yield.
  */
 export function calculateReturn(
   pool: StakingPool,
   investedIDRX: number,
-  utilizationPct: number,       // 0–100
-  lockPeriod: LockPeriod
+  performancePct: number
 ): ReturnCalculation {
-  const sharesCount = Math.floor(investedIDRX / pool.pricePerShare)
-  const actualInvested = sharesCount * pool.pricePerShare
+  const performanceFactor = Math.max(0, Math.min(performancePct, 120)) / 100
+  const monthlyCashYieldIDRX = Math.round((investedIDRX * (pool.cashYieldPct / 100) * performanceFactor) / 12)
+  const monthlyPrincipalRecoveryIDRX = Math.round((investedIDRX * (pool.principalRecoveryPct / 100) * performanceFactor) / 12)
+  const annualCashYieldIDRX = monthlyCashYieldIDRX * 12
+  const annualPrincipalRecoveryIDRX = monthlyPrincipalRecoveryIDRX * 12
+  const annualCashDistributionIDRX = annualCashYieldIDRX + annualPrincipalRecoveryIDRX
+  const remainingPrincipalAfterYearOne = Math.max(0, investedIDRX - annualPrincipalRecoveryIDRX)
 
-  // APY scales with utilization
-  const baseApy = pool.apyMin + ((pool.apyMax - pool.apyMin) * (utilizationPct / 100))
-  // Lock bonus: +2% for 3mo, +4% for 6mo, +6% for 12mo
-  const lockBonus = lockPeriod === 3 ? 2 : lockPeriod === 6 ? 4 : lockPeriod === 12 ? 6 : 0
-  const effectiveApy = baseApy + lockBonus
-
-  const annualYieldIDRX = (actualInvested * effectiveApy) / 100
-  const monthlyYieldIDRX = annualYieldIDRX / 12
-  const breakEvenMonths = actualInvested > 0
-    ? Math.ceil(actualInvested / monthlyYieldIDRX)
-    : 0
-
-  const fiveYearProjection = Array.from({ length: 5 }, (_, i) => ({
-    year: i + 1,
-    cumulativeYield: Math.round(annualYieldIDRX * (i + 1)),
-  }))
+  const principalSchedule = Array.from({ length: Math.min(pool.tenorMonths, 36) }, (_, i) => {
+    const month = i + 1
+    return {
+      month,
+      outstandingPrincipal: Math.max(0, investedIDRX - monthlyPrincipalRecoveryIDRX * month),
+    }
+  })
 
   return {
-    investedIDRX: actualInvested,
-    sharesCount,
-    utilizationPct,
-    lockPeriodMonths: lockPeriod,
-    monthlyYieldIDRX: Math.round(monthlyYieldIDRX),
-    annualYieldIDRX: Math.round(annualYieldIDRX),
-    effectiveApy: Math.round(effectiveApy * 10) / 10,
-    breakEvenMonths,
-    fiveYearProjection,
+    investedIDRX,
+    performancePct,
+    tenorMonths: pool.tenorMonths,
+    monthlyCashYieldIDRX,
+    monthlyPrincipalRecoveryIDRX,
+    annualCashYieldIDRX,
+    annualPrincipalRecoveryIDRX,
+    annualCashDistributionIDRX,
+    remainingPrincipalAfterYearOne,
+    maturitySettlementIDRX: principalSchedule.at(-1)?.outstandingPrincipal ?? investedIDRX,
+    cashYieldPct: Math.round(pool.cashYieldPct * performanceFactor * 10) / 10,
+    principalRecoveryPct: Math.round(pool.principalRecoveryPct * performanceFactor * 10) / 10,
+    totalAnnualCashDistributionPct: Math.round(pool.totalAnnualCashDistributionPct * performanceFactor * 10) / 10,
+    principalSchedule,
   }
 }
 

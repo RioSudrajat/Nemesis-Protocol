@@ -126,11 +126,11 @@ export default function DriverHomePage() {
             <span className="text-xs text-white">Dokumen</span>
           </Link>
           <Link
-            href="/depin/driver/trips"
+            href="/depin/driver/activity"
             className="glass-card p-3 text-center flex flex-col items-center gap-1"
           >
             <Clock size={22} style={{ color: "#5EEAD4" }} />
-            <span className="text-xs text-white">Riwayat</span>
+            <span className="text-xs text-white">Route Logs</span>
           </Link>
         </div>
       </div>

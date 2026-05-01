@@ -14,11 +14,11 @@ export default function StakePage() {
         </div>
 
         <h1 className="text-3xl font-bold font-[family-name:var(--font-orbitron)] gradient-text mb-4">
-          Staking $NMS
+          Future $NMS Layer
         </h1>
 
         <p className="text-gray-300 leading-relaxed mb-8">
-          Fitur ini sedang dalam pengembangan dan akan diluncurkan bersamaan dengan IDO $NMS pada 2027.
+          $NMS staking bukan bagian dari demo phase 1. Fokus sekarang adalah mobility credit pools, proof readiness, cash yield, dan principal recovery.
         </p>
 
         {/* Phase timeline */}

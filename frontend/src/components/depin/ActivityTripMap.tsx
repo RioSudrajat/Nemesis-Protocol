@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import { 
   Navigation, 
@@ -35,13 +35,9 @@ interface ActivityTripMapProps {
 }
 
 export function ActivityTripMap({ onClose, isModal = false }: ActivityTripMapProps) {
-  const [mounted, setMounted] = useState(false);
+  const [mounted] = useState(() => typeof window !== "undefined");
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Mock route from Sudirman to Kemang (Jakarta)
+  // Mock daily route segment in Jakarta
   const routePath: [number, number][] = [
     [-6.225, 106.81],
     [-6.230, 106.812],
@@ -98,7 +94,7 @@ export function ActivityTripMap({ onClose, isModal = false }: ActivityTripMapPro
         <div className="flex-1 bg-white p-6 overflow-y-auto z-[1000]">
           
           <div className="mb-6">
-            <h2 className="text-2xl font-black text-zinc-900 font-[family-name:var(--font-orbitron)] tracking-tight">Volt NMS-0042</h2>
+            <h2 className="text-2xl font-black text-zinc-900 font-[family-name:var(--font-orbitron)] tracking-tight">Daily Route Log</h2>
             <p className="text-sm text-zinc-500 font-medium mt-1">Monday, 20 Apr 2026 - 1:39 PM</p>
           </div>
 
@@ -108,29 +104,29 @@ export function ActivityTripMap({ onClose, isModal = false }: ActivityTripMapPro
               <span className="text-2xl font-black text-zinc-900 tracking-tighter">14.7 <span className="text-sm font-bold text-zinc-500">km</span></span>
             </div>
             <div className="flex flex-col">
-              <span className="text-amber-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Clock size={14} /> Duration</span>
+              <span className="text-amber-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Clock size={14} /> Active Time</span>
               <span className="text-2xl font-black text-zinc-900 tracking-tighter">42<span className="text-sm font-bold text-zinc-500">m</span> 15<span className="text-sm font-bold text-zinc-500">s</span></span>
             </div>
             <div className="flex flex-col">
-              <span className="text-rose-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Gauge size={14} /> Top Spd</span>
-              <span className="text-2xl font-black text-zinc-900 tracking-tighter">72 <span className="text-sm font-bold text-zinc-500">km/h</span></span>
+              <span className="text-rose-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Gauge size={14} /> Route Cover</span>
+              <span className="text-2xl font-black text-zinc-900 tracking-tighter">92<span className="text-sm font-bold text-zinc-500">%</span></span>
             </div>
             <div className="flex flex-col">
-              <span className="text-zinc-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Activity size={14} /> Avg Spd</span>
-              <span className="text-2xl font-black text-zinc-900 tracking-tighter">32 <span className="text-sm font-bold text-zinc-500">km/h</span></span>
+              <span className="text-zinc-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Activity size={14} /> Segments</span>
+              <span className="text-2xl font-black text-zinc-900 tracking-tighter">7</span>
             </div>
             <div className="flex flex-col">
               <span className="text-zinc-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Zap size={14} /> Energy</span>
               <span className="text-2xl font-black text-zinc-900 tracking-tighter">1.8 <span className="text-sm font-bold text-zinc-500">kWh</span></span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[#14B8A6] text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Battery size={14} /> Regen</span>
-              <span className="text-2xl font-black text-[#14B8A6] tracking-tighter">+4.2<span className="text-sm font-bold">%)</span></span>
+              <span className="text-[#14B8A6] text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Battery size={14} /> Hash</span>
+              <span className="text-2xl font-black text-[#14B8A6] tracking-tighter">OK</span>
             </div>
           </div>
 
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-4 border-b border-zinc-100 pb-2">EV Component Wear Impact</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-4 border-b border-zinc-100 pb-2">Proof of Activity + Maintenance Signals</h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center group">
                 <span className="text-sm font-semibold text-zinc-700 flex items-center gap-2.5"><div className="p-1.5 rounded-lg bg-zinc-100 group-hover:bg-zinc-200 transition-colors"><Battery size={16} className="text-zinc-600"/></div> Battery Health</span>

@@ -13,7 +13,7 @@ const upcomingPool = {
   id: "up1",
   title: "Nemesis Fleet Pool Batch #1 - Jakarta",
   units: 18,
-  yield: "20-40%",
+  yield: "14.4% cash yield",
   target: 200000,
   supplied: 0,
   image: "/ev_fleet_jakarta_1777118073477.png",
@@ -25,7 +25,7 @@ const activePools = [
     id: "p1",
     title: "Ekspansi Armada Ojol - Surabaya",
     units: 19,
-    yield: "43%",
+    yield: "14.4% cash yield",
     supplied: 150000,
     target: 150000,
     image: "/ev_ridehailing_surabaya_1777118125456.png",
@@ -35,7 +35,7 @@ const activePools = [
     id: "p2",
     title: "Logistik EV Delivery - Bandung",
     units: 12,
-    yield: "22-45%",
+    yield: "14.4% cash yield",
     supplied: 150000,
     target: 150000,
     image: "/ev_logistics_bandung_1777118107682.png",
@@ -45,7 +45,7 @@ const activePools = [
     id: "p3",
     title: "Ride-hailing Fleet - Tangerang",
     units: 6,
-    yield: "20-40%",
+    yield: "14.4% cash yield",
     supplied: 99999,
     target: 100000,
     image: "/ev_fleet_tangerang_1777118150818.png",
@@ -63,11 +63,11 @@ export default function EarnPage() {
     }
   };
   const mockPoolsForMap = [
-    { name: "Ekspansi Ojol SBY", id: "POOL-SBY", region: "Surabaya", apy: "43%", units: 19, status: "Active" },
-    { name: "Logistik EV Delivery", id: "POOL-BDO", region: "Bandung", apy: "22-45%", units: 12, status: "Active" },
-    { name: "Fleet Pool Batch #1", id: "POOL-CGK", region: "Jakarta", apy: "20-40%", units: 18, status: "Upcoming" },
-    { name: "Ride-hailing Fleet", id: "POOL-TNG", region: "Tangerang", apy: "20-40%", units: 6, status: "Upcoming" },
-  ] as any[];
+    { name: "Ekspansi Ojol SBY", id: "POOL-SBY", region: "Surabaya", cashYield: "14.4%", units: 19, status: "Active" },
+    { name: "Logistik EV Delivery", id: "POOL-BDO", region: "Bandung", cashYield: "14.4%", units: 12, status: "Active" },
+    { name: "Fleet Pool Batch #1", id: "POOL-CGK", region: "Jakarta", cashYield: "14.4%", units: 18, status: "Upcoming" },
+    { name: "Ride-hailing Fleet", id: "POOL-TNG", region: "Tangerang", cashYield: "14.4%", units: 6, status: "Upcoming" },
+  ];
 
   return (
     <div className="text-zinc-900 pb-8 w-full max-w-7xl mx-auto px-4 md:px-0">
@@ -86,10 +86,10 @@ export default function EarnPage() {
           <div className="flex-1 space-y-8">
             <div>
               <h1 className="text-3xl md:text-5xl font-bold text-zinc-900 leading-tight mb-4">
-                Earn with Tokenized<br />Productive EV Infrastructure
+                Earn points from verified<br />EV infrastructure activity
               </h1>
               <p className="text-zinc-500 text-lg">
-                Own your share of productive EV infrastructure to start earning periodic yields.
+                Participate in campaigns tied to route logs, operator onboarding, and verified mobility credit pool activity.
               </p>
             </div>
             
@@ -100,7 +100,7 @@ export default function EarnPage() {
               </div>
               <div>
                 <p className="font-bold text-zinc-900 text-xl">20-45%</p>
-                <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mt-1">Yield Earned</p>
+                <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mt-1">Cash Yield Layer</p>
               </div>
               <div>
                 <p className="font-bold text-zinc-900 text-xl">${formatNumber(399999)}</p>
@@ -154,7 +154,7 @@ export default function EarnPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-zinc-900">{upcomingPool.yield} Yield</p>
+                  <p className="font-bold text-zinc-900">{upcomingPool.yield}</p>
                   <p className="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded mt-1 inline-flex items-center gap-1">
                     <Zap size={12} /> Nemesis Points Eligible
                   </p>
@@ -202,13 +202,13 @@ export default function EarnPage() {
               <h2 className="text-xl font-bold text-zinc-900 flex items-center gap-2">
                 EV Asset Pools
                 <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded border border-green-100 flex items-center gap-1">
-                  <TrendingUp size={12} /> High Yield
+                  <TrendingUp size={12} /> Credit Pools
                 </span>
               </h2>
-              <p className="text-sm text-zinc-500 mt-1">Variable yields from productive EV infrastructure assets.</p>
+              <p className="text-sm text-zinc-500 mt-1">Cash yield and principal recovery from verified productive EV infrastructure assets.</p>
             </div>
             <button className="text-sm font-semibold text-zinc-900 flex items-center gap-2">
-              APY (High &rarr; Low)
+              Cash Yield
             </button>
           </div>
           
@@ -243,7 +243,7 @@ export default function EarnPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-green-600 text-sm">{pool.yield} Yield</p>
+                      <p className="font-bold text-green-600 text-sm">{pool.yield}</p>
                       <p className="text-[10px] font-bold text-teal-600 bg-teal-50 px-1.5 py-0.5 rounded mt-1 inline-flex items-center gap-1">
                         <Zap size={10} /> Points Eligible
                       </p>
@@ -285,12 +285,12 @@ export default function EarnPage() {
         {/* Fixed Income Pools */}
         <div className="pb-16">
           <h2 className="text-xl font-bold text-zinc-900 mb-2">Fixed Income Pools</h2>
-          <p className="text-sm text-zinc-500 mb-6">Earn fixed yields from Partner Operated EV Pools globally.</p>
+          <p className="text-sm text-zinc-500 mb-6">Future fixed remittance products for partner operated EV pools.</p>
           
           <div className="bg-zinc-50/50 rounded-3xl border border-zinc-100 p-16 flex flex-col items-center justify-center text-center">
             <h3 className="text-3xl font-bold text-zinc-900 mb-3">Coming Soon</h3>
             <p className="text-lg text-teal-600 font-semibold mb-2">Fixed Income Pool Investment Opportunities</p>
-            <p className="text-sm text-zinc-500">Stay tuned for stable yield-generating investment pools</p>
+            <p className="text-sm text-zinc-500">Stay tuned for remittance-based infrastructure financing pools</p>
           </div>
         </div>
 
@@ -298,4 +298,3 @@ export default function EarnPage() {
     </div>
   );
 }
-

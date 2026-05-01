@@ -8,7 +8,7 @@ import { AppSidebar, type NavItem } from '@/components/layout/AppSidebar'
 const OPERATOR_NAV: NavItem[] = [
   { href: '/rwa/operator', label: 'Overview', icon: LayoutDashboard },
   { href: '/rwa/operator/fleet', label: 'Fleet', icon: Map },
-  { href: '/rwa/operator/mint', label: 'Mint', icon: Plus },
+  { href: '/rwa/operator/mint', label: 'Onboard', icon: Plus },
   { href: '/rwa/operator/maintenance', label: 'Maintenance', icon: Wrench },
   { href: '/rwa/operator/analytics', label: 'Analytics', icon: BarChart2 },
   { href: '/rwa/operator/transactions', label: 'Transaksi', icon: ArrowLeftRight },

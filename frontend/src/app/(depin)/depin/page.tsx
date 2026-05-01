@@ -61,7 +61,7 @@ const mockVehicles = [
   { name: "Unit 06", vin: "NMS-006", health: 90, region: "Medan", odometer: 9500, owner: "6cD2...xY1u" },
   { name: "Unit 07", vin: "NMS-007", health: 82, region: "Semarang", odometer: 16000, owner: "3eF4...zA2v" },
   { name: "Unit 08", vin: "NMS-008", health: 45, region: "Jakarta", odometer: 32000, owner: "8gH6...bC3w" },
-] as any[];
+];
 
 const FleetLeafletMap = dynamic(() => import("@/components/ui/FleetLeafletMap"), { ssr: false });
 

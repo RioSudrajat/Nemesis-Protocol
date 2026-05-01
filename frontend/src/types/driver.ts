@@ -10,23 +10,24 @@ export interface DriverProfile {
   simNumber: string
   kycStatus: KYCStatus
   assignedVehicleId?: string
-  assignedVehicleUnitId?: string  // e.g. "#NMS-0042"
+  assignedVehicleUnitId?: string
   contractType: ContractType
-  flatFeeDaily: number            // IDR (shown in Rupiah, driver doesn't see IDRX)
+  flatFeeDaily: number
   operatorId: string
   joinedAt: string
 }
 
 export interface DriverDailyStatus {
   driverId: string
-  date: string                    // YYYY-MM-DD
+  date: string
   gpsActive: boolean
   gpsActiveMinutes: number
   flatFeePaid: boolean
-  flatFeeAmount: number           // IDR
+  flatFeeAmount: number
   kmToday: number
-  tripsToday: number
+  routeLogCount: number
   activeHours: number
+  movementSegments: number
 }
 
 export interface DriverScheduleEntry {
