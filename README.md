@@ -12,6 +12,7 @@
   <a href="#key-features">Features</a> •
   <a href="#how-it-works">How It Works</a> •
   <a href="#tech-stack">Tech Stack</a> •
+  <a href="#grant-package">Grant Package</a> •
   <a href="#getting-started">Getting Started</a> •
   <a href="#project-structure">Structure</a> •
   <a href="#roadmap">Roadmap</a> •
@@ -119,6 +120,12 @@ No vague token stories. Real assets, real cashflows, real protocol revenue from 
 | **Icons** | [Lucide React](https://lucide.dev/) |
 | **Fonts** | Orbitron · Exo 2 · Fraunces · Plus Jakarta Sans (Google Fonts) |
 | **Target Chain** | [Solana](https://solana.com/) + [IDRX](https://idrx.co/) stablecoin |
+
+---
+
+## Grant Package
+
+- [Money Back Guarantee Agent Grant Application](docs/GRANT_APPLICATION_MONEY_BACK_GUARANTEE_AGENT.md)
 
 ---
 
