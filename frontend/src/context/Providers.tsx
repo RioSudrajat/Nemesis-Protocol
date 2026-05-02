@@ -4,17 +4,17 @@ import { ReactNode } from "react";
 import { ToastProvider } from "@/components/ui/Toast";
 import { AdminProvider } from "@/context/AdminContext";
 import { BookingProvider } from "@/context/BookingContext";
-import { EnterpriseProvider } from "@/context/EnterpriseContext";
+import { OperatorProvider } from "@/context/OperatorContext";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <ToastProvider>
       <AdminProvider>
-        <EnterpriseProvider>
+        <OperatorProvider>
           <BookingProvider>
             {children}
           </BookingProvider>
-        </EnterpriseProvider>
+        </OperatorProvider>
       </AdminProvider>
     </ToastProvider>
   );

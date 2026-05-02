@@ -6,22 +6,22 @@ import { Building2, Search, CheckCircle2, XCircle, ShieldAlert, MoreHorizontal }
 import { useAdmin } from "@/context/AdminContext";
 import { useToast } from "@/components/ui/Toast";
 
-export default function AdminEnterprisesPage() {
+export default function AdminOperatorsPage() {
   const admin = useAdmin();
   const { showToast } = useToast();
   const wallets = admin?.whitelistedWallets || [];
   const [searchQuery, setSearchQuery] = useState("");
 
-  const enterprises = useMemo(() => wallets.filter(w => w.role === "operator"), [wallets]);
+  const operators = useMemo(() => wallets.filter(w => w.role === "operator"), [wallets]);
 
   const filtered = useMemo(() => {
-    if (!searchQuery) return enterprises;
-    return enterprises.filter(e => e.entityName.toLowerCase().includes(searchQuery.toLowerCase()) || e.wallet.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [enterprises, searchQuery]);
+    if (!searchQuery) return operators;
+    return operators.filter(e => e.entityName.toLowerCase().includes(searchQuery.toLowerCase()) || e.wallet.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [operators, searchQuery]);
 
-  const activeCount = enterprises.filter(e => e.status === "active").length;
-  const suspendedCount = enterprises.filter(e => e.status === "suspended").length;
-  const pendingCount = enterprises.filter(e => e.status === "pending").length;
+  const activeCount = operators.filter(e => e.status === "active").length;
+  const suspendedCount = operators.filter(e => e.status === "suspended").length;
+  const pendingCount = operators.filter(e => e.status === "pending").length;
 
   return (
     <div>
@@ -38,7 +38,7 @@ export default function AdminEnterprisesPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Total Operators", value: enterprises.length, color: "#5EEAD4", icon: Building2 },
+          { label: "Total Operators", value: operators.length, color: "#5EEAD4", icon: Building2 },
           { label: "Active", value: activeCount, color: "#86EFAC", icon: CheckCircle2 },
           { label: "Suspended", value: suspendedCount, color: "#FCA5A5", icon: XCircle },
           { label: "Pending", value: pendingCount, color: "#FCD34D", icon: ShieldAlert },
@@ -82,7 +82,7 @@ export default function AdminEnterprisesPage() {
                     {e.status}
                   </span>
                 </td>
-                <td className="py-4 px-6 text-gray-300">Enterprise Tier</td>
+                <td className="py-4 px-6 text-gray-300">Operator Tier</td>
                 <td className="py-4 px-6 text-gray-400 text-xs">{e.registeredAt.split("T")[0]}</td>
                 <td className="py-4 px-6 text-right">
                   <div className="flex items-center justify-end gap-1">
@@ -96,7 +96,7 @@ export default function AdminEnterprisesPage() {
               </tr>
             ))}
             {filtered.length === 0 && (
-              <tr><td colSpan={6} className="text-center py-12 text-gray-500"><Building2 className="w-8 h-8 mx-auto mb-2 opacity-30" /><p className="text-sm">No enterprises found.</p></td></tr>
+              <tr><td colSpan={6} className="text-center py-12 text-gray-500"><Building2 className="w-8 h-8 mx-auto mb-2 opacity-30" /><p className="text-sm">No operators found.</p></td></tr>
             )}
           </tbody>
         </table>

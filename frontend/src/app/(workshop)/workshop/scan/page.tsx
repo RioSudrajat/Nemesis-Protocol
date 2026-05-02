@@ -108,7 +108,7 @@ export default function ScanPage() {
                 <motion.div className="absolute left-2 right-2 h-[2px]" style={{ background: "var(--solana-purple)", boxShadow: "0 0 10px var(--solana-purple)" }} animate={{ top: ["10%", "90%", "10%"] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} />
               </div>
               <h3 className="text-xl font-semibold mb-2">Hold NFC Card Near Device</h3>
-              <p className="text-sm mb-6" style={{ color: "var(--solana-text-muted)" }}>Place the vehicle&apos;s NOC ID NFC card near your device&apos;s NFC reader</p>
+              <p className="text-sm mb-6" style={{ color: "var(--solana-text-muted)" }}>Place the vehicle&apos;s Nemesis NFC card near your device&apos;s NFC reader</p>
               <button onClick={() => setScanned(true)} className="glow-btn flex items-center gap-2 cursor-pointer">
                 <Scan className="w-5 h-5" /> Simulate NFC Scan
               </button>
@@ -155,7 +155,7 @@ export default function ScanPage() {
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Vehicle</p><p className="font-semibold flex items-center gap-2"><Car className="w-4 h-4" style={{ color: "var(--solana-purple)" }} /> {simVehicle.name}</p></div>
               <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>VIN</p><p className="font-semibold mono text-sm">{simVehicle.vin}</p></div>
-              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>NOC ID</p><p className="font-semibold flex items-center gap-2"><Shield className="w-4 h-4" style={{ color: "var(--solana-green)" }} /> #{simVehicleKey.toUpperCase().padEnd(5, "0").slice(0, 5)}</p></div>
+              <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Nemesis ID</p><p className="font-semibold flex items-center gap-2"><Shield className="w-4 h-4" style={{ color: "var(--solana-green)" }} /> #{simVehicleKey.toUpperCase().padEnd(5, "0").slice(0, 5)}</p></div>
               <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Health Score</p><p className="font-semibold text-xl" style={{ color: "#5EEAD4" }}>{simVehicle.health}</p></div>
               <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Mileage</p><p className="font-semibold mono">{simVehicle.odometer}</p></div>
               <div className="p-4 rounded-xl" style={{ background: "rgba(20,20,40,0.5)" }}><p className="text-xs mb-1" style={{ color: "var(--solana-text-muted)" }}>Last Service</p><p className="font-semibold flex items-center gap-2"><Clock className="w-4 h-4" style={{ color: "var(--solana-text-muted)" }} /> 2026-02-10</p></div>

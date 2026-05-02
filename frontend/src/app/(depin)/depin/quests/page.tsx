@@ -22,7 +22,7 @@ const quests: Quest[] = [
   { id: "q3", title: "Join Discord", desc: "Join our Discord server", reward: 100, Icon: MessageCircle, cta: "Join" },
   { id: "q4", title: "Connect Wallet", desc: "Connect Solana wallet", reward: 100, Icon: Wallet, cta: "Connect" },
   { id: "q5", title: "Refer 1 New Operator", desc: "Invite fleet operator to join", reward: 500, Icon: Handshake, cta: "Start" },
-  { id: "q6", title: "Join Pool Batch #1", desc: "Invest min 30,000 IDRX", reward: 1000, Icon: PiggyBank, cta: "View Pool" },
+  { id: "q6", title: "Join Pool Batch #1", desc: "Invest min 300,000 IDRX", reward: 1000, Icon: PiggyBank, cta: "View Pool" },
   { id: "q7", title: "Hold 1,000 points for 30 days", desc: "Maintain your points balance", reward: 200, Icon: Trophy, cta: "Start" },
 ];
 

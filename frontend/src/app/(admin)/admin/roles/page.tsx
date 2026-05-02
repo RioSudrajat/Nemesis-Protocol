@@ -176,7 +176,7 @@ export default function AdminRolesPage() {
                 <div>
                   <label className="text-xs font-semibold uppercase tracking-wider block mb-2" style={{ color: "var(--solana-text-muted)" }}>Role</label>
                   <select value={newRole} onChange={e => setNewRole(e.target.value as PlatformRole)} className="input-field w-full text-sm bg-transparent">
-                    {(["user", "workshop", "enterprise", "admin"] as PlatformRole[]).map(r => (
+                    {(["driver", "workshop", "operator", "admin", "superadmin"] as PlatformRole[]).map(r => (
                       <option key={r} value={r} className="bg-gray-900 capitalize">{r}</option>
                     ))}
                   </select>

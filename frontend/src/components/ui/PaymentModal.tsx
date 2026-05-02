@@ -13,7 +13,7 @@ interface PaymentModalProps {
     description: string;
     amountIDR: number;
     amountUSDC: number;
-    amountNOC: number;
+    amountNMS: number;
     parts?: PartItem[];
     serviceCost?: number;
     gasFee?: number;
@@ -21,7 +21,7 @@ interface PaymentModalProps {
   onPaymentComplete: () => void;
 }
 
-type PaymentMethod = "web3" | "fiat" | "noc" | null;
+type PaymentMethod = "web3" | "fiat" | "nms" | null;
 
 export function PaymentModal({
   isOpen,
@@ -200,7 +200,7 @@ export function PaymentModal({
                   </div>
                 </button>
 
-                {/* 3. NOC Token (Disabled) */}
+                {/* 3. Protocol Token (Disabled) */}
                 <button
                   disabled={true}
                   className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-700 bg-slate-800/30 opacity-60 cursor-not-allowed"
@@ -210,12 +210,12 @@ export function PaymentModal({
                       <Coins className="w-5 h-5" />
                     </div>
                     <div className="text-left">
-                      <div className="font-medium text-white">Pay with $NOC</div>
-                      <div className="text-xs text-teal-400 font-medium tracking-wide text-[10px] uppercase">Coming Soon</div>
+                      <div className="font-medium text-white">$NMS protocol token</div>
+                      <div className="text-xs text-teal-400 font-medium tracking-wide text-[10px] uppercase">Coming 2027</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm font-medium text-slate-400">{serviceDetails.amountNOC} NOC</div>
+                    <div className="text-sm font-medium text-slate-400">{serviceDetails.amountNMS} NMS</div>
                   </div>
                 </button>
               </div>

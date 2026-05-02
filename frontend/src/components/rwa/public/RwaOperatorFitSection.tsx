@@ -3,7 +3,7 @@ import { ArrowRight, Building2, UserRound } from 'lucide-react'
 
 const OPERATOR_TYPES = [
   {
-    title: 'Enterprise Fleet',
+    title: 'Fleet Operator',
     label: 'PT / CV / UD',
     body: 'For operators with structured fleets, operational SLAs, and recurring revenue reporting.',
     requirements: ['Min. 10 units', 'Business KYC', '85%+ uptime SLA', 'Monthly investor reporting'],

@@ -1,5 +1,16 @@
 'use client'
 
+import type { ReactNode } from 'react'
+import {
+  Activity,
+  BrainCircuit,
+  CircleDollarSign,
+  Gauge,
+  Route,
+  ShieldCheck,
+  TrendingUp,
+  WalletCards,
+} from 'lucide-react'
 import { AIFleetInsights } from '@/components/rwa/AIFleetInsights'
 import { InteractiveDonutChart } from '@/components/ui/InteractiveDonutChart'
 import { WorkshopRevenueChart } from '@/components/ui/WorkshopRevenueChart'
@@ -9,143 +20,265 @@ const AI_INSIGHTS: AIFleetInsight[] = [
   {
     unitId: '#NMS-0042',
     severity: 'critical',
-    message: 'Ban belakang: keausan tidak merata',
-    prediction: 'Perlu penggantian dalam 14 hari',
+    message: 'Rear tire wear is uneven across the latest service interval.',
+    prediction: 'Schedule tire replacement within 14 days to keep maintenance proof valid.',
     confidence: 87,
     category: 'maintenance',
   },
   {
     unitId: '#NMS-0018',
     severity: 'warning',
-    message: 'Efisiensi baterai turun 12%',
-    prediction: 'Pantau selama 7 hari ke depan',
+    message: 'Battery efficiency is 12% below the fleet baseline.',
+    prediction: 'Monitor route load and charging behavior over the next 7 days.',
     confidence: 72,
     category: 'battery',
   },
   {
     severity: 'info',
-    message: '3 unit di atas avg idle rate minggu ini',
-    prediction: 'Investigasi pola pengemudi',
+    message: '3 units are above the average idle-rate band this week.',
+    prediction: 'Review driver assignment and route coverage before the next pool report.',
     confidence: 65,
     category: 'utilization',
   },
 ]
 
 const DONUT_DATA = [
-  { id: 'active', label: 'Aktif', value: 71, color: '#86EFAC' },
+  { id: 'active', label: 'Active', value: 71, color: '#5EEAD4' },
   { id: 'maintenance', label: 'Maintenance', value: 6, color: '#FCD34D' },
-  { id: 'idle', label: 'Idle', value: 18, color: '#A1A1AA' },
-  { id: 'offline', label: 'Offline', value: 5, color: '#FCA5A5' },
+  { id: 'idle', label: 'Idle', value: 18, color: '#94A3B8' },
+  { id: 'offline', label: 'Offline', value: 5, color: '#FDA4AF' },
+]
+
+const CASH_DISTRIBUTION_DATA = [
+  { day: 'Mon', value: 540000 },
+  { day: 'Tue', value: 610000 },
+  { day: 'Wed', value: 580000 },
+  { day: 'Thu', value: 760000 },
+  { day: 'Fri', value: 690000 },
+  { day: 'Sat', value: 830000 },
+  { day: 'Sun', value: 520000 },
 ]
 
 const STATS_ROW = [
-  { label: 'Avg Health Score', value: '83/100', color: '#86EFAC', icon: '❤️' },
-  { label: 'Utilisasi Rate', value: '85.5%', color: '#5EEAD4', icon: '⚡' },
-  { label: 'Avg Km/Unit/Day', value: '72 km', color: '#FCD34D', icon: '🛣️' },
-  { label: 'Yield Bulan Ini', value: 'Rp 4.2M', color: '#A78BFA', icon: '💰' },
+  {
+    label: 'Avg Fleet Health',
+    value: '83/100',
+    detail: '2 units require review',
+    Icon: Gauge,
+    tone: 'text-emerald-200',
+  },
+  {
+    label: 'Route Utilization',
+    value: '85.5%',
+    detail: 'Daily route-log coverage',
+    Icon: Activity,
+    tone: 'text-teal-100',
+  },
+  {
+    label: 'Km / Unit / Day',
+    value: '72 km',
+    detail: 'Median productive movement',
+    Icon: Route,
+    tone: 'text-amber-100',
+  },
+  {
+    label: 'Cash Distributed',
+    value: 'Rp 4.2M',
+    detail: 'IDRX settled this month',
+    Icon: WalletCards,
+    tone: 'text-white/82',
+  },
 ]
+
+const SEGMENT_PERFORMANCE = [
+  {
+    segment: 'Ride-hailing',
+    units: 38,
+    health: 87,
+    km: 78,
+    utilization: '89%',
+    cash: 'Rp 48,000',
+    status: 'Strong',
+  },
+  {
+    segment: 'Delivery',
+    units: 31,
+    health: 81,
+    km: 65,
+    utilization: '83%',
+    cash: 'Rp 42,000',
+    status: 'Stable',
+  },
+  {
+    segment: 'Cargo',
+    units: 14,
+    health: 79,
+    km: 58,
+    utilization: '79%',
+    cash: 'Rp 55,000',
+    status: 'Watch',
+  },
+]
+
+function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return (
+    <section
+      className={`rounded-[28px] border border-white/[0.075] bg-[#070808]/88 shadow-[0_24px_80px_rgba(0,0,0,0.34)] ${className}`}
+    >
+      {children}
+    </section>
+  )
+}
+
+function Eyebrow({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/42">
+      {children}
+    </p>
+  )
+}
 
 export default function AnalyticsPage() {
   return (
-    <div className="flex flex-col gap-6 max-w-6xl">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-black gradient-text" style={{ fontFamily: 'var(--font-orbitron, Orbitron, sans-serif)' }}>
-          Analytics & AI Insights
-        </h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--solana-text-muted)' }}>
-          Data performa armada dan prediksi berbasis AI
-        </p>
-      </div>
-
-      {/* Stats Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {STATS_ROW.map((s) => (
-          <div
-            key={s.label}
-            className="glass-card rounded-2xl p-5"
-            style={{ border: '1px solid rgba(94,234,212,0.15)' }}
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+      <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
+        <div>
+          <Eyebrow>Operator analytics</Eyebrow>
+          <h1
+            className="mt-3 text-4xl font-semibold tracking-[-0.055em] text-white sm:text-5xl"
+            style={{ fontFamily: 'var(--font-fraunces, Fraunces, serif)' }}
           >
-            <div className="text-2xl mb-2">{s.icon}</div>
-            <div className="text-xl font-black" style={{ color: s.color }}>{s.value}</div>
-            <div className="text-xs mt-1" style={{ color: 'var(--solana-text-muted)' }}>{s.label}</div>
-          </div>
-        ))}
+            Fleet Intelligence
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-white/52">
+            Monitor fleet health, route utilization, cash distribution, and predictive maintenance
+            signals from one operator intelligence layer.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.035] px-3 py-2 text-xs font-semibold text-white/54">
+          <BrainCircuit className="h-4 w-4 text-teal-100/80" />
+          AI health insights active
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Fleet Status Donut */}
-        <div className="glass-card rounded-2xl p-6" style={{ border: '1px solid rgba(94,234,212,0.2)' }}>
-          <h2 className="font-bold text-sm uppercase tracking-wider mb-1" style={{ color: 'var(--solana-text-muted)' }}>
-            Fleet Health Distribution
-          </h2>
-          <p className="text-xs mb-4" style={{ color: 'var(--solana-text-muted)' }}>Status distribusi 83 unit armada</p>
-          <InteractiveDonutChart data={DONUT_DATA} />
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            {DONUT_DATA.map((d) => (
-              <div key={d.id} className="flex items-center gap-2 text-xs">
-                <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: d.color }} />
-                <span style={{ color: 'var(--solana-text-muted)' }}>{d.label}</span>
-                <span className="font-bold ml-auto" style={{ color: d.color }}>{d.value}%</span>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {STATS_ROW.map((stat) => {
+          const Icon = stat.Icon
+          return (
+            <div
+              key={stat.label}
+              className="rounded-3xl border border-white/[0.075] bg-[#080A0A] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)]"
+            >
+              <div className="mb-6 flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/42">
+                  {stat.label}
+                </span>
+                <span className={`rounded-full border border-white/[0.08] bg-white/[0.035] p-2 ${stat.tone}`}>
+                  <Icon className="h-4 w-4" />
+                </span>
               </div>
-            ))}
+              <div className="text-3xl font-semibold tracking-[-0.045em] text-white">{stat.value}</div>
+              <p className="mt-2 text-xs text-white/45">{stat.detail}</p>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr]">
+        <Panel className="p-5 sm:p-6">
+          <div className="mb-4 flex items-start justify-between gap-4">
+            <div>
+              <Eyebrow>Fleet status</Eyebrow>
+              <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-white">
+                Unit distribution
+              </h2>
+              <p className="mt-2 text-xs leading-5 text-white/43">
+                Current operating state across 83 registered units.
+              </p>
+            </div>
+            <ShieldCheck className="h-5 w-5 text-teal-100/70" />
+          </div>
+          <InteractiveDonutChart data={DONUT_DATA} centerLabel="Fleet state" centerValue="83 units" />
+        </Panel>
+
+        <Panel className="p-5 sm:p-6">
+          <div className="mb-5 flex items-start justify-between gap-4">
+            <div>
+              <Eyebrow>Predictive layer</Eyebrow>
+              <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-white">
+                Maintenance intelligence
+              </h2>
+              <p className="mt-2 text-xs leading-5 text-white/43">
+                AI-assisted signals from GPS activity, usage behavior, and service history.
+              </p>
+            </div>
+            <BrainCircuit className="h-5 w-5 text-teal-100/70" />
+          </div>
+          <AIFleetInsights insights={AI_INSIGHTS} />
+        </Panel>
+      </div>
+
+      <Panel className="p-5 sm:p-6">
+        <div className="mb-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+          <div>
+            <Eyebrow>Settlement trend</Eyebrow>
+            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-white">
+              IDRX Cash Distribution
+            </h2>
+            <p className="mt-2 text-xs leading-5 text-white/43">
+              Daily cash distributed from verified fleet operations over the last 7 days.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.035] px-3 py-2 text-xs font-semibold text-white/54">
+            <CircleDollarSign className="h-4 w-4 text-teal-100/80" />
+            Rp 4.2M month-to-date
           </div>
         </div>
+        <WorkshopRevenueChart data={CASH_DISTRIBUTION_DATA} suffix="IDRX" color="#5EEAD4" variant="dark" />
+      </Panel>
 
-        {/* AI Fleet Insights */}
-        <div className="glass-card rounded-2xl p-6" style={{ border: '1px solid rgba(94,234,212,0.2)' }}>
-          <h2 className="font-bold text-sm uppercase tracking-wider mb-1" style={{ color: 'var(--solana-text-muted)' }}>
-            AI Fleet Insights
-          </h2>
-          <p className="text-xs mb-4" style={{ color: 'var(--solana-text-muted)' }}>Prediksi berbasis data GPS & sensor kendaraan</p>
-          <AIFleetInsights insights={AI_INSIGHTS} />
+      <Panel className="overflow-hidden">
+        <div className="flex items-start justify-between gap-4 border-b border-white/[0.07] p-5 lg:p-6">
+          <div>
+            <Eyebrow>Segment performance</Eyebrow>
+            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-white">
+              Productive mobility segments
+            </h2>
+          </div>
+          <TrendingUp className="h-5 w-5 text-teal-100/70" />
         </div>
-      </div>
-
-      {/* Yield Distribution Chart */}
-      <div className="glass-card rounded-2xl p-6" style={{ border: '1px solid rgba(94,234,212,0.2)' }}>
-        <h2 className="font-bold text-sm uppercase tracking-wider mb-1" style={{ color: 'var(--solana-text-muted)' }}>
-          Distribusi Yield Mingguan
-        </h2>
-        <p className="text-xs mb-2" style={{ color: 'var(--solana-text-muted)' }}>
-          Total IDRX yang terdistribusi ke investor per hari dalam 7 hari terakhir
-        </p>
-        <WorkshopRevenueChart />
-      </div>
-
-      {/* Performance Table */}
-      <div className="glass-card rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(94,234,212,0.2)' }}>
-        <div className="px-5 py-4 border-b" style={{ borderColor: 'rgba(94,234,212,0.1)', background: 'rgba(94,234,212,0.05)' }}>
-          <h2 className="font-bold text-sm">Performa Per Kategori</h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                {['Kategori', 'Unit', 'Avg Health', 'Avg Km/Hari', 'Utilisasi', 'Yield/Unit/Minggu'].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--solana-text-muted)' }}>{h}</th>
+        <div className="overflow-x-auto [scrollbar-color:rgba(148,163,184,0.28)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/15 hover:[&::-webkit-scrollbar-thumb]:bg-white/25">
+          <table className="w-full min-w-[860px] text-left text-sm">
+            <thead className="border-b border-white/[0.07] text-[11px] uppercase tracking-[0.18em] text-white/36">
+              <tr>
+                {['Segment', 'Units', 'Avg Health', 'Km / Day', 'Utilization', 'Cash / Unit / Week', 'State'].map((header) => (
+                  <th key={header} className="px-5 py-4 font-semibold">
+                    {header}
+                  </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
-              {[
-                { cat: 'Ojol', unit: 38, health: 87, km: 78, util: '89%', yield: 'Rp 48.000' },
-                { cat: 'Kurir', unit: 31, health: 81, km: 65, util: '83%', yield: 'Rp 42.000' },
-                { cat: 'Logistik', unit: 14, health: 79, km: 58, util: '79%', yield: 'Rp 55.000' },
-              ].map((row, i) => (
-                <tr key={i} style={{ borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
-                  <td className="px-4 py-3 font-semibold">{row.cat}</td>
-                  <td className="px-4 py-3">{row.unit}</td>
-                  <td className="px-4 py-3 font-bold" style={{ color: '#86EFAC' }}>{row.health}</td>
-                  <td className="px-4 py-3">{row.km} km</td>
-                  <td className="px-4 py-3 font-semibold" style={{ color: '#5EEAD4' }}>{row.util}</td>
-                  <td className="px-4 py-3 font-semibold gradient-text">{row.yield}</td>
+            <tbody className="divide-y divide-white/[0.06]">
+              {SEGMENT_PERFORMANCE.map((row) => (
+                <tr key={row.segment} className="text-white/72 transition hover:bg-white/[0.035]">
+                  <td className="px-5 py-4 text-sm font-semibold text-white/82">{row.segment}</td>
+                  <td className="px-5 py-4 text-sm text-white/62">{row.units}</td>
+                  <td className="px-5 py-4 text-sm font-semibold text-emerald-100/82">{row.health}/100</td>
+                  <td className="px-5 py-4 text-sm text-white/62">{row.km} km</td>
+                  <td className="px-5 py-4 text-sm font-semibold text-teal-100/82">{row.utilization}</td>
+                  <td className="px-5 py-4 text-sm font-semibold text-white/78">{row.cash}</td>
+                  <td className="px-5 py-4">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] px-2.5 py-1 text-xs font-semibold text-white/62">
+                      <span className="h-1.5 w-1.5 rounded-full bg-teal-300/80" />
+                      {row.status}
+                    </span>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </div>
+      </Panel>
     </div>
   )
 }

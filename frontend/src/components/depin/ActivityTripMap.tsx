@@ -56,8 +56,8 @@ export function ActivityTripMap({ onClose, isModal = false }: ActivityTripMapPro
     : "relative w-full h-[800px] rounded-3xl overflow-hidden bg-zinc-900 border border-zinc-800";
 
   const containerClass = isModal
-    ? "relative w-full h-[95vh] sm:h-[800px] max-w-[480px] bg-white sm:rounded-3xl overflow-hidden shadow-2xl flex flex-col animate-in slide-in-from-bottom-10 sm:zoom-in-95"
-    : "w-full h-full flex flex-col bg-white";
+    ? "relative w-full h-[95vh] sm:h-[800px] max-w-[480px] overflow-hidden bg-[#050606] sm:rounded-3xl border border-white/[0.09] shadow-[0_30px_120px_rgba(0,0,0,0.64)] flex flex-col animate-in slide-in-from-bottom-10 sm:zoom-in-95"
+    : "w-full h-full flex flex-col bg-[#050606]";
 
   const content = (
     <Wrapper className={wrapperClass}>
@@ -80,65 +80,71 @@ export function ActivityTripMap({ onClose, isModal = false }: ActivityTripMapPro
             style={{ width: "100%", height: "100%", background: "#18181b" }}
           >
             <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
               attribution='&copy; <a href="https://carto.com/">CARTO</a>'
             />
-            <Polyline positions={routePath} color="#2563eb" weight={5} opacity={0.8} />
+            <Polyline positions={routePath} color="#5EEAD4" weight={5} opacity={0.86} />
           </MapContainer>
           
-          {/* Fading overlay to blend map into white card */}
-          <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent z-[500]" />
+          {/* Fading overlay to blend map into the dark route sheet */}
+          <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#050606] to-transparent z-[500]" />
         </div>
 
-        {/* Strava-like Details Sheet */}
-        <div className="flex-1 bg-white p-6 overflow-y-auto z-[1000]">
+        {/* Route details sheet */}
+        <div className="z-[1000] flex-1 overflow-y-auto bg-[#050606] p-6 [scrollbar-color:rgba(148,163,184,0.28)_transparent] [scrollbar-width:thin]">
           
           <div className="mb-6">
-            <h2 className="text-2xl font-black text-zinc-900 font-[family-name:var(--font-orbitron)] tracking-tight">Daily Route Log</h2>
-            <p className="text-sm text-zinc-500 font-medium mt-1">Monday, 20 Apr 2026 - 1:39 PM</p>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/42">Proof of Activity</p>
+            <h2
+              className="text-2xl font-semibold tracking-[-0.045em] text-white"
+              style={{ fontFamily: 'var(--font-fraunces, Fraunces, serif)' }}
+            >
+              Daily Route Log
+            </h2>
+            <p className="mt-1 text-sm font-medium text-white/42">Monday, 20 Apr 2026 - 1:39 PM</p>
           </div>
 
           <div className="grid grid-cols-3 gap-y-8 gap-x-4 mb-10">
             <div className="flex flex-col">
-              <span className="text-blue-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Navigation size={14} /> Distance</span>
-              <span className="text-2xl font-black text-zinc-900 tracking-tighter">14.7 <span className="text-sm font-bold text-zinc-500">km</span></span>
+              <span className="mb-1 flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-teal-100/78"><Navigation size={14} /> Distance</span>
+              <span className="text-2xl font-semibold tracking-tighter text-white">14.7 <span className="text-sm font-bold text-white/42">km</span></span>
             </div>
             <div className="flex flex-col">
-              <span className="text-amber-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Clock size={14} /> Active Time</span>
-              <span className="text-2xl font-black text-zinc-900 tracking-tighter">42<span className="text-sm font-bold text-zinc-500">m</span> 15<span className="text-sm font-bold text-zinc-500">s</span></span>
+              <span className="mb-1 flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-amber-100/78"><Clock size={14} /> Active Time</span>
+              <span className="text-2xl font-semibold tracking-tighter text-white">42<span className="text-sm font-bold text-white/42">m</span> 15<span className="text-sm font-bold text-white/42">s</span></span>
             </div>
             <div className="flex flex-col">
-              <span className="text-rose-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Gauge size={14} /> Route Cover</span>
-              <span className="text-2xl font-black text-zinc-900 tracking-tighter">92<span className="text-sm font-bold text-zinc-500">%</span></span>
+              <span className="mb-1 flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-rose-100/78"><Gauge size={14} /> Route Cover</span>
+              <span className="text-2xl font-semibold tracking-tighter text-white">92<span className="text-sm font-bold text-white/42">%</span></span>
             </div>
             <div className="flex flex-col">
-              <span className="text-zinc-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Activity size={14} /> Segments</span>
-              <span className="text-2xl font-black text-zinc-900 tracking-tighter">7</span>
+              <span className="mb-1 flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-white/42"><Activity size={14} /> Segments</span>
+              <span className="text-2xl font-semibold tracking-tighter text-white">7</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-zinc-500 text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Zap size={14} /> Energy</span>
-              <span className="text-2xl font-black text-zinc-900 tracking-tighter">1.8 <span className="text-sm font-bold text-zinc-500">kWh</span></span>
+              <span className="mb-1 flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-white/42"><Zap size={14} /> Energy</span>
+              <span className="text-2xl font-semibold tracking-tighter text-white">1.8 <span className="text-sm font-bold text-white/42">kWh</span></span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[#14B8A6] text-[11px] font-bold uppercase tracking-widest mb-1 flex items-center gap-1"><Battery size={14} /> Hash</span>
-              <span className="text-2xl font-black text-[#14B8A6] tracking-tighter">OK</span>
+              <span className="mb-1 flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-teal-100/78"><Battery size={14} /> Hash</span>
+              <span className="text-2xl font-semibold tracking-tighter text-teal-100">OK</span>
             </div>
           </div>
 
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-4 border-b border-zinc-100 pb-2">Proof of Activity + Maintenance Signals</h3>
+            <h3 className="mb-4 border-b border-white/[0.07] pb-2 text-xs font-bold uppercase tracking-wider text-white/42">Proof of Activity + Maintenance Signals</h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center group">
-                <span className="text-sm font-semibold text-zinc-700 flex items-center gap-2.5"><div className="p-1.5 rounded-lg bg-zinc-100 group-hover:bg-zinc-200 transition-colors"><Battery size={16} className="text-zinc-600"/></div> Battery Health</span>
-                <span className="text-sm font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-md">-0.01%</span>
+                <span className="flex items-center gap-2.5 text-sm font-semibold text-white/70"><div className="rounded-lg border border-white/[0.08] bg-white/[0.035] p-1.5 transition-colors group-hover:bg-white/[0.06]"><Battery size={16} className="text-white/54"/></div> Battery Health</span>
+                <span className="rounded-md border border-rose-200/15 bg-rose-200/10 px-2 py-0.5 text-sm font-bold text-rose-200">-0.01%</span>
               </div>
               <div className="flex justify-between items-center group">
-                <span className="text-sm font-semibold text-zinc-700 flex items-center gap-2.5"><div className="p-1.5 rounded-lg bg-zinc-100 group-hover:bg-zinc-200 transition-colors"><Settings size={16} className="text-zinc-600"/></div> Tire Tread</span>
-                <span className="text-sm font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-md">-0.12%</span>
+                <span className="flex items-center gap-2.5 text-sm font-semibold text-white/70"><div className="rounded-lg border border-white/[0.08] bg-white/[0.035] p-1.5 transition-colors group-hover:bg-white/[0.06]"><Settings size={16} className="text-white/54"/></div> Tire Tread</span>
+                <span className="rounded-md border border-rose-200/15 bg-rose-200/10 px-2 py-0.5 text-sm font-bold text-rose-200">-0.12%</span>
               </div>
               <div className="flex justify-between items-center group">
-                <span className="text-sm font-semibold text-zinc-700 flex items-center gap-2.5"><div className="p-1.5 rounded-lg bg-zinc-100 group-hover:bg-zinc-200 transition-colors"><ShieldCheck size={16} className="text-zinc-600"/></div> Brake Pads</span>
-                <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Minimal (Regen)</span>
+                <span className="flex items-center gap-2.5 text-sm font-semibold text-white/70"><div className="rounded-lg border border-white/[0.08] bg-white/[0.035] p-1.5 transition-colors group-hover:bg-white/[0.06]"><ShieldCheck size={16} className="text-white/54"/></div> Brake Pads</span>
+                <span className="rounded-md border border-emerald-200/15 bg-emerald-200/10 px-2 py-0.5 text-sm font-bold text-emerald-200">Minimal (Regen)</span>
               </div>
             </div>
           </div>

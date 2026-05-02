@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface NavItem {
@@ -28,6 +28,8 @@ export interface AppSidebarProps {
   useInlineActiveStyle?: boolean;
   /** Visual theme — 'dark' (default) uses dark surfaces, 'light' uses white surfaces with CSS scope hooks */
   theme?: "dark" | "light";
+  /** Dark shell treatment. Legacy preserves existing portal styling; executive is the refined operator shell. */
+  shellTone?: "legacy" | "executive";
 }
 
 export function AppSidebar({
@@ -39,11 +41,14 @@ export function AppSidebar({
   mobileNavCount = 4,
   useInlineActiveStyle = false,
   theme = "dark",
+  shellTone = "legacy",
 }: AppSidebarProps) {
   const pathname = usePathname();
   const [isLeftCollapsed, setIsLeftCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isLight = theme === "light";
+  const isExecutive = !isLight && shellTone === "executive";
 
   const isNavActive = (item: NavItem) => {
     if (useInlineActiveStyle || isLight) {
@@ -51,10 +56,19 @@ export function AppSidebar({
     }
     return pathname === item.href;
   };
+  const mobilePrimaryItems = navItems.slice(0, mobileNavCount);
+  const mobileOverflowActive = navItems.slice(mobileNavCount).some((item) => isNavActive(item));
 
   // Style hook: dark keeps the old inline styles; light relies on .theme-light CSS scope in globals.css
   const asideStyle = isLight
     ? undefined
+    : isExecutive
+    ? {
+        background: "rgba(4,5,5,0.96)",
+        borderColor: "rgba(255,255,255,0.08)",
+        boxShadow: "12px 0 48px rgba(0,0,0,0.38)",
+        zIndex: 40,
+      }
     : {
         background: "var(--solana-dark-2)",
         borderColor: "rgba(94, 234, 212,0.4)",
@@ -64,6 +78,12 @@ export function AppSidebar({
 
   const mobileHeaderStyle = isLight
     ? undefined
+    : isExecutive
+    ? {
+        background: "rgba(4,5,5,0.92)",
+        backdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(255,255,255,0.08)",
+      }
     : {
         background: "rgba(14,14,26,0.95)",
         backdropFilter: "blur(20px)",
@@ -84,7 +104,13 @@ export function AppSidebar({
           className={`app-sidebar-toggle absolute -right-3 top-8 rounded-full p-1.5 z-10 transition-transform hover:scale-110 shadow-md cursor-pointer ${
             isLight ? "" : "text-white"
           }`}
-          style={isLight ? undefined : { background: "var(--solana-purple)" }}
+          style={
+            isLight
+              ? undefined
+              : isExecutive
+              ? { background: "rgba(10,12,12,0.95)", border: "1px solid rgba(255,255,255,0.1)" }
+              : { background: "var(--solana-purple)" }
+          }
         >
           {isLeftCollapsed ? (
             <ChevronRight className="w-4 h-4" />
@@ -143,15 +169,19 @@ export function AppSidebar({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center p-3 rounded-xl transition-colors ${
-                    active
+                  className={`group relative flex items-center p-3 rounded-xl transition-colors ${
+                    isExecutive
+                      ? active
+                        ? "border border-white/[0.085] bg-white/[0.055] text-white/82 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)]"
+                        : "text-white/44 hover:bg-white/[0.035] hover:text-white/72"
+                      : active
                       ? "bg-teal-500/10 text-teal-400"
                       : "text-gray-400 hover:bg-white/5 hover:text-gray-200"
                   } ${isLeftCollapsed ? "justify-center" : "gap-3"}`}
                 >
-                  <item.icon className="w-5 h-5 shrink-0" />
+                  <item.icon className={`w-5 h-5 shrink-0 ${isExecutive && active ? "text-teal-100/76" : ""}`} />
                   {!isLeftCollapsed && (
-                    <span className="whitespace-nowrap text-sm">{item.label}</span>
+                    <span className={`whitespace-nowrap text-sm ${isExecutive ? "font-medium" : ""}`}>{item.label}</span>
                   )}
                 </Link>
               );
@@ -181,7 +211,9 @@ export function AppSidebar({
             isLight
               ? "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 text-sm font-medium"
               : useInlineActiveStyle
-              ? "text-gray-400 hover:bg-white/5 hover:text-gray-200"
+              ? isExecutive
+                ? "text-white/44 hover:bg-white/[0.035] hover:text-white/72"
+                : "text-gray-400 hover:bg-white/5 hover:text-gray-200"
               : "sidebar-link"
           } ${isLeftCollapsed ? "justify-center" : "gap-3"}`}
         >
@@ -216,23 +248,25 @@ export function AppSidebar({
 
       {/* Mobile header */}
       <div
-        className="app-sidebar-mobile md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4"
+        className="app-sidebar-mobile md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between gap-3 p-4"
         style={mobileHeaderStyle}
       >
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex min-w-0 items-center gap-2">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
             <Image src="/noc_logo.png" alt="Nemesis Protocol" width={32} height={32} className="object-contain" />
           </div>
-          <span className={`font-bold text-sm ${isLight ? "text-zinc-900" : ""}`}>{portalLabel}</span>
+          <span className={`truncate font-bold text-sm ${isLight ? "text-zinc-900" : ""}`}>{portalLabel}</span>
         </Link>
-        <div className="flex items-center gap-2">
-          {navItems.slice(0, mobileNavCount).map((item) => {
-            const active = pathname === item.href;
+        <div className="flex shrink-0 items-center gap-1.5">
+          {mobilePrimaryItems.map((item) => {
+            const active = isNavActive(item);
             if (isLight) {
               return (
                 <Link
                   key={item.href}
                   href={item.href}
+                  aria-label={item.label}
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className={`app-sidebar-link p-2 rounded-lg transition-colors ${active ? "active" : ""}`}
                 >
                   <item.icon className="w-5 h-5" />
@@ -243,18 +277,83 @@ export function AppSidebar({
               <Link
                 key={item.href}
                 href={item.href}
-                className="p-2 rounded-lg transition-colors"
+                aria-label={item.label}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`p-2 rounded-lg transition-colors ${isExecutive && active ? "bg-white/[0.055]" : ""}`}
                 style={{
-                  background: active ? "rgba(94, 234, 212,0.15)" : "transparent",
-                  color: active ? "var(--solana-green)" : "var(--solana-text-muted)",
+                  background: isExecutive ? undefined : active ? "rgba(94, 234, 212,0.15)" : "transparent",
+                  color: isExecutive ? (active ? "#DDFDF8" : "rgba(255,255,255,0.48)") : active ? "var(--solana-green)" : "var(--solana-text-muted)",
                 }}
               >
                 <item.icon className="w-5 h-5" />
               </Link>
             );
           })}
+
+          {navItems.length > mobileNavCount && (
+            <button
+              type="button"
+              aria-label="Open mobile navigation"
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="app-sidebar-mobile-menu"
+              onClick={() => setIsMobileMenuOpen((open) => !open)}
+              className={`rounded-lg p-2 transition-colors ${
+                isLight
+                  ? "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900"
+                  : isExecutive
+                  ? isMobileMenuOpen || mobileOverflowActive
+                    ? "bg-white/[0.055] text-white/82"
+                    : "text-white/48 hover:bg-white/[0.035] hover:text-white/72"
+                  : "text-gray-400 hover:bg-white/5 hover:text-gray-200"
+              }`}
+            >
+              <MoreHorizontal className="h-5 w-5" />
+            </button>
+          )}
         </div>
       </div>
+
+      {isMobileMenuOpen && (
+        <div
+          id="app-sidebar-mobile-menu"
+          className={`fixed inset-x-3 top-[76px] z-50 rounded-3xl border p-2 shadow-[0_24px_80px_rgba(0,0,0,0.36)] backdrop-blur-xl md:hidden ${
+            isLight
+              ? "border-zinc-100 bg-white/95"
+              : isExecutive
+              ? "border-white/[0.08] bg-[#050606]/96"
+              : "border-teal-200/10 bg-[#0E0E1A]/95"
+          }`}
+        >
+          <div className="grid grid-cols-2 gap-1.5">
+            {navItems.map((item) => {
+              const active = isNavActive(item);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`flex min-w-0 items-center gap-2 rounded-2xl px-3 py-3 text-sm font-semibold transition-colors ${
+                    isLight
+                      ? active
+                        ? "bg-teal-50 text-teal-700"
+                        : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900"
+                      : isExecutive
+                      ? active
+                        ? "border border-white/[0.08] bg-white/[0.055] text-white/82"
+                        : "text-white/48 hover:bg-white/[0.035] hover:text-white/72"
+                      : active
+                      ? "bg-teal-500/10 text-teal-300"
+                      : "text-gray-400 hover:bg-white/5 hover:text-gray-200"
+                  }`}
+                >
+                  <item.icon className={`h-4 w-4 shrink-0 ${isExecutive && active ? "text-teal-100/76" : ""}`} />
+                  <span className="truncate">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </>
   );
 }

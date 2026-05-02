@@ -435,10 +435,35 @@ code, pre, .mono {
 .orb-cyan { background: rgba(94, 234, 212, 0.08); }
 
 /* === Scrollbar === */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--solana-dark); }
-::-webkit-scrollbar-thumb { background: var(--solana-purple-dark); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--solana-purple); }
+* {
+  scrollbar-color: rgba(100, 116, 139, 0.42) transparent;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.42), rgba(51, 65, 85, 0.52));
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(203, 213, 225, 0.52), rgba(71, 85, 105, 0.68));
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
 
 /* === Health Colors === */
 .health-excellent { color: #86EFAC; }

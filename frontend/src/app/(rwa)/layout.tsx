@@ -11,7 +11,7 @@ const OPERATOR_NAV: NavItem[] = [
   { href: '/rwa/operator/mint', label: 'Onboard', icon: Plus },
   { href: '/rwa/operator/maintenance', label: 'Maintenance', icon: Wrench },
   { href: '/rwa/operator/analytics', label: 'Analytics', icon: BarChart2 },
-  { href: '/rwa/operator/transactions', label: 'Transaksi', icon: ArrowLeftRight },
+  { href: '/rwa/operator/transactions', label: 'Transactions', icon: ArrowLeftRight },
   { href: '/rwa/operator/settings', label: 'Settings', icon: Settings },
 ]
 
@@ -21,16 +21,17 @@ export default function RWALayout({ children }: { children: ReactNode }) {
 
   if (isOperatorPortal) {
     return (
-      <div className="min-h-screen flex" style={{ background: 'var(--solana-dark)' }}>
+      <div className="min-h-screen flex bg-[#080A0B]">
         <AppSidebar
           navItems={OPERATOR_NAV}
           portalName="Nemesis RWA"
           portalLabel="RWA"
           useInlineActiveStyle
-          mobileNavCount={5}
+          shellTone="executive"
+          mobileNavCount={4}
         />
         <main
-          className="flex-1 overflow-y-auto p-6 md:p-10 pt-24 md:pt-10"
+          className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.035),transparent_28%),linear-gradient(180deg,#090B0C_0%,#050606_100%)] p-4 pt-24 sm:p-6 md:p-10 md:pt-10"
           style={{ maxHeight: '100dvh' }}
         >
           {children}

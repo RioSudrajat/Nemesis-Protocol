@@ -6,39 +6,30 @@ interface AIFleetInsightsProps {
 
 const SEVERITY_CONFIG = {
   critical: {
-    bg: 'rgba(252, 165, 165, 0.12)',
-    border: 'rgba(252, 165, 165, 0.4)',
-    leftBorder: '#FCA5A5',
-    badgeBg: 'rgba(252, 165, 165, 0.2)',
-    badgeColor: '#FCA5A5',
-    label: 'Kritis',
-    dot: '#FCA5A5',
+    label: 'Critical',
+    badgeClass: 'border-rose-200/18 bg-white/[0.045] text-rose-100/90',
+    dotClass: 'bg-rose-300 shadow-[0_0_16px_rgba(253,164,175,0.24)]',
+    confidenceClass: 'text-rose-100/90',
   },
   warning: {
-    bg: 'rgba(252, 211, 77, 0.08)',
-    border: 'rgba(252, 211, 77, 0.25)',
-    leftBorder: '#FCD34D',
-    badgeBg: 'rgba(252, 211, 77, 0.15)',
-    badgeColor: '#FCD34D',
-    label: 'Perhatian',
-    dot: '#FCD34D',
+    label: 'Warning',
+    badgeClass: 'border-white/[0.08] bg-white/[0.04] text-amber-100/82',
+    dotClass: 'bg-amber-300/90 shadow-[0_0_16px_rgba(252,211,77,0.2)]',
+    confidenceClass: 'text-amber-100/84',
   },
   info: {
-    bg: 'rgba(94, 234, 212, 0.07)',
-    border: 'rgba(94, 234, 212, 0.2)',
-    leftBorder: '#5EEAD4',
-    badgeBg: 'rgba(94, 234, 212, 0.15)',
-    badgeColor: '#5EEAD4',
-    label: 'Info',
-    dot: '#5EEAD4',
+    label: 'Signal',
+    badgeClass: 'border-white/[0.08] bg-white/[0.035] text-white/62',
+    dotClass: 'bg-teal-300/80 shadow-[0_0_16px_rgba(94,234,212,0.18)]',
+    confidenceClass: 'text-teal-100/78',
   },
 }
 
-const CATEGORY_ICON: Record<string, string> = {
-  maintenance: '🔧',
-  battery: '🔋',
-  utilization: '📊',
-  performance: '⚡',
+const CATEGORY_LABEL: Record<AIFleetInsight['category'], string> = {
+  maintenance: 'Maintenance',
+  battery: 'Battery',
+  utilization: 'Utilization',
+  performance: 'Performance',
 }
 
 export function AIFleetInsights({ insights }: AIFleetInsightsProps) {
@@ -47,74 +38,54 @@ export function AIFleetInsights({ insights }: AIFleetInsightsProps) {
       {insights.map((insight, idx) => {
         const cfg = SEVERITY_CONFIG[insight.severity]
         return (
-          <div
-            key={idx}
-            className="rounded-xl p-4 flex gap-4 items-start"
-            style={{
-              background: cfg.bg,
-              border: `1px solid ${cfg.border}`,
-              borderLeft: `3px solid ${cfg.leftBorder}`,
-            }}
+          <article
+            key={`${insight.unitId ?? insight.category}-${idx}`}
+            className="rounded-2xl border border-white/[0.075] bg-[#0B0C0C] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)] transition hover:bg-white/[0.035]"
           >
-            {/* Category icon */}
-            <div className="text-xl shrink-0 mt-0.5">
-              {CATEGORY_ICON[insight.category] ?? '🤖'}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-2 mb-1">
-                {insight.unitId && (
-                  <span
-                    className="text-xs font-mono font-bold px-2 py-0.5 rounded"
-                    style={{ background: 'rgba(255,255,255,0.07)', color: 'var(--solana-text-muted)' }}
-                  >
-                    {insight.unitId}
+            <div className="flex items-start gap-3">
+              <span className={`mt-2 h-2 w-2 shrink-0 rounded-full ${cfg.dotClass}`} />
+              <div className="min-w-0 flex-1">
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  {insight.unitId && (
+                    <span className="rounded-full border border-white/[0.08] bg-white/[0.035] px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-teal-100/78">
+                      {insight.unitId}
+                    </span>
+                  )}
+                  <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] ${cfg.badgeClass}`}>
+                    {cfg.label}
                   </span>
-                )}
-                <span
-                  className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                  style={{ background: cfg.badgeBg, color: cfg.badgeColor }}
-                >
-                  {cfg.label}
-                </span>
-                <span
-                  className="text-xs px-2 py-0.5 rounded"
-                  style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--solana-text-muted)' }}
-                >
-                  {insight.category}
-                </span>
+                  <span className="rounded-full border border-white/[0.07] bg-white/[0.025] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/38">
+                    {CATEGORY_LABEL[insight.category]}
+                  </span>
+                </div>
+
+                <p className="text-sm font-semibold leading-6 text-white/84">
+                  {insight.message}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-white/43">
+                  Prediction: {insight.prediction}
+                </p>
               </div>
 
-              <p className="text-sm font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>
-                {insight.message}
-              </p>
-
-              <p className="text-xs" style={{ color: 'var(--solana-text-muted)' }}>
-                Prediksi: {insight.prediction}
-              </p>
-            </div>
-
-            {/* Confidence */}
-            <div className="shrink-0 text-right">
-              <div className="text-sm font-bold" style={{ color: cfg.badgeColor }}>
-                {insight.confidence}%
-              </div>
-              <div className="text-xs" style={{ color: 'var(--solana-text-muted)' }}>
-                keyakinan
+              <div className="shrink-0 text-right">
+                <div className={`text-sm font-semibold ${cfg.confidenceClass}`}>
+                  {insight.confidence}%
+                </div>
+                <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/30">
+                  Confidence
+                </div>
               </div>
             </div>
-          </div>
+          </article>
         )
       })}
 
       {insights.length === 0 && (
-        <div
-          className="text-center py-8 rounded-xl"
-          style={{ background: 'rgba(94, 234, 212, 0.05)', border: '1px solid rgba(94, 234, 212, 0.15)' }}
-        >
-          <p className="text-2xl mb-2">✅</p>
-          <p className="text-sm font-semibold" style={{ color: '#5EEAD4' }}>Semua unit dalam kondisi baik</p>
-          <p className="text-xs mt-1" style={{ color: 'var(--solana-text-muted)' }}>Tidak ada insight aktif saat ini</p>
+        <div className="rounded-2xl border border-white/[0.075] bg-[#0B0C0C] px-5 py-8 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.035)]">
+          <p className="text-sm font-semibold text-white/78">No active fleet intelligence signals</p>
+          <p className="mt-1 text-xs text-white/40">
+            Predictive alerts will appear after new route logs and service proofs are processed.
+          </p>
         </div>
       )}
     </div>

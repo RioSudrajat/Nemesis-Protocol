@@ -1,5 +1,5 @@
 /**
- * Shared health score utilities used across admin, enterprise, fleet, and UI components.
+ * Shared health score utilities used across admin, operator, fleet, and UI components.
  */
 
 export function getHealthColor(health: number): string {

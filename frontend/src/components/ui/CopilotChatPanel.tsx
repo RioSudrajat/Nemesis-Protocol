@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Bot, Send, User, Sparkles } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 
 interface CopilotChatPanelProps {
   isOpen: boolean;
@@ -11,21 +11,16 @@ interface CopilotChatPanelProps {
 }
 
 export function CopilotChatPanel({ isOpen, onClose, partName }: CopilotChatPanelProps) {
-  const [messages, setMessages] = useState<{role: "assistant"|"user", text: string}[]>([]);
+  const [messages, setMessages] = useState<{role: "assistant"|"human", text: string}[]>([]);
   const [input, setInput] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
-
-  // Initialize generic chat when a new part is selected
-  useEffect(() => {
-    if (isOpen && partName) {
-      setMessages([
-        { 
-          role: "assistant", 
-          text: `Halo! Saya NOC Copilot. Saya melihat Anda sedang menginspeksi **${partName}**. Berdasarkan riwayat on-chain dan prediksi AI, komponen ini memiliki sedikit risiko keausan. Ada yang ingin Anda tanyakan tentang prosedur servis atau pengecekan?` 
-        }
-      ]);
-    }
-  }, [isOpen, partName]);
+  const initialMessage = useMemo(
+    () => ({
+      role: "assistant" as const,
+      text: `Halo! Saya Nemesis Copilot. Saya melihat Anda sedang menginspeksi **${partName || "vehicle"}**. Berdasarkan riwayat on-chain dan prediksi AI, komponen ini memiliki sedikit risiko keausan. Ada yang ingin Anda tanyakan tentang prosedur servis atau pengecekan?`,
+    }),
+    [partName]
+  );
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -37,7 +32,7 @@ export function CopilotChatPanel({ isOpen, onClose, partName }: CopilotChatPanel
   const handleSend = () => {
     if (!input.trim()) return;
     const userMsg = input.trim();
-    setMessages(prev => [...prev, { role: "user", text: userMsg }]);
+    setMessages(prev => [...prev, { role: "human", text: userMsg }]);
     setInput("");
     
     // Mock response
@@ -83,7 +78,7 @@ export function CopilotChatPanel({ isOpen, onClose, partName }: CopilotChatPanel
                   <Bot className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold flex items-center gap-2">NOC Copilot <Sparkles className="w-3 h-3 text-yellow-400" /></h3>
+                  <h3 className="font-bold flex items-center gap-2">Nemesis Copilot <Sparkles className="w-3 h-3 text-yellow-400" /></h3>
                   <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Context: {partName || "Vehicle"}</p>
                 </div>
               </div>
@@ -97,14 +92,14 @@ export function CopilotChatPanel({ isOpen, onClose, partName }: CopilotChatPanel
 
             {/* Chat Area */}
             <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
-              {messages.map((msg, idx) => (
-                <div key={idx} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "user" ? "bg-teal-600/20 text-teal-400" : "bg-teal-500/20 text-teal-400"}`}>
-                    {msg.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+              {[initialMessage, ...messages].map((msg, idx) => (
+                <div key={idx} className={`flex gap-3 ${msg.role === "human" ? "flex-row-reverse" : "flex-row"}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "human" ? "bg-teal-600/20 text-teal-400" : "bg-teal-500/20 text-teal-400"}`}>
+                    {msg.role === "human" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                   </div>
                   <div 
                     className={`p-3 rounded-2xl text-sm max-w-[80%] ${
-                      msg.role === "user" 
+                      msg.role === "human" 
                         ? "rounded-tr-sm bg-teal-600/20 border border-teal-500/30" 
                         : "rounded-tl-sm bg-black/40 border border-white/10"
                     }`}

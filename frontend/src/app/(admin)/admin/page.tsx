@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { Car, Wrench, Users, Receipt, Scale, Activity, TrendingUp, Shield, CheckCircle2, Clock, AlertTriangle, FileText } from "lucide-react";
 import Link from "next/link";
 import { useAdmin } from "@/context/AdminContext";
-import { useEnterprise } from "@/context/EnterpriseContext";
+import { useOperator } from "@/context/OperatorContext";
 
 export default function AdminDashboard() {
   const admin = useAdmin();
-  const enterprise = useEnterprise();
-  const m = enterprise?.metrics;
+  const operator = useOperator();
+  const m = operator?.metrics;
 
   const wallets = admin?.whitelistedWallets || [];
   const disputes = admin?.disputes || [];

@@ -2,13 +2,13 @@
 
 import { motion } from "framer-motion";
 import { BarChart3, TrendingUp, Star, DollarSign, Car, Users, Wrench, Shield } from "lucide-react";
-import { useEnterprise } from "@/context/EnterpriseContext";
+import { useOperator } from "@/context/OperatorContext";
 import { useAdmin } from "@/context/AdminContext";
 
 export default function AdminAnalyticsPage() {
-  const enterprise = useEnterprise();
+  const operator = useOperator();
   const admin = useAdmin();
-  const m = enterprise?.metrics;
+  const m = operator?.metrics;
   const wallets = admin?.whitelistedWallets || [];
 
   const totalDrivers = wallets.filter(w => w.role === "driver").length;

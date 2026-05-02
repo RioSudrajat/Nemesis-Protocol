@@ -2,16 +2,16 @@
 
 import { Wallet } from "lucide-react";
 
-type PortalVariant = "dapp" | "workshop" | "enterprise" | "admin";
+type PortalVariant = "depin" | "workshop" | "operator" | "admin";
 
 const accentMap: Record<PortalVariant, { dot: string; border?: string }> = {
-  dapp: { dot: "var(--solana-green)" },
+  depin: { dot: "var(--solana-green)" },
   workshop: { dot: "var(--solana-purple)", border: "var(--solana-purple)" },
-  enterprise: { dot: "var(--solana-purple)" },
+  operator: { dot: "var(--solana-purple)" },
   admin: { dot: "#5EEAD4", border: "rgba(94, 234, 212,0.5)" },
 };
 
-export function ConnectWalletButton({ variant = "dapp" }: { variant?: PortalVariant }) {
+export function ConnectWalletButton({ variant = "depin" }: { variant?: PortalVariant }) {
   const accent = accentMap[variant];
 
   return (

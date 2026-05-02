@@ -9,7 +9,7 @@ export interface PartsTableProps {
   scanningIndex: number | null;
   onAddPart: () => void;
   onRemovePart: (i: number) => void;
-  onUpdatePart: (i: number, field: keyof PartRow, value: any) => void;
+  onUpdatePart: <K extends keyof PartRow>(i: number, field: K, value: PartRow[K]) => void;
   onOpenScanModal: () => void;
 }
 
