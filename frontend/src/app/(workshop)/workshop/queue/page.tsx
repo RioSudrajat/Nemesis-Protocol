@@ -25,7 +25,7 @@ export default function WorkshopQueue() {
           vin: vd?.vin || b.id,
           model: vd?.name || b.form.vehicleKey,
           year: 2025,
-          owner: "Pelanggan NOC",
+          owner: "Nemesis Driver",
           arrivalTime: b.form.time,
           status: b.status === "IN_SERVICE" ? ("IN_PROGRESS" as const) : ("WAITING" as const),
           priority: "NORMAL" as "NORMAL" | "HIGH",

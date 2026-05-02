@@ -6,10 +6,9 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
 const links = [
-  { href: "/depin", label: "DePIN" },
-  { href: "/fi", label: "FI" },
-  { href: "/rwa", label: "RWA" },
-  { href: "/rwa/operator", label: "Operators" },
+  { href: "#news", label: "News" },
+  { href: "#docs", label: "Docs" },
+  { href: "#community", label: "Community" },
 ];
 
 export default function Navbar() {
@@ -53,11 +52,11 @@ export default function Navbar() {
 
           <div className="flex items-center gap-2">
             <Link
-              href="/fi"
+              href="#protocol-surfaces"
               className="hidden rounded-full bg-[#111827] px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-black/10 transition-colors hover:bg-black sm:inline-flex"
               onClick={() => setMobileOpen(false)}
             >
-              Start Investing
+              Explore Products
             </Link>
             <button
               type="button"
@@ -96,11 +95,11 @@ export default function Navbar() {
               </Link>
             ))}
             <Link
-              href="/fi"
+              href="#protocol-surfaces"
               onClick={() => setMobileOpen(false)}
               className="mt-2 rounded-2xl bg-[#111827] px-4 py-3 text-center text-sm font-bold text-white transition-colors hover:bg-black sm:hidden"
             >
-              Start Investing
+              Explore Products
             </Link>
           </div>
         </div>

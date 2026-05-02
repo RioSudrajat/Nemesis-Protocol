@@ -72,16 +72,16 @@ export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProp
     <>
       <style>{`
         .leaflet-popup-content-wrapper {
-          background: rgba(14,14,26,0.95) !important;
-          border: 1px solid rgba(94, 234, 212,0.3) !important;
-          border-radius: 12px !important;
+          background: rgba(5,6,6,0.96) !important;
+          border: 1px solid rgba(255,255,255,0.10) !important;
+          border-radius: 16px !important;
           color: #fff !important;
           backdrop-filter: blur(10px);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+          box-shadow: 0 18px 60px rgba(0,0,0,0.58) !important;
         }
         .leaflet-popup-tip {
-          background: rgba(14,14,26,0.95) !important;
-          border: 1px solid rgba(94, 234, 212,0.3) !important;
+          background: rgba(5,6,6,0.96) !important;
+          border: 1px solid rgba(255,255,255,0.10) !important;
           box-shadow: none !important;
         }
         .leaflet-popup-close-button {
@@ -91,21 +91,21 @@ export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProp
         .leaflet-popup-close-button:hover { color: #fff !important; }
         .leaflet-popup-content { margin: 12px 16px !important; }
         .custom-fleet-marker { background: none !important; border: none !important; }
-        .leaflet-container { background: #0E0E1A !important; }
+        .leaflet-container { background: #030404 !important; }
         .leaflet-control-attribution {
-          background: rgba(14,14,26,0.8) !important;
+          background: rgba(5,6,6,0.78) !important;
           color: rgba(255,255,255,0.3) !important;
           font-size: 9px !important;
         }
-        .leaflet-control-attribution a { color: rgba(94, 234, 212,0.5) !important; }
+        .leaflet-control-attribution a { color: rgba(221,253,248,0.55) !important; }
         .leaflet-control-zoom a {
-          background: rgba(14,14,26,0.9) !important;
-          color: rgba(255,255,255,0.7) !important;
-          border-color: rgba(94, 234, 212,0.2) !important;
+          background: rgba(5,6,6,0.92) !important;
+          color: rgba(255,255,255,0.62) !important;
+          border-color: rgba(255,255,255,0.10) !important;
         }
         .leaflet-control-zoom a:hover {
-          background: rgba(94, 234, 212,0.2) !important;
-          color: #fff !important;
+          background: rgba(255,255,255,0.08) !important;
+          color: rgba(221,253,248,0.95) !important;
         }
       `}</style>
       <MapContainer
@@ -154,7 +154,7 @@ export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProp
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Cash Yield</span>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: "var(--solana-purple)" }}>{item.cashYield ?? item.apy}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: "#DDFDF8" }}>{item.cashYield ?? item.apy}</span>
                     </div>
                   </div>
                 ) : (
@@ -175,7 +175,7 @@ export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProp
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
                       <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Owner</span>
-                      <span style={{ fontSize: 10, fontFamily: "monospace", color: "var(--solana-purple)" }}>{(item.owner ?? "operator").slice(0, 8)}...</span>
+                      <span style={{ fontSize: 10, fontFamily: "monospace", color: "rgba(221,253,248,0.78)" }}>{(item.owner ?? "operator").slice(0, 8)}...</span>
                     </div>
                     
                     <button
@@ -183,20 +183,20 @@ export default function FleetLeafletMap({ vehicles, pools }: FleetLeafletMapProp
                       style={{
                         width: "100%",
                         padding: "8px 0",
-                        background: "rgba(20, 184, 166, 0.1)",
-                        border: "1px solid rgba(20, 184, 166, 0.3)",
+                        background: "rgba(255,255,255,0.035)",
+                        border: "1px solid rgba(255,255,255,0.10)",
                         borderRadius: "8px",
-                        color: "#14B8A6",
+                        color: "#DDFDF8",
                         fontSize: "12px",
                         fontWeight: "bold",
                         cursor: "pointer",
                         marginTop: "4px"
                       }}
                       onMouseOver={(e) => {
-                        e.currentTarget.style.background = "rgba(20, 184, 166, 0.2)";
+                        e.currentTarget.style.background = "rgba(255,255,255,0.07)";
                       }}
                       onMouseOut={(e) => {
-                        e.currentTarget.style.background = "rgba(20, 184, 166, 0.1)";
+                        e.currentTarget.style.background = "rgba(255,255,255,0.035)";
                       }}
                     >
                       View Daily Route Log

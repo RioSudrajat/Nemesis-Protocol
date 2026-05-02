@@ -21,7 +21,7 @@ const staticReviews: ReviewItem[] = [
   { customer: "Budi S.", rating: 5, date: "2026-03-14", text: "Pelayanan sangat baik, oli diganti dengan cepat dan rapi. Harga transparan.", verified: true },
   { customer: "Andi W.", rating: 5, date: "2026-03-10", text: "Inspeksi lengkap dan detail. Mekanik menjelaskan semua temuan dengan jelas.", verified: true },
   { customer: "Sari M.", rating: 4, date: "2026-03-05", text: "Servis CVT bagus, tapi antrian agak lama di jam siang.", verified: true },
-  { customer: "Rendi K.", rating: 5, date: "2026-02-28", text: "Brake pad replacement cepat dan OEM. Dapat reward $NOC juga!", verified: true },
+  { customer: "Rendi K.", rating: 5, date: "2026-02-28", text: "Brake pad replacement cepat dan OEM. Proof of Maintenance tercatat otomatis.", verified: true },
   { customer: "Diana P.", rating: 4, date: "2026-02-20", text: "Hasil inspeksi akurat. Akan kembali lagi untuk servis berikutnya.", verified: false },
 ];
 
@@ -41,7 +41,7 @@ export default function ReputationPage() {
       .map(cb => {
         const vData = vehicleData[cb.vehicleKey];
         return {
-          customer: "Pelanggan NOC",
+          customer: "Nemesis Driver",
           rating: cb.review!.rating,
           date: cb.date,
           text: cb.review!.comment || `Servis ${cb.serviceType} — tidak ada komentar.`,

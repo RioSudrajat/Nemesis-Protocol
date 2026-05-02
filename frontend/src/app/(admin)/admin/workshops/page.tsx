@@ -4,14 +4,14 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Wrench, Star, Shield, CheckCircle2, ShieldAlert, Search, MapPin, BadgeCheck, Clock } from "lucide-react";
 import { workshopsData, useBooking } from "@/context/BookingContext";
-import { useEnterprise } from "@/context/EnterpriseContext";
+import { useOperator } from "@/context/OperatorContext";
 import { useToast } from "@/components/ui/Toast";
 
 export default function AdminWorkshopsPage() {
   const { showToast } = useToast();
   const booking = useBooking();
-  const enterprise = useEnterprise();
-  const wsMetrics = enterprise?.metrics.workshopMetrics || [];
+  const operator = useOperator();
+  const wsMetrics = operator?.metrics.workshopMetrics || [];
 
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -35,9 +35,9 @@ export default function AdminWorkshopsPage() {
 
   const handleApproveKYC = (name: string) => {
     showToast("success", "KYC Approved", `${name} has been verified. On-chain credential issued.`);
-    // Notify workshop + enterprise
+    // Notify workshop + operator
     booking?.addNotification("kyc_change", "KYC Approved", `Your workshop "${name}" has been verified by platform admin.`, "workshop");
-    booking?.addNotification("kyc_change", "Workshop KYC Approved", `Workshop "${name}" has been verified and credentialed.`, "enterprise");
+    booking?.addNotification("kyc_change", "Workshop KYC Approved", `Workshop "${name}" has been verified and credentialed.`, "operator");
   };
 
   const handleRejectKYC = (name: string) => {
@@ -53,7 +53,7 @@ export default function AdminWorkshopsPage() {
           <Wrench className="w-7 h-7" style={{ color: "#5EEAD4" }} />
           Workshop Management
         </h1>
-        <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Master directory — all workshops across enterprises with KYC workflow.</p>
+        <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Master directory — all workshops across operators with KYC workflow.</p>
       </div>
 
       {/* Stats */}

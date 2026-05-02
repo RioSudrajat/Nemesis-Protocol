@@ -3,11 +3,11 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Receipt, DollarSign, Fuel, Hash, Search, Filter, AlertTriangle } from "lucide-react";
-import { useEnterprise } from "@/context/EnterpriseContext";
+import { useOperator } from "@/context/OperatorContext";
 
 export default function AdminTransactionsPage() {
-  const enterprise = useEnterprise();
-  const completed = enterprise?.metrics.completedBookings || [];
+  const operator = useOperator();
+  const completed = operator?.metrics.completedBookings || [];
   const [searchQuery, setSearchQuery] = useState("");
 
   const transactions = useMemo(() => {

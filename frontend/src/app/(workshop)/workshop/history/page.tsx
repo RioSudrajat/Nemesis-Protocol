@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { FileText, Wrench, Droplets, Settings, Search } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { SharedServiceCard, ServiceEvent } from "@/components/ui/SharedServiceCard";
@@ -11,8 +11,8 @@ const initialHistory: ServiceEvent[] = [
   { id: "SRV-102", status: "ANCHORED", date: "2026-03-20", type: "Oil Change (Innova)", category: "Fluids", icon: Droplets, mechanic: "Pak Hendra", workshop: "Bengkel Hendra Motor", rating: 4.8, mileage: "45,000 km", parts: [
     { name: "Engine Oil 10W-40 (4L)", partNumber: "08880-83461", isOem: true, manufacturer: "Toyota Motor Corp", priceIDR: 350000 },
     { name: "Oil Filter", partNumber: "90915-YZZD4", isOem: true, manufacturer: "Denso Corp", priceIDR: 45000 },
-  ], serviceCost: 50000, gasFee: 100, costIDR: 445100, costUSDC: 28, costNOC: 45, costStr: "Rp 445,100", txSig: "3fA9...mZ1p", healthBefore: 60, healthAfter: 98, notes: "Standard oil change. Checked fluids.", images: [] },
-  { id: "SRV-101", status: "ANCHORED", date: "2026-03-18", type: "Tire Rotation (Xpander)", category: "Tires", icon: Settings, mechanic: "Pak Budi", workshop: "Bengkel Hendra Motor", rating: 4.8, mileage: "20,000 km", parts: [], serviceCost: 150000, gasFee: 100, costIDR: 150100, costUSDC: 9, costNOC: 15, costStr: "Rp 150,100", txSig: "9kL1...bN3r", healthBefore: 80, healthAfter: 85, notes: "Rotated tires, adjusted pressure.", images: [] },
+  ], serviceCost: 50000, gasFee: 100, costIDR: 445100, costUSDC: 28, protocolPoints: 45, costStr: "Rp 445,100", txSig: "3fA9...mZ1p", healthBefore: 60, healthAfter: 98, notes: "Standard oil change. Checked fluids.", images: [] },
+  { id: "SRV-101", status: "ANCHORED", date: "2026-03-18", type: "Tire Rotation (Xpander)", category: "Tires", icon: Settings, mechanic: "Pak Budi", workshop: "Bengkel Hendra Motor", rating: 4.8, mileage: "20,000 km", parts: [], serviceCost: 150000, gasFee: 100, costIDR: 150100, costUSDC: 9, protocolPoints: 15, costStr: "Rp 150,100", txSig: "9kL1...bN3r", healthBefore: 80, healthAfter: 85, notes: "Rotated tires, adjusted pressure.", images: [] },
 ];
 
 export default function WorkshopGlobalHistory() {
@@ -43,28 +43,23 @@ export default function WorkshopGlobalHistory() {
       gasFee: cb.gasFee,
       costIDR: cb.totalIDR,
       costUSDC: Math.round(cb.totalIDR / 16000 * 100) / 100,
-      costNOC: Math.round(cb.totalIDR / 52),
+      protocolPoints: Math.round(cb.totalIDR / 52),
       costStr: `Rp ${cb.totalIDR.toLocaleString("id-ID")}`,
       txSig: cb.txSig,
       healthBefore: 60,
       healthAfter: 95,
-      notes: cb.mechanicNotes || "Servis via booking NOC ID.",
+      notes: cb.mechanicNotes || "Servis via booking Nemesis.",
       images: [],
     }));
   }, [bookingCtx?.completedBookings]);
 
-  const [data, setData] = useState(initialHistory);
-
-  useEffect(() => {
+  const data = useMemo(() => {
     const merged = [...initialHistory, ...completedAsEvents];
     merged.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    setData(merged);
+    return merged;
   }, [completedAsEvents]);
 
   const handleCancelInvoice = (id: string | number) => {
-    setData((prev) =>
-      prev.map(item => item.id === id ? { ...item, status: "CANCELLED" } : item)
-    );
     showToast("info", "Invoice Cancelled", `The pending invoice for ${id} has been manually cancelled.`);
   };
 
@@ -108,7 +103,7 @@ export default function WorkshopGlobalHistory() {
             <SharedServiceCard
               key={event.id}
               event={event}
-              userRole="workshop"
+              viewerRole="workshop"
               onCancelInvoice={handleCancelInvoice}
             />
           ))}

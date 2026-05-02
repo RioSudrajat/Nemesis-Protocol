@@ -1,35 +1,35 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
+import { Activity, MapPinned, RadioTower, Route, Wrench, X } from 'lucide-react'
 import { MOCK_VEHICLES } from '@/data/vehicles'
+import { MOCK_OPERATOR_PROFILE } from '@/data/operators'
 import { VehiclePreVisitBrief } from '@/components/rwa/VehiclePreVisitBrief'
 import type { RegisteredVehicle } from '@/types/rwa'
 import { formatKm } from '@/lib/yield'
 import { getHealthColor } from '@/lib/health'
-import { X } from 'lucide-react'
 
-// Fleet map needs dynamic import (leaflet SSR issue)
+// Fleet map needs dynamic import because Leaflet depends on browser APIs.
 const FleetLeafletMap = dynamic(() => import('@/components/ui/FleetLeafletMap'), { ssr: false })
 
-type StatusFilter = 'semua' | 'active' | 'maintenance' | 'idle' | 'offline'
+type StatusFilter = 'all' | 'active' | 'maintenance' | 'idle' | 'offline'
 
-const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  active: { label: 'Aktif', color: '#86EFAC' },
-  maintenance: { label: 'Maintenance', color: '#FCD34D' },
-  idle: { label: 'Idle', color: '#A1A1AA' },
-  offline: { label: 'Offline', color: '#FCA5A5' },
+const STATUS_LABEL: Record<string, { label: string; color: string; proof: string; risk: string }> = {
+  active: { label: 'Active', color: '#5EEAD4', proof: 'Route proof live', risk: 'Low' },
+  maintenance: { label: 'Maintenance', color: '#FCD34D', proof: 'Service proof pending', risk: 'High' },
+  idle: { label: 'Idle', color: '#A1A1AA', proof: 'No route log', risk: 'Medium' },
+  offline: { label: 'Offline', color: '#FCA5A5', proof: 'Telemetry offline', risk: 'High' },
 }
 
 const FILTERS: { key: StatusFilter; label: string }[] = [
-  { key: 'semua', label: 'Semua' },
-  { key: 'active', label: 'Aktif' },
+  { key: 'all', label: 'All units' },
+  { key: 'active', label: 'Active' },
   { key: 'maintenance', label: 'Maintenance' },
   { key: 'idle', label: 'Idle' },
   { key: 'offline', label: 'Offline' },
 ]
 
-// Convert RegisteredVehicle to FleetVehicle shape for the map
 function toFleetVehicle(v: RegisteredVehicle) {
   return {
     id: v.id,
@@ -40,136 +40,228 @@ function toFleetVehicle(v: RegisteredVehicle) {
     odometer: v.odometer,
     lastService: `${v.lastServiceKm} km`,
     owner: v.operatorId,
-    status: v.status === 'active' ? 'Active' : v.status === 'maintenance' ? 'Maintenance' : v.status === 'idle' ? 'Idle' : 'Offline',
+    status: STATUS_LABEL[v.status]?.label ?? 'Offline',
     type: v.type,
     brand: v.brand,
     model: v.model,
   }
 }
 
+function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return (
+    <section
+      className={`rounded-[28px] border border-white/[0.075] bg-[#070808]/88 shadow-[0_24px_80px_rgba(0,0,0,0.34)] ${className}`}
+    >
+      {children}
+    </section>
+  )
+}
+
+function Eyebrow({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/42">
+      {children}
+    </p>
+  )
+}
+
 export default function FleetMapPage() {
-  const [filter, setFilter] = useState<StatusFilter>('semua')
+  const [filter, setFilter] = useState<StatusFilter>('all')
   const [selectedVehicle, setSelectedVehicle] = useState<RegisteredVehicle | null>(null)
 
-  const filtered = filter === 'semua' ? MOCK_VEHICLES : MOCK_VEHICLES.filter((v) => v.status === filter)
+  const filtered = filter === 'all' ? MOCK_VEHICLES : MOCK_VEHICLES.filter((v) => v.status === filter)
+  const maintenanceQueue = MOCK_VEHICLES.filter((v) => v.status === 'maintenance' || v.healthScore < 80).length
+  const idleUnits = MOCK_VEHICLES.filter((v) => v.status === 'idle').length
 
-  const counts = {
-    total: 83,
-    active: 71,
-    maintenance: 5,
-    idle: 7,
-    offline: 0,
-  }
+  const stats = [
+    {
+      label: 'Registered units',
+      value: `${MOCK_OPERATOR_PROFILE.totalVehicles}`,
+      detail: `Pool ${MOCK_OPERATOR_PROFILE.poolId}`,
+      icon: RadioTower,
+    },
+    {
+      label: 'Active route logs',
+      value: `${MOCK_OPERATOR_PROFILE.activeVehicles}`,
+      detail: 'Synced in the last 24h',
+      icon: Route,
+    },
+    {
+      label: 'Maintenance queue',
+      value: `${maintenanceQueue}`,
+      detail: 'Requires operator review',
+      icon: Wrench,
+    },
+    {
+      label: 'Idle units',
+      value: `${idleUnits}`,
+      detail: 'No current route log',
+      icon: Activity,
+    },
+  ]
 
   return (
-    <div className="flex flex-col gap-6 max-w-6xl">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-black gradient-text" style={{ fontFamily: 'var(--font-orbitron, Orbitron, sans-serif)' }}>
-          Fleet Map
-        </h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--solana-text-muted)' }}>
-          Pantau posisi dan status seluruh unit armada secara real-time
-        </p>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-3">
-        {[
-          { label: 'Total', value: counts.total, color: '#5EEAD4' },
-          { label: 'Aktif', value: counts.active, color: '#86EFAC' },
-          { label: 'Maintenance', value: counts.maintenance, color: '#FCD34D' },
-          { label: 'Idle', value: counts.idle, color: '#A1A1AA' },
-        ].map((s) => (
-          <div
-            key={s.label}
-            className="glass-card rounded-xl p-3 text-center"
-            style={{ border: '1px solid rgba(94,234,212,0.15)' }}
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+      <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
+        <div>
+          <Eyebrow>Fleet operations</Eyebrow>
+          <h1
+            className="mt-3 text-4xl font-semibold tracking-[-0.055em] text-white sm:text-5xl"
+            style={{ fontFamily: 'var(--font-fraunces, Fraunces, serif)' }}
           >
-            <div className="text-xl font-black" style={{ color: s.color }}>{s.value}</div>
-            <div className="text-xs mt-0.5" style={{ color: 'var(--solana-text-muted)' }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Filter */}
-      <div className="flex flex-wrap gap-2">
-        {FILTERS.map((f) => (
-          <button
-            key={f.key}
-            onClick={() => setFilter(f.key)}
-            className="text-sm px-4 py-1.5 rounded-xl transition-all"
-            style={{
-              background: filter === f.key ? 'rgba(94,234,212,0.15)' : 'rgba(255,255,255,0.05)',
-              color: filter === f.key ? '#5EEAD4' : 'var(--solana-text-muted)',
-              border: filter === f.key ? '1px solid rgba(94,234,212,0.4)' : '1px solid rgba(255,255,255,0.08)',
-            }}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Map */}
-      <div
-        className="rounded-2xl overflow-hidden"
-        style={{ height: 400, border: '1px solid rgba(94,234,212,0.2)' }}
-      >
-        <FleetLeafletMap vehicles={filtered.map(toFleetVehicle)} />
-      </div>
-
-      {/* Vehicle List */}
-      <div className="glass-card rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(94,234,212,0.2)' }}>
-        <div className="px-5 py-4 border-b" style={{ borderColor: 'rgba(94,234,212,0.1)', background: 'rgba(94,234,212,0.05)' }}>
-          <h2 className="font-bold text-sm">Daftar Unit ({filtered.length})</h2>
+            Fleet Operations
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-white/52">
+            Monitor vehicle status, route-log coverage, health score, and maintenance risk across
+            the operator fleet.
+          </p>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                {['Unit ID', 'Tipe', 'Status', 'Node Score', 'Health', 'Km Hari Ini', 'Detail'].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--solana-text-muted)' }}>
+        <div className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.035] px-3 py-2 text-xs font-semibold text-white/54">
+          <MapPinned className="h-4 w-4 text-teal-100/80" />
+          Jakarta operations layer
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {stats.map((stat) => {
+          const Icon = stat.icon
+          return (
+            <div
+              key={stat.label}
+              className="rounded-3xl border border-white/[0.075] bg-[#080A0A] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)]"
+            >
+              <div className="mb-6 flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/42">
+                  {stat.label}
+                </span>
+                <span className="rounded-full border border-white/[0.08] bg-white/[0.035] p-2 text-teal-200/80">
+                  <Icon className="h-4 w-4" />
+                </span>
+              </div>
+              <div className="text-3xl font-semibold tracking-[-0.045em] text-white">{stat.value}</div>
+              <p className="mt-2 text-xs text-white/45">{stat.detail}</p>
+            </div>
+          )
+        })}
+      </div>
+
+      <Panel className="overflow-hidden">
+        <div className="flex flex-col justify-between gap-4 border-b border-white/[0.07] p-5 sm:flex-row sm:items-center lg:p-6">
+          <div>
+            <Eyebrow>Live fleet map</Eyebrow>
+            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-white">
+              Route and unit status
+            </h2>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 text-xs text-white/44">
+            {['Active', 'Maintenance', 'Idle'].map((label) => {
+              const color = label === 'Active' ? '#5EEAD4' : label === 'Maintenance' ? '#FCD34D' : '#A1A1AA'
+              return (
+                <span key={label} className="inline-flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: color }} />
+                  {label}
+                </span>
+              )
+            })}
+          </div>
+        </div>
+        <div className="h-[360px] border-b border-white/[0.07] bg-[#030404] sm:h-[460px]">
+          <FleetLeafletMap vehicles={filtered.map(toFleetVehicle)} />
+        </div>
+      </Panel>
+
+      <div className="flex flex-wrap gap-2 rounded-[24px] border border-white/[0.07] bg-[#070808] p-2">
+        {FILTERS.map((f) => {
+          const active = filter === f.key
+          return (
+            <button
+              key={f.key}
+              onClick={() => setFilter(f.key)}
+              className={`relative rounded-2xl px-4 py-2 text-sm font-semibold transition ${
+                active
+                  ? 'bg-white/[0.06] text-white'
+                  : 'text-white/42 hover:bg-white/[0.035] hover:text-white/68'
+              }`}
+            >
+              {active && (
+                <span className="absolute left-3 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-teal-300/85" />
+              )}
+              <span className={active ? 'pl-3' : ''}>{f.label}</span>
+            </button>
+          )
+        })}
+      </div>
+
+      <Panel className="overflow-hidden">
+        <div className="flex items-center justify-between gap-4 border-b border-white/[0.07] p-5 lg:p-6">
+          <div>
+            <Eyebrow>Unit registry</Eyebrow>
+            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-white">
+              Registered units ({filtered.length})
+            </h2>
+          </div>
+        </div>
+        <div className="overflow-x-auto [scrollbar-color:rgba(148,163,184,0.28)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/15 hover:[&::-webkit-scrollbar-thumb]:bg-white/25">
+          <table className="w-full min-w-[860px] text-left text-sm">
+            <thead className="border-b border-white/[0.07] text-[11px] uppercase tracking-[0.18em] text-white/36">
+              <tr>
+                {['Unit', 'Type', 'Status', 'Node score', 'Health', 'Odometer', 'Proof signal', 'Action'].map((h) => (
+                  <th key={h} className="px-5 py-4 font-semibold">
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
-              {filtered.map((v, i) => {
-                const st = STATUS_LABEL[v.status] ?? STATUS_LABEL.offline
-                const hc = getHealthColor(v.healthScore)
+            <tbody className="divide-y divide-white/[0.06]">
+              {filtered.map((vehicle) => {
+                const status = STATUS_LABEL[vehicle.status] ?? STATUS_LABEL.offline
+                const healthColor = getHealthColor(vehicle.healthScore)
                 return (
-                  <tr
-                    key={v.id}
-                    style={{ borderBottom: i < filtered.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}
-                  >
-                    <td className="px-4 py-3 font-mono font-bold" style={{ color: '#5EEAD4' }}>{v.unitId}</td>
-                    <td className="px-4 py-3 text-xs" style={{ color: 'var(--solana-text-muted)' }}>{v.brand} {v.model}</td>
-                    <td className="px-4 py-3">
+                  <tr key={vehicle.id} className="text-white/72 transition hover:bg-white/[0.035]">
+                    <td className="px-5 py-4">
+                      <div className="font-mono text-xs font-bold text-teal-100">{vehicle.unitId}</div>
+                      <div className="mt-1 text-xs text-white/36">{vehicle.vin}</div>
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="text-sm font-medium text-white/76">
+                        {vehicle.brand} {vehicle.model}
+                      </div>
+                      <div className="mt-1 text-xs text-white/36">{vehicle.type.replaceAll('_', ' ')}</div>
+                    </td>
+                    <td className="px-5 py-4">
                       <span
-                        className="text-xs px-2 py-0.5 rounded-full"
-                        style={{ background: `${st.color}18`, color: st.color, border: `1px solid ${st.color}35` }}
+                        className="rounded-full border px-2.5 py-1 text-xs font-semibold"
+                        style={{
+                          borderColor: `${status.color}3D`,
+                          background: `${status.color}12`,
+                          color: status.color,
+                        }}
                       >
-                        {st.label}
+                        {status.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-semibold">{v.nodeScore}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-4 text-sm font-semibold text-white/70">{vehicle.nodeScore}</td>
+                    <td className="px-5 py-4">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-xs" style={{ color: hc }}>{v.healthScore}</span>
-                        <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
-                          <div className="h-full rounded-full" style={{ width: `${v.healthScore}%`, background: hc }} />
+                        <span className="w-8 text-xs font-bold" style={{ color: healthColor }}>
+                          {vehicle.healthScore}
+                        </span>
+                        <div className="h-1.5 w-20 overflow-hidden rounded-full bg-white/[0.08]">
+                          <div
+                            className="h-full rounded-full"
+                            style={{ width: `${vehicle.healthScore}%`, background: healthColor }}
+                          />
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-xs" style={{ color: 'var(--solana-text-muted)' }}>{formatKm(v.odometer)}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-4 text-xs text-white/50">{formatKm(vehicle.odometer)}</td>
+                    <td className="px-5 py-4 text-xs text-white/54">{status.proof}</td>
+                    <td className="px-5 py-4">
                       <button
-                        onClick={() => setSelectedVehicle(v)}
-                        className="text-xs px-3 py-1 rounded-lg transition-colors"
-                        style={{ background: 'rgba(94,234,212,0.1)', color: '#5EEAD4', border: '1px solid rgba(94,234,212,0.25)' }}
+                        onClick={() => setSelectedVehicle(vehicle)}
+                        className="rounded-xl border border-white/[0.08] bg-white/[0.035] px-3 py-1.5 text-xs font-semibold text-white/66 transition hover:border-teal-200/35 hover:text-teal-100"
                       >
-                        Lihat
+                        View Brief
                       </button>
                     </td>
                   </tr>
@@ -178,19 +270,27 @@ export default function FleetMapPage() {
             </tbody>
           </table>
         </div>
-      </div>
+      </Panel>
 
-      {/* Vehicle Brief Panel (inline modal) */}
       {selectedVehicle && (
-        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
-          <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl" style={{ background: 'var(--solana-dark)', border: '1px solid rgba(94,234,212,0.25)' }}>
-            <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'rgba(94,234,212,0.15)' }}>
-              <h3 className="font-bold">Pre-Visit Brief — {selectedVehicle.unitId}</h3>
-              <button onClick={() => setSelectedVehicle(null)} className="p-1.5 rounded-lg hover:bg-white/10">
-                <X className="w-4 h-4" />
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-3 backdrop-blur-md sm:p-4 md:items-center">
+          <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-[28px] border border-white/[0.09] bg-[#050606] shadow-[0_30px_120px_rgba(0,0,0,0.64)] [scrollbar-color:rgba(148,163,184,0.28)_transparent] [scrollbar-width:thin]">
+            <div className="flex items-center justify-between border-b border-white/[0.07] p-5">
+              <div>
+                <Eyebrow>Vehicle pre-visit brief</Eyebrow>
+                <h3 className="mt-1 text-xl font-semibold tracking-[-0.03em] text-white">
+                  {selectedVehicle.unitId}
+                </h3>
+              </div>
+              <button
+                onClick={() => setSelectedVehicle(null)}
+                className="rounded-xl border border-white/[0.08] bg-white/[0.035] p-2 text-white/54 transition hover:text-white"
+                aria-label="Close vehicle brief"
+              >
+                <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="p-4">
+            <div className="p-4 sm:p-5">
               <VehiclePreVisitBrief vehicle={selectedVehicle} />
             </div>
           </div>

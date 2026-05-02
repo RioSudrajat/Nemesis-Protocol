@@ -47,10 +47,8 @@ function MaintenanceContent() {
 
   const addPart = () => setParts([...parts, emptyPart()]);
   const removePart = (i: number) => setParts(parts.filter((_, idx) => idx !== i));
-  const updatePart = (i: number, field: keyof PartRow, value: any) => {
-    const newParts = [...parts];
-    (newParts[i] as any)[field] = value;
-    setParts(newParts);
+  const updatePart = <K extends keyof PartRow>(i: number, field: K, value: PartRow[K]) => {
+    setParts((prev) => prev.map((part, idx) => (idx === i ? { ...part, [field]: value } : part)));
   };
 
   const handleScanPart = () => {
@@ -94,7 +92,7 @@ function MaintenanceContent() {
             estimatedAmountIDR: subtotal, evidencePhotos: [], submittedByWorkshopId: booking.workshop.id, submittedByWorkshopName: booking.workshop.name, submittedAt: new Date().toISOString(), aiPreScore: 75,
           };
           bookingCtx.attachWarrantyClaim(booking.form.vehicleKey, draft, currentVehicleData.vin, currentVehicleData.name);
-          showToast("success", "Invoice + Klaim Garansi Terkirim", "Customer dibebaskan dari biaya. Klaim garansi menunggu review enterprise.");
+          showToast("success", "Invoice + Klaim Garansi Terkirim", "Customer dibebaskan dari biaya. Klaim garansi menunggu review operator.");
         } else {
           showToast("success", "Invoice Terkirim!", "Invoice telah dikirim ke pelanggan. Menunggu pembayaran.");
         }

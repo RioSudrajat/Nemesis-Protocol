@@ -31,11 +31,11 @@ export default function AdminDisputesPage() {
     const dispute = disputes.find(d => d.id === id);
     admin?.resolveDispute(id, "Resolved by admin");
     showToast("success", "Dispute Resolved", `Dispute ${id} has been resolved.`);
-    // Notify user and workshop
-    booking?.addNotification("dispute_resolved", "Dispute Resolved", `Your dispute ${id} has been resolved by platform admin.`, "user");
+    // Notify driver and workshop
+    booking?.addNotification("dispute_resolved", "Dispute Resolved", `Your dispute ${id} has been resolved by platform admin.`, "driver");
     if (dispute) {
       booking?.addNotification("dispute_resolved", "Dispute Resolved", `Dispute ${id} from ${dispute.workshopName} has been resolved.`, "workshop");
-      booking?.addNotification("dispute_resolved", "Dispute Resolved", `Escalated dispute ${id} (${dispute.workshopName}) has been resolved by admin.`, "enterprise");
+      booking?.addNotification("dispute_resolved", "Dispute Resolved", `Escalated dispute ${id} (${dispute.workshopName}) has been resolved by admin.`, "operator");
     }
   };
 
@@ -46,7 +46,7 @@ export default function AdminDisputesPage() {
           <Scale className="w-7 h-7" style={{ color: "#5EEAD4" }} />
           Escalated Disputes
         </h1>
-        <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Disputes escalated beyond enterprise resolution.</p>
+        <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Disputes escalated beyond operator resolution.</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

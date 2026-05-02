@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode, ComponentType } from "react";
+import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { AppSidebar, type AppSidebarProps } from "./AppSidebar";
 
@@ -19,14 +19,14 @@ const ConnectWalletButton = dynamic(
   { ssr: false }
 );
 
-type PortalVariant = "dapp" | "workshop" | "enterprise" | "admin";
+type PortalVariant = "depin" | "workshop" | "operator" | "admin";
 
 export interface PortalLayoutProps extends AppSidebarProps {
   /** Variant passed to ConnectWalletButton */
   variant: PortalVariant;
   /**
-   * "wrapped" (default) — header + children each inside a max-w-7xl container (dapp, workshop style)
-   * "flat" — header + children directly in main with padding (enterprise, admin style)
+   * "wrapped" (default) — header + children each inside a max-w-7xl container (DePIN, workshop style)
+   * "flat" — header + children directly in main with padding (operator, admin style)
    */
   mainLayout?: "wrapped" | "flat";
   children: ReactNode;

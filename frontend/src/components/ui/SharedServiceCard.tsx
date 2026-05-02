@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, CheckCircle, CheckCircle2, XCircle, AlertCircle, Camera, ExternalLink, X, CreditCard, FileText } from "lucide-react";
-import { PaymentModal } from "./PaymentModal";
+import { CheckCircle, CheckCircle2, XCircle, AlertCircle, Camera, ExternalLink, X, CreditCard, FileText } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 export interface PartItem {
   name: string;
@@ -19,7 +19,7 @@ export interface ServiceEvent {
   date: string;
   type: string;
   category: string;
-  icon: any;
+  icon: LucideIcon;
   mechanic: string;
   workshop: string;
   rating: number;
@@ -29,7 +29,7 @@ export interface ServiceEvent {
   gasFee: number;
   costIDR: number;
   costUSDC: number;
-  costNOC: number;
+  protocolPoints: number;
   costStr: string;
   txSig: string | null;
   healthBefore: number;
@@ -40,7 +40,7 @@ export interface ServiceEvent {
 
 interface SharedServiceCardProps {
   event: ServiceEvent;
-  userRole: "user" | "workshop";
+  viewerRole: "driver" | "workshop";
   onPayNow?: (id: string | number, e: React.MouseEvent) => void;
   onDispute?: (id: string | number, e: React.MouseEvent) => void;
   onCancelInvoice?: (id: string | number, e: React.MouseEvent) => void;
@@ -54,7 +54,7 @@ function getHealthColor(health: number) {
   return "#FCA5A5";
 }
 
-export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCancelInvoice }: SharedServiceCardProps) {
+export function SharedServiceCard({ event, viewerRole, onPayNow, onDispute, onCancelInvoice }: SharedServiceCardProps) {
   const [detailModalOpen, setDetailModalOpen] = useState(false);
 
   const StatusIcon = event.icon;
@@ -152,7 +152,7 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
               
               {isPending ? (
                 <div className="flex gap-2">
-                  {userRole === "user" && onDispute && onPayNow && (
+                  {viewerRole === "driver" && onDispute && onPayNow && (
                     <>
                       <button 
                         onClick={(e) => onDispute(event.id, e)}
@@ -168,7 +168,7 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
                       </button>
                     </>
                   )}
-                  {userRole === "workshop" && onCancelInvoice && (
+                  {viewerRole === "workshop" && onCancelInvoice && (
                     <button 
                       onClick={(e) => onCancelInvoice(event.id, e)}
                       className="px-3 py-1.5 rounded-lg border border-red-600 text-xs font-medium text-red-400 hover:bg-red-500/20 transition-colors"
@@ -191,7 +191,7 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
             </div>
           </div>
           
-          {isPending && userRole === "user" && (
+          {isPending && viewerRole === "driver" && (
              <div className="mt-4 p-3 rounded-lg border border-yellow-500/30 bg-yellow-500/5 flex items-start gap-3">
                <AlertCircle className="w-5 h-5 text-yellow-500 shrink-0 mt-0.5" />
                <p className="text-xs text-slate-300">
@@ -243,7 +243,7 @@ export function SharedServiceCard({ event, userRole, onPayNow, onDispute, onCanc
                 <div>
                   <h3 className="text-sm font-semibold text-slate-300 mb-3 border-b border-slate-700/50 pb-2">Technician Notes</h3>
                   <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/50">
-                    <p className="text-sm text-slate-300 leading-relaxed italic">"{event.notes}"</p>
+                    <p className="text-sm text-slate-300 leading-relaxed italic">&quot;{event.notes}&quot;</p>
                   </div>
                 </div>
 

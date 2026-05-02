@@ -3,13 +3,13 @@
 import { use, useMemo } from "react";
 import Link from "next/link";
 import { ArrowLeft, Car, Shield, MapPin, User, Hash } from "lucide-react";
-import { useEnterprise } from "@/context/EnterpriseContext";
+import { useOperator } from "@/context/OperatorContext";
 import { getHealthColor, getHealthStatus } from "@/lib/health";
 
 export default function VehicleDetailPage({ params }: { params: Promise<{ vin: string }> }) {
   const { vin } = use(params);
-  const enterprise = useEnterprise();
-  const vehicles = enterprise?.metrics.vehicles || [];
+  const operator = useOperator();
+  const vehicles = operator?.metrics.vehicles || [];
 
   const vehicle = useMemo(() => vehicles.find(v => v.vin === vin) || null, [vehicles, vin]);
 

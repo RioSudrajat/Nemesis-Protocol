@@ -4,11 +4,13 @@
 import { MotionProvider } from "@/components/ui/motion";
 import Navbar from "@/components/landing/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
+import ProtocolSurfacesSection from "@/components/landing/ProtocolSurfacesSection";
 import ScaleSection from "@/components/landing/ScaleSection";
 import DecisionSection from "@/components/landing/DecisionSection";
 import TokenomicsSection from "@/components/landing/TokenomicsSection";
 import DecisionEasySection from "@/components/landing/DecisionEasySection";
 import BentoStatsSection from "@/components/landing/BentoStatsSection";
+import ProtocolResourcesSection from "@/components/landing/ProtocolResourcesSection";
 import FinalCtaSection from "@/components/landing/FinalCtaSection";
 import Footer from "@/components/landing/Footer";
 
@@ -36,6 +38,9 @@ export default function LandingPage() {
         {/* ── Hero ── Client Component (framer-motion animations + static visual) */}
         <HeroSection />
 
+        {/* ── Product Route Discovery ── Server Component */}
+        <ProtocolSurfacesSection />
+
         {/* ── Productive Infrastructure Scale ── Client Component (whileInView cards) */}
         <ScaleSection />
 
@@ -50,6 +55,9 @@ export default function LandingPage() {
 
         {/* ── Market Opportunity Bento Grid ── Server Component */}
         <BentoStatsSection />
+
+        {/* ── Protocol Resources ── Server Component */}
+        <ProtocolResourcesSection />
 
         {/* ── Final CTA ── Server Component */}
         <FinalCtaSection />

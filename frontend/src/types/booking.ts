@@ -141,7 +141,7 @@ export interface BookingNotification {
   message: string;
   time: string;
   read: boolean;
-  targetRole: "user" | "workshop" | "enterprise" | "admin";
+  targetRole: "driver" | "workshop" | "operator" | "admin";
 }
 
 export interface WalkinParams {

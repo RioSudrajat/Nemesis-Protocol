@@ -3,12 +3,12 @@
 import { useState, useMemo, useTransition } from "react";
 import { motion } from "framer-motion";
 import { Car, Search, Filter, Shield, Download, MoreHorizontal } from "lucide-react";
-import { useEnterprise } from "@/context/EnterpriseContext";
+import { useOperator } from "@/context/OperatorContext";
 import { getHealthColor, getHealthStatus } from "@/lib/health";
 
 export default function AdminVehiclesPage() {
-  const enterprise = useEnterprise();
-  const vehicles = enterprise?.metrics.vehicles || [];
+  const operator = useOperator();
+  const vehicles = operator?.metrics.vehicles || [];
 
   const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState("");
@@ -36,7 +36,7 @@ export default function AdminVehiclesPage() {
             <Car className="w-7 h-7" style={{ color: "#5EEAD4" }} />
             Vehicle Registry
           </h1>
-          <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Master vehicle registry across all enterprises.</p>
+          <p className="text-sm mt-1" style={{ color: "var(--solana-text-muted)" }}>Master vehicle registry across all operators.</p>
         </div>
         <button className="text-sm flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: "rgba(94, 234, 212,0.1)", color: "#5EEAD4", border: "1px solid rgba(94, 234, 212,0.3)" }}>
           <Download className="w-4 h-4" /> Export Fleet Data

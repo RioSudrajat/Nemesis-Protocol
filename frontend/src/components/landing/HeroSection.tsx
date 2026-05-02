@@ -2,6 +2,13 @@
 import HeroVehicleBackground from "@/components/landing/HeroVehicleBackground";
 import Link from "next/link";
 
+const quickLinks = [
+  { href: "/rwa", label: "RWA" },
+  { href: "/fi", label: "FI" },
+  { href: "/depin", label: "DePIN" },
+  { href: "/rwa/operator", label: "Operators" },
+];
+
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen overflow-hidden bg-[#F5FFF9] text-[#111827]">
@@ -43,6 +50,23 @@ export default function HeroSection() {
             <p className="mt-6 text-sm font-medium tracking-tight text-[#6B7280]">
               IDRX settlement · GPS-verified activity · Revenue-backed pools
             </p>
+
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <span className="text-xs font-bold uppercase tracking-[0.22em] text-[#64748B]">
+                Explore
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {quickLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="rounded-full border border-black/10 bg-white/55 px-4 py-2 text-xs font-bold tracking-tight text-[#111827] shadow-sm backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:border-[#14B8A6]/35 hover:bg-white hover:text-[#0F766E]"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

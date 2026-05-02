@@ -55,7 +55,7 @@ export default function InvoiceBreakdown({
               <Shield className="w-4 h-4" style={{ color: "#FCD34D" }} /> Cover this service under OEM warranty
             </div>
             <p className="text-[11px] mt-0.5" style={{ color: "var(--solana-text-muted)" }}>
-              Parts &amp; service cost become free for the customer. Enterprise will reimburse the workshop after review.
+              Parts &amp; service cost become free for the customer. Operator will reimburse the workshop after review.
             </p>
           </div>
         </label>
@@ -66,7 +66,7 @@ export default function InvoiceBreakdown({
         </div>
         {warrantyEnabled && (
           <p className="text-[11px] pt-1" style={{ color: "#FCD34D" }}>
-            Workshop reimbursement requested: Rp {subtotal.toLocaleString("id-ID")} (pending enterprise approval).
+            Workshop reimbursement requested: Rp {subtotal.toLocaleString("id-ID")} (pending operator approval).
           </p>
         )}
         <p className="text-[11px] italic pt-2" style={{ color: "var(--solana-text-muted)" }}>

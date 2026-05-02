@@ -277,7 +277,7 @@ export const useBookingStore = create<BookingStore>((set, get) => {
           "booking_accepted",
           "Kendaraan Masuk Antrian Bengkel \uD83D\uDD27",
           `${params.vehicleName} telah terdaftar di ${params.workshopName}. Pantau status servis Anda.`,
-          "user"
+          "driver"
         );
         notifs = pushNotification(
           notifs,
@@ -300,7 +300,7 @@ export const useBookingStore = create<BookingStore>((set, get) => {
           "booking_accepted",
           "Booking Diterima! \u2705",
           "Bengkel telah mengkonfirmasi booking Anda. Kendaraan sedang dianalisis. Datang sesuai jadwal.",
-          "user"
+          "driver"
         );
         persistBookings(bookings);
         saveJSON(NOTIF_KEY, bookingNotifications);
@@ -316,7 +316,7 @@ export const useBookingStore = create<BookingStore>((set, get) => {
           "booking_rejected",
           "Booking Ditolak",
           "Mohon maaf, bengkel tidak dapat menerima booking pada waktu yang dipilih. Silakan cari bengkel lain.",
-          "user"
+          "driver"
         );
         persistBookings(bookings);
         saveJSON(NOTIF_KEY, bookingNotifications);
@@ -332,7 +332,7 @@ export const useBookingStore = create<BookingStore>((set, get) => {
           "booking_service",
           "Kendaraan Sedang Diservis \uD83D\uDD27",
           "Mekanik sudah mulai mengerjakan kendaraan Anda. Invoice akan dikirim setelah servis selesai.",
-          "user"
+          "driver"
         );
         persistBookings(bookings);
         saveJSON(NOTIF_KEY, bookingNotifications);
@@ -348,7 +348,7 @@ export const useBookingStore = create<BookingStore>((set, get) => {
           "booking_invoice",
           "Invoice Diterima \uD83D\uDCC4",
           `Invoice servis sebesar Rp ${invoice.totalIDR.toLocaleString("id-ID")} telah dikirim. Silakan lakukan pembayaran.`,
-          "user"
+          "driver"
         );
         persistBookings(bookings);
         saveJSON(NOTIF_KEY, bookingNotifications);
@@ -379,7 +379,7 @@ export const useBookingStore = create<BookingStore>((set, get) => {
           state.bookingNotifications,
           "service_anchoring",
           "Menandatangani Log Servis \u23F3",
-          "Wallet bengkel sedang menandatangani pembaruan cNFT pada tree enterprise.",
+          "Wallet bengkel sedang menandatangani pembaruan service record untuk operator pool.",
           "workshop"
         );
         persistBookings(bookings);
@@ -397,7 +397,7 @@ export const useBookingStore = create<BookingStore>((set, get) => {
             "service_anchored",
             "Log Servis Tercatat On-Chain \u2705",
             `Riwayat servis telah di-anchor ke Solana. Tx: ${txSig}`,
-            "user"
+            "driver"
           );
           notifs = pushNotification(
             notifs,
@@ -438,14 +438,14 @@ export const useBookingStore = create<BookingStore>((set, get) => {
           "warranty_submitted",
           "Klaim Garansi Diajukan \uD83D\uDEE1\uFE0F",
           `${draft.submittedByWorkshopName} mengajukan klaim garansi: ${draft.description.slice(0, 60)}...`,
-          "enterprise"
+          "operator"
         );
         notifs = pushNotification(
           notifs,
           "warranty_submitted",
           "Klaim Garansi Terkirim \uD83D\uDEE1\uFE0F",
-          `Klaim garansi Anda untuk ${vehicleName} sedang ditinjau enterprise.`,
-          "user"
+          `Klaim garansi Anda untuk ${vehicleName} sedang ditinjau operator.`,
+          "driver"
         );
 
         persistBookings(bookings);
@@ -483,8 +483,8 @@ export const useBookingStore = create<BookingStore>((set, get) => {
               notifs,
               "warranty_update",
               "Klaim Garansi Anda Disetujui \u2705",
-              `Garansi untuk ${target.vehicleName} disetujui enterprise.`,
-              "user"
+              `Garansi untuk ${target.vehicleName} disetujui operator.`,
+              "driver"
             );
           } else if (status === "Rejected") {
             notifs = pushNotification(
@@ -518,7 +518,7 @@ export const useBookingStore = create<BookingStore>((set, get) => {
           "warranty_submitted",
           "Klaim Garansi Diajukan Ulang \uD83D\uDD01",
           "Bengkel mengajukan ulang klaim garansi dengan bukti tambahan.",
-          "enterprise"
+          "operator"
         );
         saveJSON(WARRANTY_KEY, warrantyClaims);
         saveJSON(NOTIF_KEY, bookingNotifications);
@@ -577,7 +577,7 @@ export const useBookingStore = create<BookingStore>((set, get) => {
           "booking_completed",
           "Servis Selesai & Tercatat On-Chain \u2705",
           "Riwayat servis telah di-anchor ke Solana. Review Anda telah diverifikasi on-chain.",
-          "user"
+          "driver"
         );
 
         persistBookings(bookings);

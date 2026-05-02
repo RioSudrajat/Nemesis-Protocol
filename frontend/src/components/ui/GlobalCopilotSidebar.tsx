@@ -5,8 +5,8 @@ import { ChevronRight, ChevronLeft, Bot, User, Send, Sparkles } from "lucide-rea
 
 export function GlobalCopilotSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const [messages, setMessages] = useState<{role: "assistant"|"user", text: string}[]>([
-    { role: "assistant", text: "Halo! Saya NOC Copilot. Tanyakan apa saja seputar data on-chain, status kendaraan, atau prediksi maintenance." }
+  const [messages, setMessages] = useState<{role: "assistant"|"human", text: string}[]>([
+    { role: "assistant", text: "Halo! Saya Nemesis Copilot. Tanyakan apa saja seputar data on-chain, status kendaraan, atau prediksi maintenance." }
   ]);
   const [input, setInput] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
@@ -26,7 +26,7 @@ export function GlobalCopilotSidebar() {
   const handleSend = () => {
     if (!input.trim()) return;
     const userMsg = input.trim();
-    setMessages(prev => [...prev, { role: "user", text: userMsg }]);
+    setMessages(prev => [...prev, { role: "human", text: userMsg }]);
     setInput("");
     
     setTimeout(() => {
@@ -70,7 +70,7 @@ export function GlobalCopilotSidebar() {
               <Bot className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h2 className="font-bold text-lg flex items-center gap-2">NOC Copilot <Sparkles className="w-4 h-4 text-yellow-400" /></h2>
+              <h2 className="font-bold text-lg flex items-center gap-2">Nemesis Copilot <Sparkles className="w-4 h-4 text-yellow-400" /></h2>
               <p className="text-xs" style={{ color: "var(--solana-text-muted)" }}>Global AI Assistant</p>
             </div>
           </div>
@@ -78,13 +78,13 @@ export function GlobalCopilotSidebar() {
           {/* Chat Area */}
           <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
             {messages.map((msg, idx) => (
-              <div key={idx} className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "user" ? "bg-teal-600/20 text-teal-400" : "bg-teal-500/20 text-teal-400"}`}>
-                  {msg.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+              <div key={idx} className={`flex gap-3 ${msg.role === "human" ? "flex-row-reverse" : "flex-row"}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === "human" ? "bg-teal-600/20 text-teal-400" : "bg-teal-500/20 text-teal-400"}`}>
+                  {msg.role === "human" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                 </div>
                 <div 
                   className={`p-3 rounded-2xl text-sm max-w-[85%] ${
-                    msg.role === "user" 
+                    msg.role === "human" 
                       ? "rounded-tr-sm bg-teal-600/20 border border-teal-500/30" 
                       : "rounded-tl-sm bg-black/40 border border-white/10"
                   }`}
