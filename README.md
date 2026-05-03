@@ -125,7 +125,7 @@ No vague token stories. Real assets, real cashflows, real protocol revenue from 
 
 ## Grant Package
 
-- [Money Back Guarantee Agent Grant Application](docs/GRANT_APPLICATION_MONEY_BACK_GUARANTEE_AGENT.md)
+- [Agentic Engineering Grant Application](docs/GRANT_APPLICATION_AGENTIC_ENGINEERING.md)
 
 ---
 
