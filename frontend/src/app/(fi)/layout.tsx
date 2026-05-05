@@ -29,9 +29,9 @@ export default function FiLayout({ children }: { children: React.ReactNode }) {
         mobileNavCount={3}
       />
       <main className="flex-1 min-w-0 pt-16 md:pt-0 flex flex-col">
-        {/* Wallet button for FI portal — top right, desktop only */}
-        <header className="hidden md:flex justify-end p-4 pb-0">
-          <ConnectWalletButton variant="depin" />
+        {/* Wallet in top-right of FI portal (no stats bar here, so layout header is correct) */}
+        <header className="hidden md:flex justify-end px-6 pt-6 pb-0">
+          <ConnectWalletButton variant="fi" />
         </header>
         {children}
       </main>

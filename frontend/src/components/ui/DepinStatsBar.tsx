@@ -1,14 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import dynamic from "next/dynamic";
 import { formatNumber } from "@/lib/yield";
-import { Wallet } from "lucide-react";
+
+const ConnectWalletButton = dynamic(
+  () =>
+    import("@/components/ui/ConnectWalletButton").then((m) => ({
+      default: m.ConnectWalletButton,
+    })),
+  { ssr: false }
+);
 
 export function DepinStatsBar() {
-  const [walletConnected, setWalletConnected] = useState(false);
-
   return (
-    <div className="sticky top-6 z-20 py-4 px-6 md:px-8 mb-6 bg-white rounded-2xl shadow-sm border border-zinc-100 flex flex-wrap items-center justify-between gap-y-4">
+    <div className="sticky top-6 z-20 py-3 px-6 md:px-8 mb-6 bg-white rounded-2xl shadow-sm border border-zinc-100 flex flex-wrap items-center justify-between gap-y-4">
       <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.6)] animate-pulse" />
@@ -37,24 +43,7 @@ export function DepinStatsBar() {
       </div>
       
       <div className="flex items-center gap-3">
-        <button 
-          onClick={() => setWalletConnected(!walletConnected)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-teal-500 hover:bg-teal-400 rounded-lg shadow-sm transition-colors"
-        >
-          {walletConnected ? (
-            <>
-              <div className="w-5 h-5 rounded-full bg-teal-700 flex items-center justify-center">
-                <span className="w-2 h-2 rounded-full bg-teal-300" />
-              </div>
-              8xFa...9Bv2
-            </>
-          ) : (
-            <>
-              <Wallet className="w-4 h-4" />
-              Connect Wallet
-            </>
-          )}
-        </button>
+        <ConnectWalletButton variant="depin" />
       </div>
     </div>
   );

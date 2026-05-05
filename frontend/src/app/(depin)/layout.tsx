@@ -1,18 +1,9 @@
 "use client";
 import { usePathname } from "next/navigation";
-import dynamic from "next/dynamic";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import type { NavItem } from "@/components/layout/AppSidebar";
 import { Globe, LayoutDashboard, Trophy, Zap, ArrowLeftRight, Users } from "lucide-react";
 import { DriverAuthGuard } from "@/components/depin/DriverAuthGuard";
-
-const ConnectWalletButton = dynamic(
-  () =>
-    import("@/components/ui/ConnectWalletButton").then((m) => ({
-      default: m.ConnectWalletButton,
-    })),
-  { ssr: false }
-);
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/depin", label: "Network", icon: Globe },
@@ -41,11 +32,7 @@ export default function DepinLayout({ children }: { children: React.ReactNode })
         theme="light"
         mobileNavCount={4}
       />
-      <main className="flex-1 min-w-0 pt-16 md:pt-0 flex flex-col">
-        {/* Wallet button for DePIN portal — top right, desktop only */}
-        <header className="hidden md:flex justify-end p-4 pb-0">
-          <ConnectWalletButton variant="depin" />
-        </header>
+      <main className="flex-1 min-w-0 pt-16 md:pt-0">
         {children}
       </main>
     </div>
