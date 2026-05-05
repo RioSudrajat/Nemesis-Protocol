@@ -49,7 +49,7 @@ export function DriverBottomSheet(p: Props) {
 
   return (
     <motion.div
-      className="fixed left-0 right-0 z-30 max-w-[480px] mx-auto"
+      className="fixed left-0 right-0 z-30 max-w-[480px] mx-auto overflow-hidden"
       style={{ bottom: 56, borderRadius: "24px 24px 0 0", background: "rgba(10,14,23,0.95)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderTop: "1px solid rgba(94,234,212,0.15)", boxShadow: "0 -8px 40px rgba(0,0,0,0.5)" }}
       animate={controls}
       variants={{ collapsed: { height: 120 }, expanded: { height: "35dvh" } }}
