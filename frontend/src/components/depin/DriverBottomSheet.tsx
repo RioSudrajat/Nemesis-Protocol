@@ -52,7 +52,7 @@ export function DriverBottomSheet(p: Props) {
       className="fixed left-0 right-0 z-30 max-w-[480px] mx-auto"
       style={{ bottom: 56, borderRadius: "24px 24px 0 0", background: "rgba(10,14,23,0.95)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderTop: "1px solid rgba(94,234,212,0.15)", boxShadow: "0 -8px 40px rgba(0,0,0,0.5)" }}
       animate={controls}
-      variants={{ collapsed: { height: 120 }, expanded: { height: "55dvh" } }}
+      variants={{ collapsed: { height: 120 }, expanded: { height: "35dvh" } }}
       transition={{ type: "spring", damping: 30, stiffness: 300 }}
       drag="y" dragConstraints={{ top: 0, bottom: 0 }} dragElastic={0.1} onDragEnd={onDragEnd}
     >
@@ -85,7 +85,7 @@ export function DriverBottomSheet(p: Props) {
 
       {/* Expanded content */}
       {p.expanded && (
-        <div ref={ref} className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: "calc(55dvh - 120px)" }} onPointerDownCapture={e => e.stopPropagation()}>
+        <div ref={ref} className="px-5 pb-6 overflow-y-auto" style={{ maxHeight: "calc(35dvh - 120px)" }} onPointerDownCapture={e => e.stopPropagation()}>
           <div className="h-px bg-white/5 mb-5" />
 
           {/* Stats grid */}
