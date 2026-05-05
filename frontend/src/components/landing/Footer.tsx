@@ -15,7 +15,7 @@ export default function Footer() {
         <div className="flex flex-col lg:flex-row justify-between gap-16 lg:gap-8 mb-20 lg:mb-32">
 
           {/* Links Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-16 w-full lg:w-3/5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 w-full lg:w-3/5">
 
             <div className="flex flex-col gap-4">
               <span className="text-[#111827] font-semibold text-[15px]">Protocol</span>
@@ -23,6 +23,14 @@ export default function Footer() {
               <a href="#" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors">Nodes & Data</a>
               <a href="#" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors">Yield Tracking</a>
               <a href="#" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors">Governance</a>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <span className="text-[#111827] font-semibold text-[15px]">Portals</span>
+              <Link href="/driver" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors font-medium">🏍️ Driver Login</Link>
+              <Link href="/depin" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors">DePIN Network</Link>
+              <Link href="/fi" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors">FI Pools</Link>
+              <Link href="/rwa" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors">RWA / Operators</Link>
             </div>
 
             <div className="flex flex-col gap-4">

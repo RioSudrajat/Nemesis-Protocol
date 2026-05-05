@@ -4,10 +4,11 @@ import { Loader2, LogOut, Wallet } from "lucide-react";
 import { useSolanaWallet } from "@/context/SolanaWalletContext";
 import { truncateWallet } from "@/lib/yield";
 
-type PortalVariant = "depin" | "workshop" | "operator" | "admin";
+type PortalVariant = "depin" | "fi" | "workshop" | "operator" | "admin";
 
 const accentMap: Record<PortalVariant, { dot: string; border?: string }> = {
   depin: { dot: "var(--solana-green)" },
+  fi: { dot: "#0F766E", border: "rgba(15, 118, 110, 0.5)" },
   workshop: { dot: "var(--solana-purple)", border: "var(--solana-purple)" },
   operator: { dot: "var(--solana-purple)" },
   admin: { dot: "#5EEAD4", border: "rgba(94, 234, 212,0.5)" },

@@ -1,6 +1,8 @@
 "use client";
 
-import { Navigation } from "lucide-react";
+import { Navigation, LogOut, User } from "lucide-react";
+import { useDriverAuthStore } from "@/store/driverAuthStore";
+import { useRouter } from "next/navigation";
 
 interface DriverOverlayControlsProps {
   gpsEnabled: boolean;
@@ -15,8 +17,44 @@ export function DriverOverlayControls({
   isPaidToday,
   dailyFee,
 }: DriverOverlayControlsProps) {
+  const { currentDriver, logout } = useDriverAuthStore();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.replace("/depin/driver/login");
+  };
+
   return (
     <>
+      {/* Driver identity bar — top center */}
+      {currentDriver && (
+        <div
+          className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2.5 px-4 py-2 rounded-2xl max-w-[85%]"
+          style={{
+            background: "rgba(10, 14, 23, 0.8)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+          }}
+        >
+          <div className="w-7 h-7 rounded-full bg-[#14B8A6]/15 border border-[#14B8A6]/25 flex items-center justify-center shrink-0">
+            <User size={13} className="text-[#14B8A6]" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-white truncate">{currentDriver.fullName}</p>
+            <p className="text-[10px] text-white/35 font-mono">{currentDriver.assignedVehicleId}</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="shrink-0 p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+            title="Logout"
+          >
+            <LogOut size={14} className="text-white/40 hover:text-red-400" />
+          </button>
+        </div>
+      )}
+
       {/* GPS Toggle — top left */}
       <button
         onClick={onToggleGps}
