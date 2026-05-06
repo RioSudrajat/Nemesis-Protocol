@@ -14,8 +14,8 @@ import {
   TrendingUp,
   Wrench,
 } from 'lucide-react'
-import { MOCK_VEHICLES } from '@/data/vehicles'
 import { MOCK_OPERATOR_PROFILE } from '@/data/operators'
+import { useNemesisStore, selectFleetStats } from '@/store/useNemesisStore'
 import { OperatorPoolBadge } from '@/components/rwa/OperatorPoolBadge'
 import { formatKm } from '@/lib/yield'
 import { getHealthColor } from '@/lib/health'
@@ -83,25 +83,32 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
 }
 
 export default function OperatorOverviewPage() {
-  const previewVehicles = MOCK_VEHICLES.slice(0, 5)
-  const averageHealth = Math.round(
-    MOCK_VEHICLES.reduce((total, vehicle) => total + vehicle.healthScore, 0) / MOCK_VEHICLES.length,
-  )
-  const maintenanceRiskCount = MOCK_VEHICLES.filter(
+  const { assets } = useNemesisStore()
+  const fleetStats = selectFleetStats(useNemesisStore.getState())
+
+  const previewVehicles = assets.slice(0, 8)
+  const averageHealth = assets.length > 0
+    ? Math.round(assets.reduce((total, vehicle) => total + vehicle.healthScore, 0) / assets.length)
+    : 0
+  const maintenanceRiskCount = assets.filter(
     (vehicle) => vehicle.status === 'maintenance' || vehicle.healthScore < 80,
   ).length
+
+  const routeLogCoverage = assets.length > 0
+    ? Math.round((fleetStats.active / fleetStats.total) * 100)
+    : 0
 
   const commandStats = [
     {
       label: 'Registered fleet',
-      value: `${MOCK_OPERATOR_PROFILE.totalVehicles}`,
+      value: `${fleetStats.total}`,
       detail: `Pool ${MOCK_OPERATOR_PROFILE.poolId}`,
       icon: RadioTower,
     },
     {
       label: 'Active today',
-      value: `${MOCK_OPERATOR_PROFILE.activeVehicles}`,
-      detail: '83% route-log coverage',
+      value: `${fleetStats.active}`,
+      detail: `${routeLogCoverage}% route-log coverage`,
       icon: Activity,
     },
     {
@@ -290,7 +297,7 @@ export default function OperatorOverviewPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-4 text-xs text-white/50">{formatKm(vehicle.odometer)}</td>
+                        <td className="px-4 py-4 text-xs text-white/50">{formatKm(vehicle.odometer ?? 0)}</td>
                         <td className="px-4 py-4 text-xs text-white/54">{status.proof}</td>
                         <td className="px-6 py-4 text-xs font-semibold text-white/62">{status.risk}</td>
                       </tr>

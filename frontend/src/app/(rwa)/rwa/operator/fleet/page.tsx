@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
 import { Activity, MapPinned, RadioTower, Route, Wrench, X } from 'lucide-react'
-import { MOCK_VEHICLES } from '@/data/vehicles'
+import { useNemesisStore, selectFleetStats } from '@/store/useNemesisStore'
 import { MOCK_OPERATOR_PROFILE } from '@/data/operators'
 import { VehiclePreVisitBrief } from '@/components/rwa/VehiclePreVisitBrief'
 import type { RegisteredVehicle } from '@/types/rwa'
@@ -37,11 +37,11 @@ function toFleetVehicle(v: RegisteredVehicle) {
     name: `${v.brand} ${v.model} ${v.unitId}`,
     region: 'Jakarta',
     health: v.healthScore,
-    odometer: v.odometer,
+    odometer: v.odometer ?? 0,
     lastService: `${v.lastServiceKm} km`,
     owner: v.operatorId,
     status: STATUS_LABEL[v.status]?.label ?? 'Offline',
-    type: v.type,
+    type: v.type ?? 'motor_listrik',
     brand: v.brand,
     model: v.model,
   }
@@ -69,20 +69,23 @@ export default function FleetMapPage() {
   const [filter, setFilter] = useState<StatusFilter>('all')
   const [selectedVehicle, setSelectedVehicle] = useState<RegisteredVehicle | null>(null)
 
-  const filtered = filter === 'all' ? MOCK_VEHICLES : MOCK_VEHICLES.filter((v) => v.status === filter)
-  const maintenanceQueue = MOCK_VEHICLES.filter((v) => v.status === 'maintenance' || v.healthScore < 80).length
-  const idleUnits = MOCK_VEHICLES.filter((v) => v.status === 'idle').length
+  const { assets } = useNemesisStore()
+  const fleetStats = selectFleetStats(useNemesisStore.getState())
+
+  const filtered = filter === 'all' ? assets : assets.filter((v) => v.status === filter)
+  const maintenanceQueue = assets.filter((v) => v.status === 'maintenance' || v.healthScore < 80).length
+  const idleUnits = assets.filter((v) => v.status === 'idle').length
 
   const stats = [
     {
       label: 'Registered units',
-      value: `${MOCK_OPERATOR_PROFILE.totalVehicles}`,
+      value: `${fleetStats.total}`,
       detail: `Pool ${MOCK_OPERATOR_PROFILE.poolId}`,
       icon: RadioTower,
     },
     {
       label: 'Active route logs',
-      value: `${MOCK_OPERATOR_PROFILE.activeVehicles}`,
+      value: `${fleetStats.active}`,
       detail: 'Synced in the last 24h',
       icon: Route,
     },
@@ -226,7 +229,7 @@ export default function FleetMapPage() {
                       <div className="text-sm font-medium text-white/76">
                         {vehicle.brand} {vehicle.model}
                       </div>
-                      <div className="mt-1 text-xs text-white/36">{vehicle.type.replaceAll('_', ' ')}</div>
+                      <div className="mt-1 text-xs text-white/36">{(vehicle.type ?? '').replaceAll('_', ' ')}</div>
                     </td>
                     <td className="px-5 py-4">
                       <span
@@ -254,7 +257,7 @@ export default function FleetMapPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-5 py-4 text-xs text-white/50">{formatKm(vehicle.odometer)}</td>
+                    <td className="px-5 py-4 text-xs text-white/50">{formatKm(vehicle.odometer ?? 0)}</td>
                     <td className="px-5 py-4 text-xs text-white/54">{status.proof}</td>
                     <td className="px-5 py-4">
                       <button

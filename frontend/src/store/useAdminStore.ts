@@ -49,6 +49,7 @@ const defaultConfig: PlatformConfig = {
 
 const seedWallets: WalletEntry[] = [
   { wallet: "NMS1...adm1", role: "superadmin", entityName: "Nemesis Core", status: "active", registeredAt: "2025-01-15", lastActive: "2026-04-23" },
+  { wallet: "NMS0...opNM", role: "operator", entityName: "Nemesis Protocol", status: "active", registeredAt: "2025-01-01", lastActive: "2026-04-24" },
   { wallet: "ELC1...op01", role: "operator", entityName: "PT Electrum Mobilitas Indonesia", status: "active", registeredAt: "2025-06-01", lastActive: "2026-04-23" },
   { wallet: "NMS1...op02", role: "operator", entityName: "Nemesis Native Fleet", status: "active", registeredAt: "2025-11-15", lastActive: "2026-04-24" },
   { wallet: "HND1...ws01", role: "workshop", entityName: "Bengkel Hendra Motor", status: "active", registeredAt: "2025-08-10", lastActive: "2026-04-24" },

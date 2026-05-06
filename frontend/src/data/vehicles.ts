@@ -1,67 +1,8 @@
-import type { RegisteredVehicle } from '@/types/rwa'
+import { generateMockVehicles } from './generateMockVehicles'
 
-const financedCost = 25_000_000
-
-export const MOCK_VEHICLES: RegisteredVehicle[] = [
-  {
-    id: 'vhc-0001', vin: 'NMS2026JKT0001', unitId: '#NMS-0001',
-    type: 'motor_listrik', category: 'ojol', brand: 'Gesits', model: 'G1', year: 2025,
-    operatorId: 'op-nemesis-native', gpsDeviceId: 'GPS-PHN-001',
-    financedCost, productModel: 'rent_to_own', poolProductType: 'mobility_credit',
-    odometer: 12547, nodeScore: 94, healthScore: 91,
-    healthBreakdown: { rem: 90, ban: 88, baterai: 95, lampu: 98 },
-    status: 'active', maintenanceFundBalance: 124000,
-    lastServiceKm: 10000, nextServiceKm: 12500,
-    flatFeeDaily: 50000,
-    poolId: 'pool-batch-1', registeredAt: '2026-01-15T00:00:00.000Z',
-  },
-  {
-    id: 'vhc-0042', vin: 'NMS2026JKT0042', unitId: '#NMS-0042',
-    type: 'motor_listrik', category: 'kurir', brand: 'Viar', model: 'Q1', year: 2025,
-    operatorId: 'op-nemesis-native', gpsDeviceId: 'GPS-PHN-042',
-    financedCost, productModel: 'rent_to_own', poolProductType: 'mobility_credit',
-    odometer: 8247, nodeScore: 72, healthScore: 72,
-    healthBreakdown: { rem: 78, ban: 61, baterai: 87, lampu: 95 },
-    status: 'maintenance', maintenanceFundBalance: 87000,
-    lastServiceKm: 4823, nextServiceKm: 7500,
-    flatFeeDaily: 50000,
-    poolId: 'pool-batch-1', registeredAt: '2026-01-20T00:00:00.000Z',
-    driverId: 'drv-001',
-  },
-  {
-    id: 'vhc-0018', vin: 'NMS2026JKT0018', unitId: '#NMS-0018',
-    type: 'motor_listrik', category: 'ojol', brand: 'Gesits', model: 'G1', year: 2025,
-    operatorId: 'op-nemesis-native', gpsDeviceId: 'GPS-PHN-018',
-    financedCost, productModel: 'rent_to_own', poolProductType: 'mobility_credit',
-    odometer: 22341, nodeScore: 81, healthScore: 79,
-    healthBreakdown: { rem: 82, ban: 77, baterai: 75, lampu: 92 },
-    status: 'active', maintenanceFundBalance: 210000,
-    lastServiceKm: 20000, nextServiceKm: 22500,
-    flatFeeDaily: 50000,
-    poolId: 'pool-batch-1', registeredAt: '2026-01-10T00:00:00.000Z',
-  },
-  {
-    id: 'vhc-0055', vin: 'NMS2026JKT0055', unitId: '#NMS-0055',
-    type: 'motor_kargo', category: 'logistik', brand: 'Viar', model: 'Karya', year: 2025,
-    operatorId: 'op-nemesis-native', gpsDeviceId: 'GPS-PHN-055',
-    financedCost, productModel: 'rent_to_own', poolProductType: 'mobility_credit',
-    odometer: 5102, nodeScore: 88, healthScore: 92,
-    healthBreakdown: { rem: 93, ban: 91, baterai: 94, lampu: 97 },
-    status: 'active', maintenanceFundBalance: 52000,
-    lastServiceKm: 2500, nextServiceKm: 5000,
-    flatFeeDaily: 60000,
-    poolId: 'pool-batch-1', registeredAt: '2026-02-01T00:00:00.000Z',
-  },
-  {
-    id: 'vhc-0073', vin: 'NMS2026JKT0073', unitId: '#NMS-0073',
-    type: 'motor_listrik', category: 'kurir', brand: 'Gesits', model: 'G2', year: 2026,
-    operatorId: 'op-nemesis-native', gpsDeviceId: 'GPS-PHN-073',
-    financedCost, productModel: 'rent_to_own', poolProductType: 'mobility_credit',
-    odometer: 1820, nodeScore: 95, healthScore: 98,
-    healthBreakdown: { rem: 98, ban: 97, baterai: 99, lampu: 100 },
-    status: 'active', maintenanceFundBalance: 18200,
-    lastServiceKm: 0, nextServiceKm: 2500,
-    flatFeeDaily: 55000,
-    poolId: 'pool-batch-1', registeredAt: '2026-03-15T00:00:00.000Z',
-  },
-]
+/**
+ * 100 mock vehicles generated with deterministic seeded RNG.
+ * Distribution: ~75 active, ~10 maintenance, ~10 idle, ~5 inactive.
+ * 83 vehicles have driverId assigned (matching overview "Active today" stat).
+ */
+export const MOCK_VEHICLES = generateMockVehicles(100)

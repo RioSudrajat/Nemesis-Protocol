@@ -37,11 +37,17 @@ export interface RegisteredAsset {
   vin?: string // For mobility
   iotDeviceId?: string // Generic IoT ID or GPS ID
   stationId?: string // For charging
+  gpsDeviceId?: string // GPS device for vehicles
   
   unitId: string
   brand: string
   model: string
   year: number
+  
+  // Backwards-compatible vehicle fields
+  type?: string // e.g. 'motor_listrik', 'motor_kargo'
+  category?: string // e.g. 'ojol', 'kurir', 'logistik'
+  odometer?: number // km driven (mobility assets)
   
   operatorId: string
   financedCost: number
@@ -81,7 +87,8 @@ export interface AssetHealthBreakdown {
 
 export interface MaintenanceFundEntry {
   id: string
-  assetId: string // Used to be vehicleId
+  assetId?: string // Used to be vehicleId
+  vehicleId?: string // Backwards compat
   unitId: string
   type: 'deposit' | 'release'
   amount: number
@@ -95,7 +102,8 @@ export interface MaintenanceFundEntry {
 }
 
 export interface MaintenanceAlert {
-  assetId: string // Used to be vehicleId
+  assetId?: string // Used to be vehicleId
+  vehicleId?: string // Backwards compat
   unitId: string
   severity: 'info' | 'warning' | 'critical'
   type: 'scheduled' | 'predictive'
@@ -113,6 +121,8 @@ export interface AIAssetInsight { // Used to be AIFleetInsight
   confidence: number
   category: 'maintenance' | 'performance' | 'utilization' | 'battery' | 'grid_sync'
 }
+
+export type AIFleetInsight = AIAssetInsight // Backwards compatibility alias
 
 export interface AssetModule {
   id: string

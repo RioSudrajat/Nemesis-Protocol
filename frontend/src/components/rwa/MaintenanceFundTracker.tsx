@@ -7,7 +7,7 @@ interface MaintenanceFundTrackerProps {
 }
 
 function getServiceStatus(v: RegisteredVehicle): { label: string; className: string; dotClass: string; overdue: boolean } {
-  const remaining = v.nextServiceKm - v.odometer
+  const remaining = (v.nextServiceKm ?? 0) - (v.odometer ?? 0)
   if (remaining <= 0) {
     return {
       label: 'Action Needed',
@@ -33,7 +33,7 @@ function getServiceStatus(v: RegisteredVehicle): { label: string; className: str
 }
 
 export function MaintenanceFundTracker({ vehicles, fundLog }: MaintenanceFundTrackerProps) {
-  const overdueVehicles = vehicles.filter((v) => v.odometer >= v.nextServiceKm)
+  const overdueVehicles = vehicles.filter((v) => (v.odometer ?? 0) >= (v.nextServiceKm ?? Infinity))
 
   return (
     <div className="flex flex-col gap-4">
@@ -87,7 +87,7 @@ export function MaintenanceFundTracker({ vehicles, fundLog }: MaintenanceFundTra
                   </td>
                   <td className="px-5 py-4 text-sm font-semibold text-white/76">{formatIDRX(vehicle.maintenanceFundBalance)}</td>
                   <td className="px-5 py-4">
-                    <div className="text-sm text-white/70">{formatKm(vehicle.lastServiceKm)}</div>
+                    <div className="text-sm text-white/70">{formatKm(vehicle.lastServiceKm ?? 0)}</div>
                     {lastEntry && (
                       <div className="mt-1 text-xs text-white/36">
                         {lastEntry.serviceType ?? 'General service'}
@@ -95,9 +95,9 @@ export function MaintenanceFundTracker({ vehicles, fundLog }: MaintenanceFundTra
                     )}
                   </td>
                   <td className="px-5 py-4">
-                    <div className="text-sm text-white/70">{formatKm(vehicle.nextServiceKm)}</div>
+                    <div className="text-sm text-white/70">{formatKm(vehicle.nextServiceKm ?? 0)}</div>
                     <div className="mt-1 text-xs text-white/36">
-                      Odometer: {formatKm(vehicle.odometer)}
+                      Odometer: {formatKm(vehicle.odometer ?? 0)}
                     </div>
                   </td>
                   <td className="px-5 py-4">

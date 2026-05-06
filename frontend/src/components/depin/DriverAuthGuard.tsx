@@ -18,7 +18,8 @@ export function DriverAuthGuard({ children }: { children: React.ReactNode }) {
   // Check stored session on mount
   useEffect(() => {
     checkSession();
-    setChecked(true);
+    const timeoutId = window.setTimeout(() => setChecked(true), 0);
+    return () => window.clearTimeout(timeoutId);
   }, [checkSession]);
 
   // Redirect to login if not authenticated (inside useEffect, not render)

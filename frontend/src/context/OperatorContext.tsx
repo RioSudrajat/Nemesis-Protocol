@@ -49,7 +49,7 @@ export interface OperatorMetrics {
 function mapToFleetVehicles(): FleetVehicle[] {
   return MOCK_VEHICLES.map((v) => ({
     id: v.id,
-    vin: v.vin,
+    vin: v.vin ?? '',
     name: `${v.brand} ${v.model}`,
     owner: "Nemesis Protocol",
     status:
@@ -61,7 +61,7 @@ function mapToFleetVehicles(): FleetVehicle[] {
             ? "Idle"
             : "Offline",
     health: v.healthScore,
-    odometer: v.odometer,
+    odometer: v.odometer ?? 0,
     region: "Jakarta",
     lastService: `${v.lastServiceKm} km`,
     type: v.type,

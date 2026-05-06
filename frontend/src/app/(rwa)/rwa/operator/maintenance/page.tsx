@@ -53,7 +53,7 @@ const SERVICE_PROOF_LOG = [
 const totalReserve = MOCK_VEHICLES.reduce((sum, vehicle) => sum + vehicle.maintenanceFundBalance, 0)
 const pendingCount = MOCK_FUND_LOG.filter((entry) => entry.status === 'pending').length
 const verifiedServices = MOCK_FUND_LOG.filter((entry) => entry.status === 'released').length
-const overdueUnits = MOCK_VEHICLES.filter((vehicle) => vehicle.odometer >= vehicle.nextServiceKm).length
+const overdueUnits = MOCK_VEHICLES.filter((vehicle) => (vehicle.odometer ?? 0) >= (vehicle.nextServiceKm ?? Infinity)).length
 
 const STATUS_STYLE: Record<string, { className: string; dotClass: string; label: string }> = {
   Released: {

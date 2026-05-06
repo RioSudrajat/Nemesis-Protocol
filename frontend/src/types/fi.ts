@@ -29,6 +29,7 @@ export interface StakingPool {
   totalSupplied: number
   targetSupply: number
   minInvestment: number
+  maxInvestment?: number
   defaultReservePct: number
   maintenanceReservePct: number
   operatorBaseFeePct: number
@@ -55,7 +56,18 @@ export interface StakingPool {
   documents: { title: string; url: string; size: string; type: string }[]
 
   // Impact Tab
-  impactProjections: { co2SavedKg: number; treesPlanted: number; evEquivalents: number }
+  impactProjections: {
+    co2SavedKg: number
+    treesPlanted: number
+    evEquivalents: number
+    greenKm?: number
+    energySavedKwh?: number
+  }
+  esgNarrative?: string
+  teamMembers?: { name: string; role: string; bio: string }[]
+  deliveryTimeline?: { startDate: string; firstPayoutDate: string; completionDate: string }
+  selectedAssetIds?: string[]
+  monthlyCollectionAssumption?: number
 
   proofStatus: ProofStatus
   reserveHealth: string
@@ -98,13 +110,29 @@ export interface InvestorPosition {
 }
 
 export interface PoolReport {
+  id: string
   poolId: string
-  period: string
+  period: string // e.g. "2026-04"
   type: 'monthly' | 'quarterly'
+
+  // Auto-generated from data
   avgCollectionHealth: number
   yieldDistributed: number
   principalReturned: number
   reserveBalance: number
+  activeUnits: number
+  totalKm: number
+  maintenanceEvents: number
+
+  // Auto-generated narrative (system creates from data above)
+  autoNarrative: string
+
+  // Operator-edited fields (hybrid system)
+  operatorNarrative?: string
+  operatorHeadline?: string
+  isPublished: boolean
+  editedByOperator: boolean
+
   highlights: string[]
   downloadUrl?: string
   periodData: { period: string; yield: number; principal: number; reserve: number }[]

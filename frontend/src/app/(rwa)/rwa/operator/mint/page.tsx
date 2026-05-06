@@ -3,14 +3,16 @@
 import { useState, type ReactNode } from 'react'
 import { CheckCircle2, Cpu, FileSpreadsheet, Loader2, Plus, RadioTower, ShieldCheck, Trash2 } from 'lucide-react'
 import { useNemesisStore } from '@/store/useNemesisStore'
+import type { AssetClass, AssetSubclass, ContractType } from '@/types/rwa'
+import type { PoolProductType } from '@/types/fi'
 
-const ASSET_CLASSES = [
+const ASSET_CLASSES: { value: AssetClass; label: string }[] = [
   { value: 'mobility', label: 'Mobility Fleet (EVs)' },
   { value: 'charging', label: 'EV Charging Station' },
   { value: 'energy', label: 'Energy Asset (Solar/Storage)' },
 ]
 
-const ASSET_SUBCLASSES: Record<string, { value: string, label: string }[]> = {
+const ASSET_SUBCLASSES: Record<AssetClass, { value: AssetSubclass, label: string }[]> = {
   mobility: [
     { value: 'ev_ride_hailing_rental_bike', label: 'EV Ride-Hailing Rental Bike' },
     { value: 'delivery_bike', label: 'Delivery Bike' },
@@ -33,21 +35,21 @@ const ASSET_SUBCLASSES: Record<string, { value: string, label: string }[]> = {
   ]
 }
 
-const CONTRACT_TYPES = [
+const CONTRACT_TYPES: { value: ContractType; label: string }[] = [
   { value: 'rent_to_own', label: 'Rent-to-own — Mobility Credit Pool' },
   { value: 'contracted_remittance', label: 'Contracted Remittance — Fixed Return Pool' },
   { value: 'revenue_share', label: 'Revenue Share — Realized Yield Pool' },
 ]
 
 interface RWAAssetEntry {
-  assetClass: string
-  assetSubclass: string
+  assetClass: AssetClass
+  assetSubclass: AssetSubclass
   identifier: string // VIN for mobility, Station ID for charging, Serial for energy
   telemetryId: string // GPS ID or IoT Hub ID
   year: string
   brand: string
   model: string
-  contractType: string
+  contractType: ContractType
   flatFeeDaily: string
   financedCost: string
 }
@@ -105,6 +107,7 @@ export default function AssetOnboardingPage() {
   const [submitting, setSubmitting] = useState(false)
   const { registerAsset } = useNemesisStore()
   const [submitDone, setSubmitDone] = useState(false)
+  const [currentOnboardStep, setCurrentOnboardStep] = useState(2)
   const [csvFile, setCsvFile] = useState<string | null>(null)
 
   const totalCapex = assets.reduce((sum, v) => sum + (Number(v.financedCost) || 0), 0)
@@ -139,14 +142,22 @@ export default function AssetOnboardingPage() {
 
   async function handleSubmitReadiness() {
     setSubmitting(true)
+    setCurrentOnboardStep(4)
     
     // Save to global store
     assets.forEach((v, idx) => {
+      const poolProductType: PoolProductType =
+        v.assetClass === 'mobility'
+          ? 'mobility_credit'
+          : v.assetClass === 'charging'
+            ? 'charging_yield'
+            : 'energy_yield'
+
       registerAsset({
         id: `asset-${Date.now()}-${idx}`,
         unitId: `#NMS-${Math.floor(Math.random() * 10000)}`,
-        assetClass: v.assetClass as any,
-        assetSubclass: v.assetSubclass as any,
+        assetClass: v.assetClass,
+        assetSubclass: v.assetSubclass,
         vin: v.assetClass === 'mobility' ? v.identifier || `MOCK-VIN-${idx}` : undefined,
         stationId: v.assetClass !== 'mobility' ? v.identifier || `STATION-${idx}` : undefined,
         iotDeviceId: v.telemetryId || `IOT-${idx}`,
@@ -155,8 +166,8 @@ export default function AssetOnboardingPage() {
         year: parseInt(v.year) || 2025,
         operatorId: 'nemesis_native',
         financedCost: parseFloat(v.financedCost) || 25000000,
-        productModel: v.contractType as any,
-        poolProductType: v.assetClass === 'mobility' ? 'mobility_credit' : 'yield_pool',
+        productModel: v.contractType,
+        poolProductType,
         nodeScore: 100,
         healthScore: 100,
         healthBreakdown: { rem: 100, ban: 100, baterai: 100, koneksi_iot: 100 },
@@ -169,6 +180,8 @@ export default function AssetOnboardingPage() {
 
     // Simulate Hardware Readlines / Telemetry check
     await new Promise((r) => setTimeout(r, 2000))
+    setCurrentOnboardStep(5)
+    await new Promise((r) => setTimeout(r, 1500))
     setSubmitting(false)
     setSubmitDone(true)
   }
@@ -197,7 +210,7 @@ export default function AssetOnboardingPage() {
             </p>
           </div>
           <button
-            onClick={() => { setSubmitDone(false); setAssets([{ ...BLANK_ASSET }]); setCsvFile(null); setTab('single') }}
+            onClick={() => { setSubmitDone(false); setAssets([{ ...BLANK_ASSET }]); setCsvFile(null); setTab('single'); setCurrentOnboardStep(2) }}
             className="mt-6 inline-flex items-center justify-center rounded-2xl border border-white/[0.09] bg-white/[0.035] px-5 py-3 text-sm font-bold text-white/72 transition hover:border-teal-200/35 hover:text-teal-100"
           >
             Register More Assets
@@ -279,7 +292,7 @@ export default function AssetOnboardingPage() {
                         <select
                           className={fieldClass}
                           value={asset.assetClass}
-                          onChange={(event) => updateAsset(index, { assetClass: event.target.value })}
+                          onChange={(event) => updateAsset(index, { assetClass: event.target.value as AssetClass })}
                         >
                           {ASSET_CLASSES.map((cls) => (
                             <option key={cls.value} value={cls.value}>{cls.label}</option>
@@ -291,7 +304,7 @@ export default function AssetOnboardingPage() {
                         <select
                           className={fieldClass}
                           value={asset.assetSubclass}
-                          onChange={(event) => updateAsset(index, { assetSubclass: event.target.value })}
+                          onChange={(event) => updateAsset(index, { assetSubclass: event.target.value as AssetSubclass })}
                         >
                           {ASSET_SUBCLASSES[asset.assetClass]?.map((sub) => (
                             <option key={sub.value} value={sub.value}>{sub.label}</option>
@@ -370,7 +383,7 @@ export default function AssetOnboardingPage() {
                         <select
                           className={fieldClass}
                           value={asset.contractType}
-                          onChange={(event) => updateAsset(index, { contractType: event.target.value })}
+                          onChange={(event) => updateAsset(index, { contractType: event.target.value as ContractType })}
                         >
                           {CONTRACT_TYPES.map((contractType) => (
                             <option key={contractType.value} value={contractType.value}>{contractType.label}</option>
@@ -474,17 +487,34 @@ export default function AssetOnboardingPage() {
               ))}
             </div>
             <div className="border-t border-white/[0.07] p-6">
-              <div className="mb-5 space-y-3">
-                {['Select Infrastructure Type', 'Configure Financial Metrics', 'Attach IoT Telemetry', 'Fetch Hardware Readlines', 'Mint On-chain Proof'].map((step, index) => (
-                  <div key={step} className="flex items-center gap-3 text-sm text-white/56">
-                    <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold ${
-                      index < 3 ? 'border-teal-200/25 bg-teal-200/10 text-teal-100' : 'border-white/[0.08] bg-white/[0.035] text-white/42'
-                    }`}>
-                      {index + 1}
-                    </span>
-                    {step}
-                  </div>
-                ))}
+              <div className="mb-5 relative">
+                <div className="absolute left-[11px] top-2 bottom-2 w-[1px] bg-white/[0.06] -z-10" />
+                <div className="space-y-4">
+                  {['Select Infrastructure Type', 'Configure Financial Metrics', 'Attach IoT Telemetry', 'Fetch Hardware Readlines', 'Mint On-chain Proof'].map((step, index) => {
+                    const currentStep = submitting ? currentOnboardStep : (filledTelemetry > 0 && filledTelemetry === assets.length) ? Math.max(currentOnboardStep, 3) : currentOnboardStep;
+                    const stepNumber = index + 1;
+                    const isCompleted = stepNumber < currentStep;
+                    const isActive = stepNumber === currentStep;
+                    
+                    return (
+                      <div key={step} className={`flex items-center gap-4 ${isCompleted || isActive ? 'text-white' : 'text-white/40'}`}>
+                        <span className={`relative flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full text-[10px] font-bold shadow-sm transition-all duration-300 ${
+                          isCompleted ? 'bg-teal-400 text-teal-950 shadow-teal-400/20' : 
+                          isActive ? 'border border-teal-400/50 bg-[#0B0F0E] text-teal-300 shadow-teal-400/10' : 
+                          'border border-white/10 bg-[#050606] text-white/40'
+                        }`}>
+                          {isCompleted ? <CheckCircle2 className="h-3 w-3" /> : index + 1}
+                          {isCompleted && index < 4 && (
+                            <span className="absolute top-[22px] bottom-[-16px] left-1/2 w-[1px] -translate-x-1/2 bg-teal-400/30" />
+                          )}
+                        </span>
+                        <span className={`text-sm ${isActive ? 'font-semibold text-teal-100' : isCompleted ? 'font-medium text-white/80' : ''}`}>
+                          {step}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
               <button
                 onClick={handleSubmitReadiness}
@@ -492,7 +522,7 @@ export default function AssetOnboardingPage() {
                 className="inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-teal-200/30 bg-[#0B0F0E] px-5 py-3.5 text-sm font-bold text-teal-100 transition hover:border-teal-200/55 hover:bg-[#101817] disabled:opacity-50"
               >
                 {submitting ? (
-                  <><Loader2 className="h-5 w-5 animate-spin" /> Fetching readlines...</>
+                  <><Loader2 className="h-5 w-5 animate-spin" /> {currentOnboardStep >= 5 ? 'Minting on-chain proof...' : 'Fetching readlines...'}</>
                 ) : (
                   <><RadioTower className="h-5 w-5" /> Submit Proof (Fetch Readlines)</>
                 )}

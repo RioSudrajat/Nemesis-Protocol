@@ -57,9 +57,9 @@ export function VehiclePreVisitBrief({ vehicle: v, serviceHistory }: VehiclePreV
   const statusCfg = STATUS_LABEL[v.status] ?? STATUS_LABEL.offline
 
   const mockHistory: ServiceHistoryItem[] = serviceHistory ?? [
-    { date: '2026-03-10', type: 'Routine Service', km: v.lastServiceKm, cost: 150000, workshop: 'Bengkel Mitra JKT-01' },
-    { date: '2026-01-22', type: 'Tire Replacement', km: Math.max(0, v.lastServiceKm - 3000), cost: 320000, workshop: 'Workshop Nemesis' },
-    { date: '2025-12-05', type: 'Battery Check', km: Math.max(0, v.lastServiceKm - 6000), cost: 80000, workshop: 'Bengkel Mitra JKT-02' },
+    { date: '2026-03-10', type: 'Routine Service', km: v.lastServiceKm ?? 0, cost: 150000, workshop: 'Bengkel Mitra JKT-01' },
+    { date: '2026-01-22', type: 'Tire Replacement', km: Math.max(0, (v.lastServiceKm ?? 0) - 3000), cost: 320000, workshop: 'Workshop Nemesis' },
+    { date: '2025-12-05', type: 'Battery Check', km: Math.max(0, (v.lastServiceKm ?? 0) - 6000), cost: 80000, workshop: 'Bengkel Mitra JKT-02' },
   ]
 
   const estServiceCost = 180000
@@ -81,12 +81,12 @@ export function VehiclePreVisitBrief({ vehicle: v, serviceHistory }: VehiclePreV
             </span>
           </div>
           <p className="text-sm" style={{ color: 'var(--solana-text-muted)' }}>
-            {v.brand} {v.model} · {VEHICLE_TYPE_LABELS[v.type] ?? v.type} · {FLEET_CATEGORY_LABELS[v.category] ?? v.category}
+            {v.brand} {v.model} · {VEHICLE_TYPE_LABELS[v.type ?? ''] ?? v.type} · {FLEET_CATEGORY_LABELS[v.category ?? ''] ?? v.category}
           </p>
         </div>
         <div className="text-right">
           <div className="text-xs" style={{ color: 'var(--solana-text-muted)' }}>Odometer</div>
-          <div className="font-bold text-lg">{formatKm(v.odometer)}</div>
+          <div className="font-bold text-lg">{formatKm(v.odometer ?? 0)}</div>
         </div>
       </div>
 
@@ -208,8 +208,8 @@ export function VehiclePreVisitBrief({ vehicle: v, serviceHistory }: VehiclePreV
           </div>
 
           <div className="mt-3 flex justify-between text-xs" style={{ color: 'var(--solana-text-muted)' }}>
-            <span>Last service: {formatKm(v.lastServiceKm)}</span>
-            <span>Next service: {formatKm(v.nextServiceKm)}</span>
+            <span>Last service: {formatKm(v.lastServiceKm ?? 0)}</span>
+            <span>Next service: {formatKm(v.nextServiceKm ?? 0)}</span>
           </div>
         </div>
       </div>

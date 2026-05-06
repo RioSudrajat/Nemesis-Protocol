@@ -15,8 +15,7 @@ import {
   Copy,
   Check,
 } from 'lucide-react'
-import { useDriverAuthStore, type RegisteredDriver } from '@/store/driverAuthStore'
-import { MOCK_VEHICLES } from '@/data/vehicles'
+import { useNemesisStore, selectAvailableVehicles, type RegisteredDriver } from '@/store/useNemesisStore'
 
 function Panel({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
@@ -43,7 +42,8 @@ const KYC_BADGE: Record<string, { label: string; color: string; Icon: typeof Che
 }
 
 export default function OperatorDriversPage() {
-  const { registeredDrivers, registerDriver } = useDriverAuthStore()
+  const { drivers, assets, registerDriver, _hydrated } = useNemesisStore()
+  const availableVehicles = selectAvailableVehicles(useNemesisStore.getState())
   const [showForm, setShowForm] = useState(false)
   const [search, setSearch] = useState('')
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -52,10 +52,11 @@ export default function OperatorDriversPage() {
   const [formName, setFormName] = useState('')
   const [formPhone, setFormPhone] = useState('')
   const [formVehicle, setFormVehicle] = useState('')
-  const [formContract, setFormContract] = useState<'rent' | 'rent_to_own'>('rent_to_own')
-  const [formFee, setFormFee] = useState('50000')
 
-  const filtered = registeredDrivers.filter(
+  // Derive contract info from selected vehicle (read-only)
+  const selectedVehicleData = assets.find(v => v.unitId === formVehicle)
+
+  const filtered = drivers.filter(
     (d) =>
       d.fullName.toLowerCase().includes(search.toLowerCase()) ||
       d.phone.includes(search) ||
@@ -69,23 +70,21 @@ export default function OperatorDriversPage() {
     else if (normalizedPhone.startsWith('62')) normalizedPhone = '+' + normalizedPhone
     else if (!normalizedPhone.startsWith('+62')) normalizedPhone = '+62' + normalizedPhone
 
-    const vehicle = MOCK_VEHICLES.find((v) => v.unitId === formVehicle) || MOCK_VEHICLES[0]
+    const vehicle = assets.find((v) => v.unitId === formVehicle)
+    if (!vehicle) return
 
     registerDriver({
       phone: normalizedPhone,
       fullName: formName,
       kycStatus: 'pending',
-      assignedVehicleId: formVehicle || vehicle.unitId,
+      assignedVehicleId: vehicle.unitId,
       assignedVehicleName: `${vehicle.brand} ${vehicle.model}`,
-      contractType: formContract,
-      dailyFee: parseInt(formFee) || 50000,
     })
 
     // Reset form
     setFormName('')
     setFormPhone('')
     setFormVehicle('')
-    setFormFee('50000')
     setShowForm(false)
   }
 
@@ -93,6 +92,10 @@ export default function OperatorDriversPage() {
     void navigator.clipboard.writeText(driver.phone)
     setCopiedId(driver.id)
     setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  if (!_hydrated) {
+    return null
   }
 
   return (
@@ -172,8 +175,8 @@ export default function OperatorDriversPage() {
                   onChange={(e) => setFormVehicle(e.target.value)}
                   className="w-full appearance-none rounded-xl border border-white/10 bg-white/[0.04] py-3.5 pl-10 pr-4 text-sm text-white focus:border-teal-400/50 focus:outline-none transition-colors"
                 >
-                  <option value="" className="bg-[#080A0B]">Select vehicle...</option>
-                  {MOCK_VEHICLES.slice(0, 10).map((v) => (
+                  <option value="" className="bg-[#080A0B]">Select vehicle ({availableVehicles.length} available)...</option>
+                  {availableVehicles.map((v) => (
                     <option key={v.id} value={v.unitId} className="bg-[#080A0B]">
                       {v.unitId} — {v.brand} {v.model}
                     </option>
@@ -182,33 +185,29 @@ export default function OperatorDriversPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/42">
-                  Contract
-                </label>
-                <select
-                  value={formContract}
-                  onChange={(e) => setFormContract(e.target.value as 'rent' | 'rent_to_own')}
-                  className="w-full appearance-none rounded-xl border border-white/10 bg-white/[0.04] py-3.5 px-4 text-sm text-white focus:border-teal-400/50 focus:outline-none transition-colors"
-                >
-                  <option value="rent_to_own" className="bg-[#080A0B]">Rent to Own</option>
-                  <option value="rent" className="bg-[#080A0B]">Rent Only</option>
-                </select>
+            {selectedVehicleData && (
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-white/42">Inherited from Asset</p>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="text-white/40">Contract:</span>{' '}
+                    <span className="text-white font-medium">{selectedVehicleData.productModel === 'rent_to_own' ? 'Rent to Own' : selectedVehicleData.productModel}</span>
+                  </div>
+                  <div>
+                    <span className="text-white/40">Daily Fee:</span>{' '}
+                    <span className="text-white font-medium">Rp {(selectedVehicleData.flatFeeDaily || 50000).toLocaleString('id-ID')}</span>
+                  </div>
+                  <div>
+                    <span className="text-white/40">Financed Cost:</span>{' '}
+                    <span className="text-white font-medium">Rp {selectedVehicleData.financedCost.toLocaleString('id-ID')}</span>
+                  </div>
+                  <div>
+                    <span className="text-white/40">Pool:</span>{' '}
+                    <span className="text-white font-medium">{selectedVehicleData.poolId || 'Unassigned'}</span>
+                  </div>
+                </div>
               </div>
-              <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-white/42">
-                  Daily Fee (IDR)
-                </label>
-                <input
-                  type="number"
-                  min="10000"
-                  value={formFee}
-                  onChange={(e) => setFormFee(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-3.5 px-4 text-sm text-white placeholder:text-white/20 focus:border-teal-400/50 focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
+            )}
 
             <div className="sm:col-span-2 flex flex-col gap-3">
               <div className="flex items-center gap-2 p-3 rounded-xl bg-teal-500/6 border border-teal-500/15">
@@ -237,10 +236,10 @@ export default function OperatorDriversPage() {
       {/* Stats bar */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
-          { label: 'Total Drivers', value: registeredDrivers.length },
-          { label: 'KYC Verified', value: registeredDrivers.filter((d) => d.kycStatus === 'verified').length },
-          { label: 'Pending KYC', value: registeredDrivers.filter((d) => d.kycStatus === 'pending').length },
-          { label: 'Rent to Own', value: registeredDrivers.filter((d) => d.contractType === 'rent_to_own').length },
+          { label: 'Total Drivers', value: drivers.length },
+          { label: 'KYC Verified', value: drivers.filter((d) => d.kycStatus === 'verified').length },
+          { label: 'Pending KYC', value: drivers.filter((d) => d.kycStatus === 'pending').length },
+          { label: 'Available Vehicles', value: availableVehicles.length },
         ].map((stat) => (
           <div
             key={stat.label}
@@ -336,7 +335,7 @@ export default function OperatorDriversPage() {
                       </span>
                     </td>
                     <td className="px-4 py-4 text-xs text-white/60">
-                      Rp {driver.dailyFee.toLocaleString('id-ID')}
+                      Rp {(driver.dailyFee ?? 0).toLocaleString('id-ID')}
                     </td>
                     <td className="px-4 py-4">
                       <span

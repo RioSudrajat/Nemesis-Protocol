@@ -1,5 +1,5 @@
 export type FleetCategory = 'ojol' | 'kurir' | 'logistik' | 'korporat'
-export type NodeStatus = 'active' | 'idle' | 'maintenance' | 'offline'
+export type NodeStatus = 'active' | 'idle' | 'maintenance' | 'offline' | 'inactive'
 
 export interface NetworkStats {
   totalFleet: number

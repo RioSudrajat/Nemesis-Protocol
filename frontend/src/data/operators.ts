@@ -1,5 +1,9 @@
 import type { OperatorProfile } from '@/types/rwa'
 
+/**
+ * Operator profiles. Note: totalAssets/activeAssets are seed values only —
+ * the UI should derive real counts from useNemesisStore().assets at runtime.
+ */
 export const MOCK_OPERATOR_PROFILE: OperatorProfile = {
   id: 'op-nemesis-native',
   walletAddress: 'NMSop1...xyz9',
@@ -8,8 +12,8 @@ export const MOCK_OPERATOR_PROFILE: OperatorProfile = {
   businessName: 'Nemesis Protocol — Native Fleet',
   city: 'Jakarta',
   kycStatus: 'verified',
-  totalVehicles: 100,
-  activeVehicles: 83,
+  totalAssets: 0, // Derived at runtime from store
+  activeAssets: 0, // Derived at runtime from store
   poolId: 'pool-batch-1',
   joinedAt: '2026-01-01T00:00:00.000Z',
 }
@@ -23,8 +27,8 @@ export const MOCK_PARTNER_OPERATORS: OperatorProfile[] = [
     businessName: 'PT SurabayaExpress Logistics',
     city: 'Surabaya',
     kycStatus: 'verified',
-    totalVehicles: 100,
-    activeVehicles: 91,
+    totalAssets: 100,
+    activeAssets: 91,
     poolId: 'pool-batch-2',
     joinedAt: '2026-01-10T00:00:00.000Z',
   },

@@ -1,16 +1,8 @@
 import { create } from "zustand";
+import type { RegisteredDriver } from "@/store/useNemesisStore";
 
-export interface RegisteredDriver {
-  id: string;
-  phone: string;
-  fullName: string;
-  kycStatus: "pending" | "verified" | "rejected";
-  assignedVehicleId: string;
-  assignedVehicleName: string;
-  contractType: "rent" | "rent_to_own";
-  dailyFee: number; // IDR
-  registeredAt: string;
-}
+// Re-export for backward compatibility
+export type { RegisteredDriver } from "@/store/useNemesisStore";
 
 interface DriverAuthState {
   // Auth state
@@ -27,55 +19,14 @@ interface DriverAuthState {
   /** Loading state */
   isLoading: boolean;
 
-  // Registered drivers (mock database — seeded + operator can add)
-  registeredDrivers: RegisteredDriver[];
-
   // Actions
   setLoginPhone: (phone: string) => void;
   sendOtp: () => void;
   verifyOtp: (otp: string) => void;
   logout: () => void;
   checkSession: () => void;
-  registerDriver: (driver: Omit<RegisteredDriver, "id" | "registeredAt">) => void;
   clearError: () => void;
 }
-
-/** Mock seed: pre-registered drivers so demo works out of the box */
-const SEED_DRIVERS: RegisteredDriver[] = [
-  {
-    id: "drv-001",
-    phone: "+6281234567890",
-    fullName: "Budi Santoso",
-    kycStatus: "verified",
-    assignedVehicleId: "NMS-0001",
-    assignedVehicleName: "Honda EM1 e:",
-    contractType: "rent_to_own",
-    dailyFee: 50000,
-    registeredAt: "2026-03-15T08:00:00Z",
-  },
-  {
-    id: "drv-002",
-    phone: "+6281298765432",
-    fullName: "Agus Pratama",
-    kycStatus: "verified",
-    assignedVehicleId: "NMS-0002",
-    assignedVehicleName: "Viar Q1",
-    contractType: "rent",
-    dailyFee: 45000,
-    registeredAt: "2026-04-01T10:00:00Z",
-  },
-  {
-    id: "drv-003",
-    phone: "+6287700001111",
-    fullName: "Dewi Lestari",
-    kycStatus: "pending",
-    assignedVehicleId: "NMS-0003",
-    assignedVehicleName: "Gesits G1",
-    contractType: "rent_to_own",
-    dailyFee: 50000,
-    registeredAt: "2026-04-20T14:00:00Z",
-  },
-];
 
 const SESSION_KEY = "nemesis_driver_session";
 
@@ -116,6 +67,20 @@ function clearSession(): void {
   localStorage.removeItem(SESSION_KEY);
 }
 
+/**
+ * Helper to get drivers from NemesisStore.
+ * We lazily import to avoid circular dependency issues.
+ */
+function getDriversFromNemesisStore(): RegisteredDriver[] {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { useNemesisStore } = require("@/store/useNemesisStore");
+    return useNemesisStore.getState().drivers ?? [];
+  } catch {
+    return [];
+  }
+}
+
 export const useDriverAuthStore = create<DriverAuthState>((set, get) => ({
   isAuthenticated: false,
   currentDriver: null,
@@ -124,12 +89,11 @@ export const useDriverAuthStore = create<DriverAuthState>((set, get) => ({
   otpSent: false,
   error: "",
   isLoading: false,
-  registeredDrivers: [...SEED_DRIVERS],
 
   setLoginPhone: (phone) => set({ loginPhone: phone, error: "" }),
 
   sendOtp: () => {
-    const { loginPhone, registeredDrivers } = get();
+    const { loginPhone } = get();
 
     // Normalize phone: allow user to enter without +62 prefix
     let normalized = loginPhone.replace(/\s/g, "");
@@ -141,6 +105,8 @@ export const useDriverAuthStore = create<DriverAuthState>((set, get) => ({
       normalized = "+62" + normalized;
     }
 
+    // Read drivers from the unified NemesisStore
+    const registeredDrivers = getDriversFromNemesisStore();
     const driver = registeredDrivers.find((d) => d.phone === normalized);
     if (!driver) {
       set({ error: "This phone number is not registered. Contact your operator." });
@@ -161,7 +127,7 @@ export const useDriverAuthStore = create<DriverAuthState>((set, get) => ({
   },
 
   verifyOtp: (otp) => {
-    const { generatedOtp, loginPhone, registeredDrivers } = get();
+    const { generatedOtp, loginPhone } = get();
     set({ isLoading: true });
 
     // Simulate network delay
@@ -171,6 +137,8 @@ export const useDriverAuthStore = create<DriverAuthState>((set, get) => ({
         return;
       }
 
+      // Read drivers from the unified NemesisStore
+      const registeredDrivers = getDriversFromNemesisStore();
       const driver = registeredDrivers.find((d) => d.phone === loginPhone);
       if (!driver) {
         set({ error: "Driver not found.", isLoading: false });
@@ -206,16 +174,6 @@ export const useDriverAuthStore = create<DriverAuthState>((set, get) => ({
     if (driver) {
       set({ isAuthenticated: true, currentDriver: driver });
     }
-  },
-
-  registerDriver: (driverData) => {
-    const { registeredDrivers } = get();
-    const newDriver: RegisteredDriver = {
-      ...driverData,
-      id: `drv-${Date.now()}`,
-      registeredAt: new Date().toISOString(),
-    };
-    set({ registeredDrivers: [...registeredDrivers, newDriver] });
   },
 
   clearError: () => set({ error: "" }),

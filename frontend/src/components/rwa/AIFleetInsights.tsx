@@ -30,6 +30,7 @@ const CATEGORY_LABEL: Record<AIFleetInsight['category'], string> = {
   battery: 'Battery',
   utilization: 'Utilization',
   performance: 'Performance',
+  grid_sync: 'Grid Sync',
 }
 
 export function AIFleetInsights({ insights }: AIFleetInsightsProps) {
