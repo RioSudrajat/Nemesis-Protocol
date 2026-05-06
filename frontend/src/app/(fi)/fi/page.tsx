@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Banknote, Bike, CheckCircle2, Clock, Layers3, Shield, Users } from "lucide-react";
+import { useNemesisStore } from "@/store/useNemesisStore";
 import { MOCK_POOLS } from "@/data/pools";
 import { formatIDRXFull, formatNumber } from "@/lib/yield";
 
@@ -36,13 +37,17 @@ const UPCOMING_PRODUCTS = [
 
 export default function FiPoolsPage() {
   const [activeFilter, setActiveFilter] = useState<FilterKey>("all");
+  const { pools } = useNemesisStore();
 
   const visiblePools = useMemo(() => {
-    if (activeFilter === "native") return MOCK_POOLS.filter((p) => p.operatorType === "nemesis_native");
-    if (activeFilter === "future") return [];
-    if (activeFilter === "all") return MOCK_POOLS;
-    return MOCK_POOLS.filter((p) => p.productType === activeFilter);
-  }, [activeFilter]);
+    let filtered = pools.filter(p => p.status === 'active' || p.status === 'upcoming');
+    
+    if (activeFilter === "native") filtered = filtered.filter((p) => p.operatorType === "nemesis_native");
+    else if (activeFilter === "future") filtered = [];
+    else if (activeFilter !== "all") filtered = filtered.filter((p) => p.productType === activeFilter);
+    
+    return filtered;
+  }, [pools, activeFilter]);
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] p-6 text-zinc-950 md:p-8">

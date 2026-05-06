@@ -12,6 +12,31 @@ const commonFinancials = {
   protocolFeePct: 10,
 }
 
+const richContextCommon = {
+  assetClass: 'mobility' as const,
+  settlementCurrency: 'USDC',
+  collateralDescription: 'Ownership of underlying physical EV assets, secured via conditional transfer agreement.',
+  performanceTargetYield: 14.4,
+  performanceTrailingRevenue: 0,
+  locationLabel: 'Jakarta, Indonesia',
+  projectOverview: 'Deployment of high-utility electric vehicles for ride-hailing and last-mile delivery, transitioning internal combustion engine (ICE) drivers to EVs.',
+  problemStatement: 'High fuel and maintenance costs for ICE vehicles severely limit the take-home pay of gig workers, while contributing significantly to urban air pollution.',
+  solutionStrategy: 'Provide affordable rent-to-own EV schemes with inclusive maintenance, reducing daily operational costs by up to 60%.',
+  operatorHistory: 'Nemesis Protocol native fleet operations with over 500,000 km tracked across earlier testnet deployments.',
+  riskDisclosure: 'Risks include driver default on daily payments, hardware degradation faster than warranty terms, and potential regulatory changes to gig-worker classifications.',
+  documents: [
+    { title: 'Fleet Management Agreement', url: '#', size: '2.4 MB', type: 'PDF' },
+    { title: 'Insurance Policy Overview', url: '#', size: '850 KB', type: 'PDF' },
+    { title: 'Token Sale Terms', url: '#', size: '1.1 MB', type: 'PDF' },
+    { title: 'Monthly DePIN Performance Report - Oct 2026', url: '#', size: '1.4 MB', type: 'PDF' }
+  ],
+  impactProjections: {
+    co2SavedKg: 125000,
+    treesPlanted: 5000,
+    evEquivalents: 100
+  }
+}
+
 export const MOCK_POOLS: StakingPool[] = [
   {
     id: 'pool-batch-1',
@@ -27,6 +52,7 @@ export const MOCK_POOLS: StakingPool[] = [
     category: ['ojol', 'kurir'],
     unitCount: 100,
     ...commonFinancials,
+    ...richContextCommon,
     totalSupplied: 1_875_000_000,
     targetSupply: 2_500_000_000,
     minInvestment: 300_000,
@@ -35,7 +61,6 @@ export const MOCK_POOLS: StakingPool[] = [
     status: 'active',
     energyPointsEligible: true,
     imageUrl: '/images/pool-jakarta.jpg',
-    locationLabel: 'Jakarta, Indonesia',
     nextDistribution: '2026-05-28T00:00:00.000Z',
     createdAt: '2026-03-01T00:00:00.000Z',
     tags: ['36 months', 'Rent-to-own', 'Default reserve'],
@@ -62,6 +87,8 @@ export const MOCK_POOLS: StakingPool[] = [
     category: ['kurir', 'logistik'],
     unitCount: 100,
     ...commonFinancials,
+    ...richContextCommon,
+    locationLabel: 'Surabaya, Jawa Timur',
     totalSupplied: 2_500_000_000,
     targetSupply: 2_500_000_000,
     minInvestment: 300_000,
@@ -70,7 +97,6 @@ export const MOCK_POOLS: StakingPool[] = [
     status: 'filled',
     energyPointsEligible: true,
     imageUrl: '/images/pool-surabaya.jpg',
-    locationLabel: 'Surabaya, Jawa Timur',
     nextDistribution: '2026-05-28T00:00:00.000Z',
     createdAt: '2026-01-15T00:00:00.000Z',
     tags: ['36 months', 'Partner operated', 'Collection health 96%'],
@@ -96,6 +122,8 @@ export const MOCK_POOLS: StakingPool[] = [
     category: ['ojol', 'kurir', 'logistik'],
     unitCount: 60,
     ...commonFinancials,
+    ...richContextCommon,
+    locationLabel: 'Bandung, Jawa Barat',
     totalSupplied: 1_500_000_000,
     targetSupply: 1_500_000_000,
     minInvestment: 300_000,
@@ -104,7 +132,6 @@ export const MOCK_POOLS: StakingPool[] = [
     status: 'filled',
     energyPointsEligible: true,
     imageUrl: '/images/pool-bandung.jpg',
-    locationLabel: 'Bandung, Jawa Barat',
     nextDistribution: '2026-05-28T00:00:00.000Z',
     createdAt: '2026-01-20T00:00:00.000Z',
     tags: ['36 months', 'Nemesis Native', 'Route-log verified'],
@@ -139,6 +166,8 @@ export const MOCK_POOLS: StakingPool[] = [
     operatorBaseFeePct: 8,
     operatorPerformanceFeePct: 2,
     protocolFeePct: 10,
+    ...richContextCommon,
+    locationLabel: 'Medan, Sumatera Utara',
     totalSupplied: 0,
     targetSupply: 2_000_000_000,
     minInvestment: 500_000,
@@ -147,7 +176,6 @@ export const MOCK_POOLS: StakingPool[] = [
     status: 'upcoming',
     energyPointsEligible: true,
     imageUrl: '/images/pool-medan.jpg',
-    locationLabel: 'Medan, Sumatera Utara',
     nextDistribution: '2026-07-02T00:00:00.000Z',
     createdAt: '2026-04-23T00:00:00.000Z',
     tags: ['Waitlist', 'Contracted remittance', 'Partner operated'],

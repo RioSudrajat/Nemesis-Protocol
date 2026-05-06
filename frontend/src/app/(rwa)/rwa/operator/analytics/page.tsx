@@ -14,9 +14,9 @@ import {
 import { AIFleetInsights } from '@/components/rwa/AIFleetInsights'
 import { InteractiveDonutChart } from '@/components/ui/InteractiveDonutChart'
 import { WorkshopRevenueChart } from '@/components/ui/WorkshopRevenueChart'
-import type { AIFleetInsight } from '@/types/rwa'
+import type { AIAssetInsight } from '@/types/rwa'
 
-const AI_INSIGHTS: AIFleetInsight[] = [
+const AI_INSIGHTS: AIAssetInsight[] = [
   {
     unitId: '#NMS-0042',
     severity: 'critical',

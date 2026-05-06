@@ -2,37 +2,67 @@
 
 import { useState, type ReactNode } from 'react'
 import { CheckCircle2, Cpu, FileSpreadsheet, Loader2, Plus, RadioTower, ShieldCheck, Trash2 } from 'lucide-react'
+import { useNemesisStore } from '@/store/useNemesisStore'
 
-const FINANCED_COST_PER_UNIT = 25_000_000
-
-type TabKey = 'single' | 'csv'
-
-const VEHICLE_TYPES = ['Electric Motorcycle', 'Cargo Motorcycle', 'Electric Car', 'Electric Van', 'Electric Truck', 'Electric Bus']
-const CONTRACT_TYPES = [
-  { value: 'rent_to_own', label: 'Rent-to-own — Mobility Credit Pool' },
-  { value: 'contracted_remittance', label: 'Contracted Remittance — Fleet Remittance Pool' },
+const ASSET_CLASSES = [
+  { value: 'mobility', label: 'Mobility Fleet (EVs)' },
+  { value: 'charging', label: 'EV Charging Station' },
+  { value: 'energy', label: 'Energy Asset (Solar/Storage)' },
 ]
 
-interface RWAVehicleEntry {
-  vin: string
-  type: string
+const ASSET_SUBCLASSES: Record<string, { value: string, label: string }[]> = {
+  mobility: [
+    { value: 'ev_ride_hailing_rental_bike', label: 'EV Ride-Hailing Rental Bike' },
+    { value: 'delivery_bike', label: 'Delivery Bike' },
+    { value: 'cargo_bike', label: 'Cargo Bike' },
+    { value: 'ev_taxi', label: 'EV Taxi' },
+    { value: 'ev_van', label: 'EV Van' },
+    { value: 'ev_shuttle', label: 'EV Shuttle' },
+    { value: 'ev_bus', label: 'EV Bus' },
+  ],
+  charging: [
+    { value: 'depot_charger', label: 'Depot Charger' },
+    { value: 'public_fast_charger', label: 'Public Fast Charger' },
+    { value: 'swap_station', label: 'Battery Swap Station' },
+    { value: 'corridor_charging_hub', label: 'Corridor Charging Hub' },
+  ],
+  energy: [
+    { value: 'solar_ev_depot', label: 'Solar EV Depot' },
+    { value: 'battery_storage', label: 'Battery Storage' },
+    { value: 'exportable_surplus_electricity', label: 'Exportable Surplus Electricity' },
+  ]
+}
+
+const CONTRACT_TYPES = [
+  { value: 'rent_to_own', label: 'Rent-to-own — Mobility Credit Pool' },
+  { value: 'contracted_remittance', label: 'Contracted Remittance — Fixed Return Pool' },
+  { value: 'revenue_share', label: 'Revenue Share — Realized Yield Pool' },
+]
+
+interface RWAAssetEntry {
+  assetClass: string
+  assetSubclass: string
+  identifier: string // VIN for mobility, Station ID for charging, Serial for energy
+  telemetryId: string // GPS ID or IoT Hub ID
   year: string
   brand: string
   model: string
-  gpsDeviceId: string
   contractType: string
   flatFeeDaily: string
+  financedCost: string
 }
 
-const BLANK_VEHICLE: RWAVehicleEntry = {
-  vin: '',
-  type: '',
+const BLANK_ASSET: RWAAssetEntry = {
+  assetClass: 'mobility',
+  assetSubclass: 'ev_ride_hailing_rental_bike',
+  identifier: '',
+  telemetryId: '',
   year: '2025',
   brand: '',
   model: '',
-  gpsDeviceId: '',
   contractType: 'rent_to_own',
   flatFeeDaily: '50000',
+  financedCost: '25000000',
 }
 
 const fieldClass =
@@ -69,30 +99,75 @@ function formatIDR(value: number) {
 }
 
 export default function AssetOnboardingPage() {
+  type TabKey = 'single' | 'csv'
   const [tab, setTab] = useState<TabKey>('single')
-  const [vehicles, setVehicles] = useState<RWAVehicleEntry[]>([{ ...BLANK_VEHICLE }])
+  const [assets, setAssets] = useState<RWAAssetEntry[]>([{ ...BLANK_ASSET }])
   const [submitting, setSubmitting] = useState(false)
+  const { registerAsset } = useNemesisStore()
   const [submitDone, setSubmitDone] = useState(false)
   const [csvFile, setCsvFile] = useState<string | null>(null)
 
-  const totalCapex = vehicles.length * FINANCED_COST_PER_UNIT
-  const selectedProduct = CONTRACT_TYPES.find((item) => item.value === vehicles[0]?.contractType)?.label ?? CONTRACT_TYPES[0].label
-  const filledTelemetry = vehicles.filter((vehicle) => vehicle.gpsDeviceId.trim().length > 0).length
+  const totalCapex = assets.reduce((sum, v) => sum + (Number(v.financedCost) || 0), 0)
+  const selectedProduct = CONTRACT_TYPES.find((item) => item.value === assets[0]?.contractType)?.label ?? CONTRACT_TYPES[0].label
+  const filledTelemetry = assets.filter((asset) => asset.telemetryId.trim().length > 0).length
 
-  function updateVehicle(i: number, patch: Partial<RWAVehicleEntry>) {
-    setVehicles((prev) => prev.map((v, idx) => (idx === i ? { ...v, ...patch } : v)))
+  function updateAsset(i: number, patch: Partial<RWAAssetEntry>) {
+    setAssets((prev) => prev.map((v, idx) => {
+      if (idx === i) {
+        const updated = { ...v, ...patch }
+        // Auto-update subclass if class changes
+        if (patch.assetClass && patch.assetClass !== v.assetClass) {
+          updated.assetSubclass = ASSET_SUBCLASSES[patch.assetClass][0].value
+          // Auto-adjust default capex assumptions based on class
+          if (patch.assetClass === 'charging') updated.financedCost = '75000000'
+          else if (patch.assetClass === 'energy') updated.financedCost = '200000000'
+          else updated.financedCost = '25000000'
+        }
+        return updated
+      }
+      return v
+    }))
   }
 
-  function addVehicle() {
-    setVehicles((prev) => [...prev, { ...BLANK_VEHICLE }])
+  function addAsset() {
+    setAssets((prev) => [...prev, { ...BLANK_ASSET }])
   }
 
-  function removeVehicle(i: number) {
-    setVehicles((prev) => prev.filter((_, idx) => idx !== i))
+  function removeAsset(i: number) {
+    setAssets((prev) => prev.filter((_, idx) => idx !== i))
   }
 
   async function handleSubmitReadiness() {
     setSubmitting(true)
+    
+    // Save to global store
+    assets.forEach((v, idx) => {
+      registerAsset({
+        id: `asset-${Date.now()}-${idx}`,
+        unitId: `#NMS-${Math.floor(Math.random() * 10000)}`,
+        assetClass: v.assetClass as any,
+        assetSubclass: v.assetSubclass as any,
+        vin: v.assetClass === 'mobility' ? v.identifier || `MOCK-VIN-${idx}` : undefined,
+        stationId: v.assetClass !== 'mobility' ? v.identifier || `STATION-${idx}` : undefined,
+        iotDeviceId: v.telemetryId || `IOT-${idx}`,
+        brand: v.brand || 'MockBrand',
+        model: v.model || 'MockModel',
+        year: parseInt(v.year) || 2025,
+        operatorId: 'nemesis_native',
+        financedCost: parseFloat(v.financedCost) || 25000000,
+        productModel: v.contractType as any,
+        poolProductType: v.assetClass === 'mobility' ? 'mobility_credit' : 'yield_pool',
+        nodeScore: 100,
+        healthScore: 100,
+        healthBreakdown: { rem: 100, ban: 100, baterai: 100, koneksi_iot: 100 },
+        status: 'idle', // Idle before assigned
+        maintenanceFundBalance: 0,
+        flatFeeDaily: parseFloat(v.flatFeeDaily) || 50000,
+        registeredAt: new Date().toISOString(),
+      })
+    })
+
+    // Simulate Hardware Readlines / Telemetry check
     await new Promise((r) => setTimeout(r, 2000))
     setSubmitting(false)
     setSubmitDone(true)
@@ -105,28 +180,27 @@ export default function AssetOnboardingPage() {
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-teal-200/20 bg-white/[0.035] text-teal-100">
             <CheckCircle2 className="h-7 w-7" />
           </div>
-          <Eyebrow>Readiness submitted</Eyebrow>
+          <Eyebrow>Proof hash generated</Eyebrow>
           <h2
             className="mt-3 text-4xl font-semibold tracking-[-0.055em] text-white"
             style={{ fontFamily: 'var(--font-fraunces, Fraunces, serif)' }}
           >
-            Asset readiness is queued.
+            Hardware validated. Asset minted.
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-white/52">
-            {vehicles.length} unit{vehicles.length === 1 ? '' : 's'} entered the proof readiness queue.
-            The operator can continue telemetry validation, revenue model review, and maintenance path checks.
+            {assets.length} infrastructure unit{assets.length === 1 ? '' : 's'} successfully submitted hardware readlines. The protocol has generated an on-chain verification hash, placing these assets into the pool queue.
           </p>
           <div className="mt-6 rounded-2xl border border-white/[0.075] bg-[#050606] p-4 text-left">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/40">Proof hash mock</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/40">Readlines Signature Hash</p>
             <p className="break-all font-mono text-xs leading-6 text-teal-100/80">
               3xR7mNkP2vWqJzLfDhUiCbEtYsXaGpOnV5wM9jKcHrT1eAdNFBSQZul6oIvmyW4
             </p>
           </div>
           <button
-            onClick={() => { setSubmitDone(false); setVehicles([{ ...BLANK_VEHICLE }]); setCsvFile(null); setTab('single') }}
+            onClick={() => { setSubmitDone(false); setAssets([{ ...BLANK_ASSET }]); setCsvFile(null); setTab('single') }}
             className="mt-6 inline-flex items-center justify-center rounded-2xl border border-white/[0.09] bg-white/[0.035] px-5 py-3 text-sm font-bold text-white/72 transition hover:border-teal-200/35 hover:text-teal-100"
           >
-            Submit Another Batch
+            Register More Assets
           </button>
         </Panel>
       </div>
@@ -145,13 +219,12 @@ export default function AssetOnboardingPage() {
             Asset Registration
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-white/52">
-            Register productive EV assets, configure the revenue model, attach telemetry, and
-            submit proof readiness before opening funding eligibility.
+            Register productive EV infrastructure, specify the classification (Mobility, Charging, Energy), attach telemetry IoT, and submit hardware proofs to mint the asset on-chain.
           </p>
         </div>
         <div className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.035] px-3 py-2 text-xs font-semibold text-white/54">
           <ShieldCheck className="h-4 w-4 text-teal-100/80" />
-          4-proof onboarding rail
+          Hardware Verified
         </div>
       </div>
 
@@ -180,18 +253,18 @@ export default function AssetOnboardingPage() {
           {tab === 'single' && (
             <>
               <div className="flex flex-col gap-4">
-                {vehicles.map((vehicle, index) => (
+                {assets.map((asset, index) => (
                   <Panel key={index} className="p-5 sm:p-6">
                     <div className="mb-5 flex items-start justify-between gap-4">
                       <div>
                         <Eyebrow>Asset {index + 1}</Eyebrow>
                         <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-white">
-                          Productive EV Unit
+                          Infrastructure Unit
                         </h2>
                       </div>
-                      {vehicles.length > 1 && (
+                      {assets.length > 1 && (
                         <button
-                          onClick={() => removeVehicle(index)}
+                          onClick={() => removeAsset(index)}
                           className="inline-flex items-center gap-2 rounded-xl border border-rose-200/15 bg-rose-200/10 px-3 py-2 text-xs font-semibold text-rose-200 transition hover:bg-rose-200/15"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -202,76 +275,102 @@ export default function AssetOnboardingPage() {
 
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
-                        <FieldLabel>VIN / asset ID</FieldLabel>
-                        <input
-                          type="text"
-                          className={`${fieldClass} font-mono uppercase`}
-                          placeholder="NMS2026JKT0001"
-                          maxLength={17}
-                          value={vehicle.vin}
-                          onChange={(event) => updateVehicle(index, { vin: event.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <FieldLabel>Vehicle type</FieldLabel>
+                        <FieldLabel>Asset Class</FieldLabel>
                         <select
                           className={fieldClass}
-                          value={vehicle.type}
-                          onChange={(event) => updateVehicle(index, { type: event.target.value })}
+                          value={asset.assetClass}
+                          onChange={(event) => updateAsset(index, { assetClass: event.target.value })}
                         >
-                          <option value="" disabled>Select type...</option>
-                          {VEHICLE_TYPES.map((type) => (
-                            <option key={type} value={type}>{type}</option>
+                          {ASSET_CLASSES.map((cls) => (
+                            <option key={cls.value} value={cls.value}>{cls.label}</option>
                           ))}
                         </select>
                       </div>
                       <div>
-                        <FieldLabel>Brand</FieldLabel>
+                        <FieldLabel>Subclass / Type</FieldLabel>
+                        <select
+                          className={fieldClass}
+                          value={asset.assetSubclass}
+                          onChange={(event) => updateAsset(index, { assetSubclass: event.target.value })}
+                        >
+                          {ASSET_SUBCLASSES[asset.assetClass]?.map((sub) => (
+                            <option key={sub.value} value={sub.value}>{sub.label}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <FieldLabel>
+                          {asset.assetClass === 'mobility' ? 'VIN Number' : 'Station / Serial ID'}
+                        </FieldLabel>
                         <input
                           type="text"
-                          className={fieldClass}
-                          placeholder="Gesits / Viar / Volta"
-                          value={vehicle.brand}
-                          onChange={(event) => updateVehicle(index, { brand: event.target.value })}
+                          className={`${fieldClass} font-mono uppercase`}
+                          placeholder={asset.assetClass === 'mobility' ? "NMS2026JKT0001" : "STN-ID-001"}
+                          value={asset.identifier}
+                          onChange={(event) => updateAsset(index, { identifier: event.target.value })}
                         />
                       </div>
                       <div>
-                        <FieldLabel>Model</FieldLabel>
+                        <FieldLabel>Telemetry (GPS / IoT ID)</FieldLabel>
+                        <input
+                          type="text"
+                          className={`${fieldClass} font-mono`}
+                          placeholder="352999111234567"
+                          value={asset.telemetryId}
+                          onChange={(event) => updateAsset(index, { telemetryId: event.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <FieldLabel>Brand / Manufacturer</FieldLabel>
                         <input
                           type="text"
                           className={fieldClass}
-                          placeholder="G1 / Q1 / Charge"
-                          value={vehicle.model}
-                          onChange={(event) => updateVehicle(index, { model: event.target.value })}
+                          placeholder={asset.assetClass === 'mobility' ? "Gesits / Viar" : "StarCharge / Huawei"}
+                          value={asset.brand}
+                          onChange={(event) => updateAsset(index, { brand: event.target.value })}
                         />
                       </div>
                       <div>
-                        <FieldLabel>Year</FieldLabel>
+                        <FieldLabel>Model Details</FieldLabel>
+                        <input
+                          type="text"
+                          className={fieldClass}
+                          placeholder={asset.assetClass === 'mobility' ? "G1 / Q1" : "DC Fast 120kW"}
+                          value={asset.model}
+                          onChange={(event) => updateAsset(index, { model: event.target.value })}
+                        />
+                      </div>
+
+                      <div>
+                        <FieldLabel>Year of Manufacture</FieldLabel>
                         <input
                           type="number"
                           className={fieldClass}
                           min="2020"
                           max="2027"
-                          value={vehicle.year}
-                          onChange={(event) => updateVehicle(index, { year: event.target.value })}
+                          value={asset.year}
+                          onChange={(event) => updateAsset(index, { year: event.target.value })}
                         />
                       </div>
                       <div>
-                        <FieldLabel>GPS device ID</FieldLabel>
+                        <FieldLabel>Capex / Financed Cost (IDR)</FieldLabel>
                         <input
-                          type="text"
-                          className={`${fieldClass} font-mono`}
-                          placeholder="352999111234567"
-                          value={vehicle.gpsDeviceId}
-                          onChange={(event) => updateVehicle(index, { gpsDeviceId: event.target.value })}
+                          type="number"
+                          className={fieldClass}
+                          placeholder="25000000"
+                          value={asset.financedCost}
+                          onChange={(event) => updateAsset(index, { financedCost: event.target.value })}
                         />
                       </div>
+
                       <div>
-                        <FieldLabel>Revenue model</FieldLabel>
+                        <FieldLabel>Revenue Model</FieldLabel>
                         <select
                           className={fieldClass}
-                          value={vehicle.contractType}
-                          onChange={(event) => updateVehicle(index, { contractType: event.target.value })}
+                          value={asset.contractType}
+                          onChange={(event) => updateAsset(index, { contractType: event.target.value })}
                         >
                           {CONTRACT_TYPES.map((contractType) => (
                             <option key={contractType.value} value={contractType.value}>{contractType.label}</option>
@@ -279,13 +378,13 @@ export default function AssetOnboardingPage() {
                         </select>
                       </div>
                       <div>
-                        <FieldLabel>Daily flat fee (IDR)</FieldLabel>
+                        <FieldLabel>Daily Flat / Fixed Target (IDR)</FieldLabel>
                         <input
                           type="number"
                           className={fieldClass}
                           placeholder="50000"
-                          value={vehicle.flatFeeDaily}
-                          onChange={(event) => updateVehicle(index, { flatFeeDaily: event.target.value })}
+                          value={asset.flatFeeDaily}
+                          onChange={(event) => updateAsset(index, { flatFeeDaily: event.target.value })}
                         />
                       </div>
                     </div>
@@ -294,11 +393,11 @@ export default function AssetOnboardingPage() {
               </div>
 
               <button
-                onClick={addVehicle}
+                onClick={addAsset}
                 className="inline-flex items-center justify-center gap-2 rounded-[22px] border border-dashed border-white/[0.12] bg-white/[0.025] px-5 py-4 text-sm font-bold text-white/62 transition hover:border-teal-200/35 hover:text-teal-100"
               >
                 <Plus className="h-4 w-4" />
-                Add Another Unit
+                Add Another Asset
               </button>
             </>
           )}
@@ -311,7 +410,7 @@ export default function AssetOnboardingPage() {
               <div>
                 <h3 className="text-2xl font-semibold tracking-[-0.04em] text-white">Import Batch CSV</h3>
                 <p className="mt-2 max-w-lg text-sm leading-7 text-white/48">
-                  Upload a CSV with VIN, type, brand, model, year, GPS ID, revenue model, and flat fee.
+                  Upload a CSV mapping with Asset Class, Subclass, ID, Telemetry, and Capex fields.
                 </p>
               </div>
               {csvFile ? (
@@ -341,7 +440,7 @@ export default function AssetOnboardingPage() {
                   {submitting ? (
                     <><Loader2 className="h-4 w-4 animate-spin" /> Processing...</>
                   ) : (
-                    <><Cpu className="h-4 w-4" /> Submit Batch Readiness</>
+                    <><Cpu className="h-4 w-4" /> Validate & Mint Assets</>
                   )}
                 </button>
               )}
@@ -355,20 +454,18 @@ export default function AssetOnboardingPage() {
         <aside className="lg:sticky lg:top-10 lg:self-start">
           <Panel className="overflow-hidden">
             <div className="border-b border-white/[0.07] p-6">
-              <Eyebrow>Readiness summary</Eyebrow>
+              <Eyebrow>Registration summary</Eyebrow>
               <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-white">
-                Funding eligibility
+                Pending Verification
               </h2>
             </div>
             <div className="space-y-4 p-6">
               {[
-                ['Total units', `${vehicles.length}`],
-                ['Capex assumption', `${formatIDR(FINANCED_COST_PER_UNIT)} / unit`],
-                ['Total financed cost', formatIDR(totalCapex)],
-                ['Product model', selectedProduct],
-                ['Telemetry attached', `${filledTelemetry}/${vehicles.length} units`],
-                ['Proof readiness', 'Pending review'],
-                ['Funding eligibility', 'Locked until proofs pass'],
+                ['Total assets', `${assets.length}`],
+                ['Total capex', formatIDR(totalCapex)],
+                ['Revenue model', selectedProduct],
+                ['IoT telemetry', `${filledTelemetry}/${assets.length} linked`],
+                ['Hardware readlines', 'Pending proof fetch'],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between gap-4 border-b border-white/[0.06] pb-4 last:border-b-0 last:pb-0">
                   <span className="text-xs text-white/40">{label}</span>
@@ -378,7 +475,7 @@ export default function AssetOnboardingPage() {
             </div>
             <div className="border-t border-white/[0.07] p-6">
               <div className="mb-5 space-y-3">
-                {['Register Asset', 'Configure Revenue Model', 'Attach Telemetry', 'Submit Proof Readiness', 'Open Funding Eligibility'].map((step, index) => (
+                {['Select Infrastructure Type', 'Configure Financial Metrics', 'Attach IoT Telemetry', 'Fetch Hardware Readlines', 'Mint On-chain Proof'].map((step, index) => (
                   <div key={step} className="flex items-center gap-3 text-sm text-white/56">
                     <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold ${
                       index < 3 ? 'border-teal-200/25 bg-teal-200/10 text-teal-100' : 'border-white/[0.08] bg-white/[0.035] text-white/42'
@@ -395,9 +492,9 @@ export default function AssetOnboardingPage() {
                 className="inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-teal-200/30 bg-[#0B0F0E] px-5 py-3.5 text-sm font-bold text-teal-100 transition hover:border-teal-200/55 hover:bg-[#101817] disabled:opacity-50"
               >
                 {submitting ? (
-                  <><Loader2 className="h-5 w-5 animate-spin" /> Submitting readiness...</>
+                  <><Loader2 className="h-5 w-5 animate-spin" /> Fetching readlines...</>
                 ) : (
-                  <><RadioTower className="h-5 w-5" /> Submit Proof Readiness</>
+                  <><RadioTower className="h-5 w-5" /> Submit Proof (Fetch Readlines)</>
                 )}
               </button>
             </div>

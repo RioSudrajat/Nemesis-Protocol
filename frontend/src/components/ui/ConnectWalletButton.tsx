@@ -19,6 +19,8 @@ import { truncateWallet } from "@/lib/yield";
 
 type PortalVariant = "depin" | "fi" | "workshop" | "operator" | "admin";
 
+import { useNemesisStore } from "@/store/useNemesisStore";
+
 /** Mock role resolution — in production this comes from the backend */
 interface WalletRole {
   key: string;
@@ -29,16 +31,8 @@ interface WalletRole {
   color: string;
 }
 
-function getMockRoles(): WalletRole[] {
-  return [
-    {
-      key: "operator",
-      label: "Operator",
-      detail: "Nemesis Native",
-      icon: Building2,
-      href: "/rwa/operator",
-      color: "#5EEAD4",
-    },
+function getMockRoles(role: 'investor' | 'operator' | 'super_operator' | null): WalletRole[] {
+  const roles: WalletRole[] = [
     {
       key: "investor",
       label: "Investor",
@@ -56,6 +50,19 @@ function getMockRoles(): WalletRole[] {
       color: "#86EFAC",
     },
   ];
+
+  if (role === 'operator' || role === 'super_operator') {
+    roles.unshift({
+      key: "operator",
+      label: role === 'super_operator' ? "Super Operator" : "Operator",
+      detail: role === 'super_operator' ? "Nemesis Native" : "Verified Partner",
+      icon: Building2,
+      href: "/rwa/operator",
+      color: "#5EEAD4",
+    });
+  }
+
+  return roles;
 }
 
 const themeMap: Record<PortalVariant, { bg: string; border: string; text: string; dropBg: string; dropBorder: string }> = {
@@ -124,7 +131,12 @@ export function ConnectWalletButton({ variant = "depin" }: { variant?: PortalVar
       setDropdownOpen((prev) => !prev);
       return;
     }
-    void connect();
+    void connect().then(() => {
+      // Mock setting role on connect
+      if (!userRole) {
+        setUserRole('super_operator');
+      }
+    });
   };
 
   const handleCopy = () => {
@@ -140,7 +152,8 @@ export function ConnectWalletButton({ variant = "depin" }: { variant?: PortalVar
     void disconnect();
   };
 
-  const roles = getMockRoles();
+  const { userRole, setUserRole } = useNemesisStore();
+  const roles = getMockRoles(userRole);
 
   return (
     <div className="relative" ref={dropdownRef}>

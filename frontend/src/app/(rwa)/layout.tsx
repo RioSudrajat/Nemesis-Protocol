@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import type { ReactNode } from 'react'
-import { LayoutDashboard, Map, Plus, Wrench, BarChart2, ArrowLeftRight, Settings, Users } from 'lucide-react'
+import { LayoutDashboard, Map, Plus, Wrench, BarChart2, ArrowLeftRight, Settings, Users, Megaphone } from 'lucide-react'
 import { AppSidebar, type NavItem } from '@/components/layout/AppSidebar'
 
 const ConnectWalletButton = dynamic(
@@ -18,6 +18,7 @@ const OPERATOR_NAV: NavItem[] = [
   { href: '/rwa/operator', label: 'Overview', icon: LayoutDashboard },
   { href: '/rwa/operator/fleet', label: 'Fleet', icon: Map },
   { href: '/rwa/operator/mint', label: 'Onboard', icon: Plus },
+  { href: '/rwa/operator/campaigns/create', label: 'Campaigns', icon: Megaphone },
   { href: '/rwa/operator/drivers', label: 'Drivers', icon: Users },
   { href: '/rwa/operator/maintenance', label: 'Maintenance', icon: Wrench },
   { href: '/rwa/operator/analytics', label: 'Analytics', icon: BarChart2 },

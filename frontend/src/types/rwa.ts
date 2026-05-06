@@ -1,41 +1,65 @@
 import { FleetCategory, NodeStatus } from './depin'
 import { OperatorType, PoolProductType } from './fi'
 
-export type VehicleType =
-  | 'motor_listrik'
-  | 'motor_kargo'
-  | 'mobil_listrik'
-  | 'van_listrik'
-  | 'truk_listrik'
-  | 'bus_listrik'
-  | 'pikap_listrik'
+export type AssetClass = 'mobility' | 'charging' | 'energy'
 
-export type ContractType = 'rent' | 'rent_to_own' | 'contracted_remittance'
+export type MobilitySubclass =
+  | 'ev_ride_hailing_rental_bike'
+  | 'delivery_bike'
+  | 'cargo_bike'
+  | 'ev_taxi'
+  | 'ev_van'
+  | 'ev_shuttle'
+  | 'ev_bus'
+
+export type ChargingSubclass =
+  | 'depot_charger'
+  | 'public_fast_charger'
+  | 'swap_station'
+  | 'corridor_charging_hub'
+
+export type EnergySubclass =
+  | 'solar_ev_depot'
+  | 'battery_storage'
+  | 'exportable_surplus_electricity'
+
+export type AssetSubclass = MobilitySubclass | ChargingSubclass | EnergySubclass
+
+export type ContractType = 'rent' | 'rent_to_own' | 'contracted_remittance' | 'revenue_share'
 export type AssetModuleStatus = 'active' | 'coming_soon' | 'future'
 
-export interface RegisteredVehicle {
+export interface RegisteredAsset {
   id: string
-  vin: string
+  assetClass: AssetClass
+  assetSubclass: AssetSubclass
+  
+  // Identifiers (Adaptable based on asset class)
+  vin?: string // For mobility
+  iotDeviceId?: string // Generic IoT ID or GPS ID
+  stationId?: string // For charging
+  
   unitId: string
-  type: VehicleType
-  category: FleetCategory
   brand: string
   model: string
   year: number
+  
   operatorId: string
-  gpsDeviceId: string
   financedCost: number
   productModel: ContractType
   poolProductType: PoolProductType
-  odometer: number
+  
+  // Health & Metrics
   nodeScore: number
   healthScore: number
-  healthBreakdown: VehicleHealthBreakdown
+  healthBreakdown: AssetHealthBreakdown
   status: NodeStatus
+  
+  // Operations
   maintenanceFundBalance: number
-  lastServiceKm: number
-  nextServiceKm: number
-  flatFeeDaily: number
+  lastServiceKm?: number // Optional for non-mobility
+  nextServiceKm?: number // Optional for non-mobility
+  flatFeeDaily?: number // Optional for revenue-share models
+  
   poolId?: string
   onChainAddress?: string
   imageUrl?: string
@@ -43,17 +67,21 @@ export interface RegisteredVehicle {
   driverId?: string
 }
 
-export interface VehicleHealthBreakdown {
-  rem: number
-  ban: number
-  baterai: number
-  lampu: number
+export type RegisteredVehicle = RegisteredAsset // Alias for backwards compatibility
+
+export interface AssetHealthBreakdown {
+  rem?: number
+  ban?: number
+  baterai?: number
+  lampu?: number
   mesin?: number
+  koneksi_iot?: number
+  power_output?: number
 }
 
 export interface MaintenanceFundEntry {
   id: string
-  vehicleId: string
+  assetId: string // Used to be vehicleId
   unitId: string
   type: 'deposit' | 'release'
   amount: number
@@ -67,7 +95,7 @@ export interface MaintenanceFundEntry {
 }
 
 export interface MaintenanceAlert {
-  vehicleId: string
+  assetId: string // Used to be vehicleId
   unitId: string
   severity: 'info' | 'warning' | 'critical'
   type: 'scheduled' | 'predictive'
@@ -76,14 +104,14 @@ export interface MaintenanceAlert {
   component?: string
 }
 
-export interface AIFleetInsight {
-  vehicleId?: string
+export interface AIAssetInsight { // Used to be AIFleetInsight
+  assetId?: string // Used to be vehicleId
   unitId?: string
   severity: 'info' | 'warning' | 'critical'
   message: string
   prediction: string
   confidence: number
-  category: 'maintenance' | 'performance' | 'utilization' | 'battery'
+  category: 'maintenance' | 'performance' | 'utilization' | 'battery' | 'grid_sync'
 }
 
 export interface AssetModule {
@@ -95,7 +123,7 @@ export interface AssetModule {
   status: AssetModuleStatus
   statusLabel: string
   icon: string
-  vehicleTypes?: string[]
+  assetSubclasses?: string[] // Replaced vehicleTypes
   revenueSource?: string
   proofMechanism?: string
 }
@@ -108,8 +136,8 @@ export interface OperatorProfile {
   businessName?: string
   city: string
   kycStatus: 'pending' | 'verified' | 'rejected'
-  totalVehicles: number
-  activeVehicles: number
+  totalAssets: number // Used to be totalVehicles
+  activeAssets: number // Used to be activeVehicles
   poolId?: string
   joinedAt: string
 }

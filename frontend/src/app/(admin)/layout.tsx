@@ -26,7 +26,7 @@ const navItems: NavItem[] = [
   { href: "/admin/transactions", label: "Transactions", icon: Receipt },
   { href: "/admin/disputes", label: "Disputes", icon: Scale },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/admin/campaigns", label: "Campaigns", icon: Megaphone },
+  { href: "/admin/pools", label: "Pools", icon: Megaphone },
   { href: "/admin/config", label: "Config", icon: Settings },
   { href: "/admin/audit", label: "Audit Log", icon: FileText },
 ];

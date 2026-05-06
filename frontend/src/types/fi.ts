@@ -1,7 +1,7 @@
 import { FleetCategory } from './depin'
 
 export type OperatorType = 'nemesis_native' | 'verified_partner' | 'independent'
-export type PoolStatus = 'upcoming' | 'active' | 'filled' | 'closed'
+export type PoolStatus = 'pending_approval' | 'upcoming' | 'active' | 'filled' | 'closed'
 export type PoolProductType = 'mobility_credit' | 'fleet_remittance' | 'charging_yield' | 'energy_yield'
 export type ProofStatus = 'pending' | 'partial' | 'verified'
 
@@ -9,7 +9,7 @@ export interface StakingPool {
   id: string
   name: string
   slug: string
-  description: string
+  description: string // short description
   productType: PoolProductType
   productLabel: string
   revenueModel: string
@@ -17,6 +17,11 @@ export interface StakingPool {
   managedBy: string
   category: FleetCategory[]
   unitCount: number
+  
+  // ReFiHub - Rich Context Fields
+  assetClass: 'mobility' | 'energy' | 'charging'
+  
+  // Deal Terms Tab
   cashYieldPct: number
   principalRecoveryPct: number
   totalAnnualCashDistributionPct: number
@@ -29,12 +34,34 @@ export interface StakingPool {
   operatorBaseFeePct: number
   operatorPerformanceFeePct: number
   protocolFeePct: number
+  settlementCurrency: string
+  collateralDescription: string
+  
+  // Performance Tab
+  performanceTargetYield: number
+  performanceTrailingRevenue?: number
+  
+  // Asset & Operator Tab (Overview / Details)
+  locationLabel: string
+  projectOverview: string
+  problemStatement: string
+  solutionStrategy: string
+  operatorHistory: string
+  
+  // Risks Tab
+  riskDisclosure: string
+  
+  // Documents
+  documents: { title: string; url: string; size: string; type: string }[]
+
+  // Impact Tab
+  impactProjections: { co2SavedKg: number; treesPlanted: number; evEquivalents: number }
+
   proofStatus: ProofStatus
   reserveHealth: string
   status: PoolStatus
   energyPointsEligible: boolean
   imageUrl: string
-  locationLabel: string
   nextDistribution: string
   createdAt: string
   tags: string[]
