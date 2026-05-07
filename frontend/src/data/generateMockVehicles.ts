@@ -63,7 +63,16 @@ export function generateMockVehicles(count = 100): RegisteredVehicle[] {
     [statusPool[i], statusPool[j]] = [statusPool[j], statusPool[i]]
   }
 
-  // Pre-assign drivers: first 83 active/maintenance vehicles get a driver
+  // Keep exactly 17 non-inactive units without drivers so "83 assigned / 17 available"
+  // stays true and every available unit can actually be assigned.
+  const unassignedIndexes = new Set<number>()
+  for (let i = count - 1; i >= 0 && unassignedIndexes.size < 17; i--) {
+    if (statusPool[i] !== 'inactive') {
+      unassignedIndexes.add(i)
+    }
+  }
+
+  // Pre-assign drivers to every unit outside the available set.
   let driverIdx = 0
 
   const vehicles: RegisteredVehicle[] = []
@@ -101,9 +110,9 @@ export function generateMockVehicles(count = 100): RegisteredVehicle[] {
     const regDay = 1 + Math.floor(rng() * 28)
     const registeredAt = `2026-0${regMonth + 1}-${String(regDay).padStart(2, '0')}T00:00:00.000Z`
 
-    // Assign drivers to active/maintenance units (up to 83)
+    // Assign drivers to all units outside the 17 available units.
     let driverId: string | undefined
-    if ((status === 'active' || status === 'maintenance') && driverIdx < 83) {
+    if (!unassignedIndexes.has(i) && driverIdx < 83) {
       driverId = `drv-${String(driverIdx + 1).padStart(3, '0')}`
       driverIdx++
     }

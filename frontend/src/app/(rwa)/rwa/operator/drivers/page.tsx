@@ -15,7 +15,12 @@ import {
   Copy,
   Check,
 } from 'lucide-react'
-import { useNemesisStore, selectAvailableVehicles, type RegisteredDriver } from '@/store/useNemesisStore'
+import {
+  useNemesisStore,
+  selectAssignableVehicles,
+  selectUnassignedVehicles,
+  type RegisteredDriver,
+} from '@/store/useNemesisStore'
 
 function Panel({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
@@ -42,8 +47,10 @@ const KYC_BADGE: Record<string, { label: string; color: string; Icon: typeof Che
 }
 
 export default function OperatorDriversPage() {
-  const { drivers, assets, registerDriver, _hydrated } = useNemesisStore()
-  const availableVehicles = selectAvailableVehicles(useNemesisStore.getState())
+  const nemesisState = useNemesisStore()
+  const { drivers, assets, registerDriver, _hydrated } = nemesisState
+  const availableVehicles = selectAssignableVehicles(nemesisState)
+  const unassignedVehicles = selectUnassignedVehicles(nemesisState)
   const [showForm, setShowForm] = useState(false)
   const [search, setSearch] = useState('')
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -175,7 +182,7 @@ export default function OperatorDriversPage() {
                   onChange={(e) => setFormVehicle(e.target.value)}
                   className="w-full appearance-none rounded-xl border border-white/10 bg-white/[0.04] py-3.5 pl-10 pr-4 text-sm text-white focus:border-teal-400/50 focus:outline-none transition-colors"
                 >
-                  <option value="" className="bg-[#080A0B]">Select vehicle ({availableVehicles.length} available)...</option>
+                  <option value="" className="bg-[#080A0B]">Select vehicle ({availableVehicles.length} assignable)...</option>
                   {availableVehicles.map((v) => (
                     <option key={v.id} value={v.unitId} className="bg-[#080A0B]">
                       {v.unitId} — {v.brand} {v.model}
@@ -239,7 +246,8 @@ export default function OperatorDriversPage() {
           { label: 'Total Drivers', value: drivers.length },
           { label: 'KYC Verified', value: drivers.filter((d) => d.kycStatus === 'verified').length },
           { label: 'Pending KYC', value: drivers.filter((d) => d.kycStatus === 'pending').length },
-          { label: 'Available Vehicles', value: availableVehicles.length },
+          { label: 'Unassigned', value: unassignedVehicles.length },
+          { label: 'Assignable', value: availableVehicles.length },
         ].map((stat) => (
           <div
             key={stat.label}

@@ -119,6 +119,8 @@ interface NemesisActions {
   // Pool Management
   createPool: (pool: StakingPool) => void
   updatePoolStatus: (poolId: string, status: StakingPool['status']) => void
+  approvePool: (poolId: string) => void
+  rejectPool: (poolId: string) => void
 
   // Driver Management
   registerDriver: (driver: Omit<RegisteredDriver, 'id' | 'registeredAt'>) => void
@@ -139,12 +141,29 @@ interface NemesisActions {
 /* ── Computed selectors (use these in components) ── */
 
 export function selectAvailableVehicles(state: NemesisState): RegisteredVehicle[] {
+  return selectAssignableVehicles(state)
+}
+
+export function selectUnassignedVehicles(state: NemesisState): RegisteredVehicle[] {
+  const assignedIds = new Set(state.drivers.map(d => d.assignedVehicleId))
+  return state.assets.filter(a => !a.driverId && !assignedIds.has(a.unitId))
+}
+
+export function selectAssignableVehicles(state: NemesisState): RegisteredVehicle[] {
   const assignedIds = new Set(state.drivers.map(d => d.assignedVehicleId))
   return state.assets.filter(a => !a.driverId && !assignedIds.has(a.unitId) && a.status !== 'inactive')
 }
 
 export function selectUnpooledAssets(state: NemesisState): RegisteredVehicle[] {
+  return selectCampaignEligibleAssets(state)
+}
+
+export function selectCampaignEligibleAssets(state: NemesisState): RegisteredVehicle[] {
   return state.assets.filter(a => !a.poolId && a.status !== 'inactive')
+}
+
+export function selectAssetsByPool(state: NemesisState, poolId: string): RegisteredVehicle[] {
+  return state.assets.filter(a => a.poolId === poolId)
 }
 
 export function selectFleetStats(state: NemesisState) {
@@ -154,14 +173,82 @@ export function selectFleetStats(state: NemesisState) {
   const idle = state.assets.filter(a => a.status === 'idle').length
   const inactive = state.assets.filter(a => a.status === 'inactive').length
   const withDriver = state.assets.filter(a => a.driverId).length
-  return { total, active, maintenance, idle, inactive, withDriver }
+  const unassigned = selectUnassignedVehicles(state).length
+  const assignable = selectAssignableVehicles(state).length
+  return { total, active, maintenance, idle, inactive, withDriver, unassigned, assignable }
+}
+
+export function selectPoolStats(state: NemesisState) {
+  const total = state.pools.length
+  const pending = state.pools.filter(p => p.status === 'pending_approval').length
+  const active = state.pools.filter(p => p.status === 'active').length
+  const supplied = state.pools.reduce((sum, p) => sum + p.totalSupplied, 0)
+  const target = state.pools.reduce((sum, p) => sum + p.targetSupply, 0)
+  return { total, pending, active, supplied, target }
+}
+
+export function selectOperatorDirectory(state: NemesisState): OperatorProfile[] {
+  return state.operators.map((operator) => {
+    const operatorAssets = state.assets.filter(a => a.operatorId === operator.id)
+    return {
+      ...operator,
+      totalAssets: operatorAssets.length || operator.totalAssets,
+      activeAssets: operatorAssets.filter(a => a.status === 'active').length || operator.activeAssets,
+    }
+  })
+}
+
+export function selectInvestorPortfolio(state: NemesisState): InvestorPosition[] {
+  return state.investments.map((position) => {
+    const pool = state.pools.find(p => p.id === position.poolId)
+    if (!pool) return position
+
+    const publishedReports = state.poolReports
+      .filter(r => r.poolId === position.poolId && r.isPublished)
+      .sort((a, b) => a.period.localeCompare(b.period))
+    const ownershipRatio = pool.totalSupplied > 0 ? position.invested / pool.totalSupplied : 0
+    const cashYieldReceived = Math.round(
+      publishedReports.reduce((sum, report) => sum + report.yieldDistributed * ownershipRatio, 0)
+    )
+    const principalRecovered = Math.round(
+      publishedReports.reduce((sum, report) => sum + report.principalReturned * ownershipRatio, 0)
+    )
+
+    return {
+      ...position,
+      poolName: pool.name,
+      cashYieldPct: pool.cashYieldPct,
+      tenorMonths: pool.tenorMonths,
+      cashYieldReceived,
+      principalRecovered,
+      outstandingPrincipal: Math.max(0, position.invested - principalRecovered),
+      nextDistribution: pool.nextDistribution,
+    }
+  })
+}
+
+export function selectDepinNetworkStats(state: NemesisState) {
+  const totalFleet = state.assets.length
+  const activeNodes = state.assets.filter(a => a.status === 'active').length
+  const kmToday = Math.round(state.assets.reduce((sum, asset) => sum + (asset.odometer ?? 0), 0) / 30)
+  const tokenizedValue = state.assets.reduce((sum, asset) => sum + asset.financedCost, 0)
+  const totalSupplied = state.pools.reduce((sum, pool) => sum + pool.totalSupplied, 0)
+  return {
+    totalFleet,
+    activeNodes,
+    kmToday,
+    onChainSubmissions: totalFleet,
+    tokenizedValue,
+    totalSupplied,
+    totalPools: state.pools.length,
+  }
 }
 
 /* ── Store ── */
 
 export const useNemesisStore = create<NemesisState & NemesisActions>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       assets: MOCK_VEHICLES,
       pools: MOCK_POOLS,
       drivers: SEED_DRIVERS,
@@ -182,12 +269,43 @@ export const useNemesisStore = create<NemesisState & NemesisActions>()(
 
       // ─── Pool ───
       createPool: (pool) =>
-        set((state) => ({ pools: [...state.pools, pool] })),
+        set((state) => {
+          const selectedAssetIds = pool.selectedAssetIds ?? []
+          const hasAlreadyPooledAsset = selectedAssetIds.some((assetId) => {
+            const asset = state.assets.find(a => a.id === assetId)
+            return Boolean(asset?.poolId)
+          })
+          if (hasAlreadyPooledAsset) return state
+
+          const assets = state.assets.map((asset) =>
+            selectedAssetIds.includes(asset.id) ? { ...asset, poolId: pool.id } : asset
+          )
+          return { pools: [...state.pools, pool], assets }
+        }),
 
       updatePoolStatus: (poolId, status) =>
         set((state) => ({
           pools: state.pools.map((p) => (p.id === poolId ? { ...p, status } : p)),
         })),
+
+      approvePool: (poolId) =>
+        set((state) => ({
+          pools: state.pools.map((p) => (p.id === poolId ? { ...p, status: 'active' } : p)),
+        })),
+
+      rejectPool: (poolId) =>
+        set((state) => {
+          const pool = state.pools.find(p => p.id === poolId)
+          const selectedAssetIds = new Set(pool?.selectedAssetIds ?? [])
+          return {
+            pools: state.pools.map((p) => (p.id === poolId ? { ...p, status: 'closed' } : p)),
+            assets: state.assets.map((asset) =>
+              asset.poolId === poolId || selectedAssetIds.has(asset.id)
+                ? { ...asset, poolId: undefined }
+                : asset
+            ),
+          }
+        }),
 
       // ─── Driver ───
       registerDriver: (driverData) =>
@@ -209,6 +327,7 @@ export const useNemesisStore = create<NemesisState & NemesisActions>()(
       assignVehicleToDriver: (driverId, vehicleUnitId) =>
         set((state) => {
           const vehicle = state.assets.find(a => a.unitId === vehicleUnitId)
+          if (!vehicle || vehicle.driverId) return state
           const drivers = state.drivers.map((d) =>
             d.id === driverId
               ? {
@@ -234,9 +353,11 @@ export const useNemesisStore = create<NemesisState & NemesisActions>()(
           if (!pool) return state
 
           const position: InvestorPosition = {
+            id: `pos-${poolId}-${Date.now()}`,
             poolId,
             poolName: pool.name,
             invested: amount,
+            currency,
             cashYieldReceived: 0,
             principalRecovered: 0,
             outstandingPrincipal: amount,
@@ -272,6 +393,31 @@ export const useNemesisStore = create<NemesisState & NemesisActions>()(
     }),
     {
       name: 'nemesis-global-store',
+      version: 3,
+      migrate: (persistedState) => {
+        const persisted = persistedState as Partial<NemesisState>
+        const assignedCount = persisted.assets?.filter(a => a.driverId).length ?? 0
+        const assignableCount = persisted.assets
+          ? selectAssignableVehicles({ ...persisted, assets: persisted.assets, drivers: persisted.drivers ?? [] } as NemesisState).length
+          : 0
+        const shouldResetAssets = !persisted.assets || persisted.assets.length < 100 || assignedCount !== 83 || assignableCount !== 17
+        const assets = shouldResetAssets
+          ? MOCK_VEHICLES
+          : persisted.assets
+        const drivers = shouldResetAssets || !persisted.drivers || persisted.drivers.length < 80
+          ? SEED_DRIVERS
+          : persisted.drivers
+        const poolReports = !persisted.poolReports || persisted.poolReports.length < 6
+          ? Object.values(MOCK_POOL_REPORTS).flat()
+          : persisted.poolReports
+
+        return {
+          ...persisted,
+          assets,
+          drivers,
+          poolReports,
+        }
+      },
       onRehydrateStorage: () => (state) => {
         state?.setHydrated()
       },

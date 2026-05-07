@@ -1,11 +1,11 @@
 "use client";
 
-import { use, useMemo, useState } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, FileText, Shield, WalletCards, Leaf, Activity } from "lucide-react";
 import { MOCK_YIELD_DISTRIBUTIONS } from "@/data/pools";
 import { calculateReturn, formatIDRXFull, formatNumber } from "@/lib/yield";
-import { useNemesisStore } from "@/store/useNemesisStore";
+import { selectAssetsByPool, useNemesisStore } from "@/store/useNemesisStore";
 import { PoolSidebar } from "@/components/fi/PoolSidebar";
 import { AvatarInitials } from "@/components/ui/AvatarInitials";
 import { ReportsTab } from "@/components/fi/ReportsTab";
@@ -23,20 +23,38 @@ const TABS: { key: TabKey; label: string }[] = [
 
 export default function PoolDetailPage({ params }: { params: Promise<{ poolId: string }> }) {
   const { poolId } = use(params);
-  const { pools, poolReports } = useNemesisStore();
-  const pool = pools.find((item) => item.id === poolId) ?? pools[0];
-  const reports = poolReports
-    .filter((report) => report.poolId === pool.id && report.isPublished)
-    .sort((a, b) => b.period.localeCompare(a.period));
+  const nemesisState = useNemesisStore();
+  const { pools, poolReports } = nemesisState;
+  const pool = pools.find((item) => item.id === poolId);
+  const poolAssets = pool ? selectAssetsByPool(nemesisState, pool.id) : [];
+  const teamMembers = pool?.teamMembers?.length
+    ? pool.teamMembers
+    : [{ name: pool?.managedBy ?? "Nemesis Protocol", role: "Pool Operator", bio: pool?.operatorHistory ?? "Verified Nemesis operator." }];
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const [investAmount, setInvestAmount] = useState(1_000_000);
   const [performancePct, setPerformancePct] = useState(100);
 
-  const distributions = MOCK_YIELD_DISTRIBUTIONS[pool.id] ?? [];
-  const calc = useMemo(
-    () => calculateReturn(pool, investAmount, performancePct),
-    [investAmount, performancePct, pool],
-  );
+  const reports = pool
+    ? poolReports
+        .filter((report) => report.poolId === pool.id && report.isPublished)
+        .sort((a, b) => b.period.localeCompare(a.period))
+    : [];
+  const distributions = pool ? MOCK_YIELD_DISTRIBUTIONS[pool.id] ?? [] : [];
+  const calc = pool ? calculateReturn(pool, investAmount, performancePct) : null;
+
+  if (!pool || !calc) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] p-6 text-zinc-950 md:p-8">
+        <div className="mx-auto max-w-3xl rounded-[1.75rem] border border-zinc-950/10 bg-white p-8 shadow-sm">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-teal-700">Pool not found</p>
+          <h1 className="mt-3 text-3xl font-bold text-zinc-950">This financing pool does not exist.</h1>
+          <Link href="/fi" className="mt-6 inline-flex rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white">
+            Back to FI pools
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] p-6 text-zinc-950 md:p-8">
@@ -120,18 +138,46 @@ export default function PoolDetailPage({ params }: { params: Promise<{ poolId: s
                       <div className="relative">
                         <div className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-teal-500 ring-4 ring-white" />
                         <h4 className="text-sm font-bold text-zinc-950">Capital Deployed</h4>
-                        <p className="text-sm text-zinc-500 mt-1">Funds locked and verified on-chain. Vehicles procured.</p>
+                        <p className="text-sm text-zinc-500 mt-1">{pool.deliveryTimeline?.startDate ?? "Funds locked and verified on-chain. Vehicles procured."}</p>
                       </div>
                       <div className="relative">
                         <div className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-teal-500 ring-4 ring-white" />
                         <h4 className="text-sm font-bold text-zinc-950">Assets Activated</h4>
-                        <p className="text-sm text-zinc-500 mt-1">IoT telemetry linked and assets assigned to drivers.</p>
+                        <p className="text-sm text-zinc-500 mt-1">{poolAssets.length} assets locked to this pool.</p>
                       </div>
                       <div className="relative">
                         <div className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-zinc-200 ring-4 ring-white" />
                         <h4 className="text-sm font-bold text-zinc-400">First Yield Distribution</h4>
-                        <p className="text-sm text-zinc-400 mt-1">Expected: {new Date(pool.nextDistribution).toLocaleDateString("id-ID", { month: 'long', year: 'numeric' })}</p>
+                        <p className="text-sm text-zinc-400 mt-1">Expected: {pool.deliveryTimeline?.firstPayoutDate ?? new Date(pool.nextDistribution).toLocaleDateString("id-ID", { month: 'long', year: 'numeric' })}</p>
                       </div>
+                    </div>
+                  </Card>
+
+                  <Card title="Asset Details" icon={<Activity className="h-5 w-5" />}>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-zinc-50 text-left text-xs uppercase tracking-[0.12em] text-zinc-500">
+                          <tr>
+                            <th className="px-4 py-3">Unit</th>
+                            <th className="px-4 py-3">Model</th>
+                            <th className="px-4 py-3">Status</th>
+                            <th className="px-4 py-3">Health</th>
+                            <th className="px-4 py-3">Capex</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {poolAssets.slice(0, 12).map((asset) => (
+                            <tr key={asset.id} className="border-t border-zinc-950/5">
+                              <td className="px-4 py-3 font-mono text-xs font-bold text-teal-700">{asset.unitId}</td>
+                              <td className="px-4 py-3 text-zinc-700">{asset.brand} {asset.model}</td>
+                              <td className="px-4 py-3 capitalize text-zinc-600">{asset.status}</td>
+                              <td className="px-4 py-3 font-semibold text-zinc-950">{asset.healthScore}/100</td>
+                              <td className="px-4 py-3 text-zinc-600">{formatIDRXFull(asset.financedCost)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {poolAssets.length === 0 && <p className="py-8 text-center text-sm text-zinc-500">No assets are currently locked to this pool.</p>}
                     </div>
                   </Card>
                 </>
@@ -191,10 +237,7 @@ export default function PoolDetailPage({ params }: { params: Promise<{ poolId: s
                     <div>
                       <h4 className="text-sm font-bold text-zinc-950 mb-4">Core Team</h4>
                       <div className="grid gap-4 sm:grid-cols-2">
-                        {[
-                          { name: "Budi Santoso", role: "Fleet Manager", bio: "10+ years in logistics & EV deployment." },
-                          { name: "Siti Rahma", role: "Operations Lead", bio: "Former Gojek regional manager." }
-                        ].map((member, i) => (
+                        {teamMembers.map((member, i) => (
                           <div key={i} className="flex gap-4 p-4 rounded-xl border border-zinc-100 bg-white">
                             <AvatarInitials name={member.name} size="lg" />
                             <div>
@@ -224,17 +267,17 @@ export default function PoolDetailPage({ params }: { params: Promise<{ poolId: s
                     <div className="rounded-2xl bg-teal-50 p-5 border border-teal-100">
                       <Activity className="h-6 w-6 text-teal-600 mb-3" />
                       <p className="text-xs font-bold uppercase tracking-widest text-teal-800/60 mb-1">Green Dist.</p>
-                      <p className="text-2xl font-bold text-teal-900">12.5k <span className="text-sm font-semibold">km</span></p>
+                      <p className="text-2xl font-bold text-teal-900">{formatNumber(pool.impactProjections?.greenKm ?? 0)} <span className="text-sm font-semibold">km</span></p>
                     </div>
                     <div className="rounded-2xl bg-amber-50 p-5 border border-amber-100">
                       <Leaf className="h-6 w-6 text-amber-600 mb-3" />
                       <p className="text-xs font-bold uppercase tracking-widest text-amber-800/60 mb-1">Energy Saved</p>
-                      <p className="text-2xl font-bold text-amber-900">4,200 <span className="text-sm font-semibold">kWh</span></p>
+                      <p className="text-2xl font-bold text-amber-900">{formatNumber(pool.impactProjections?.energySavedKwh ?? 0)} <span className="text-sm font-semibold">kWh</span></p>
                     </div>
                     <div className="rounded-2xl bg-green-50 p-5 border border-green-100">
                       <Leaf className="h-6 w-6 text-green-600 mb-3" />
                       <p className="text-xs font-bold uppercase tracking-widest text-green-800/60 mb-1">Tree Equivalent</p>
-                      <p className="text-2xl font-bold text-green-900">850 <span className="text-sm font-semibold">trees</span></p>
+                      <p className="text-2xl font-bold text-green-900">{formatNumber(pool.impactProjections?.treesPlanted ?? 0)} <span className="text-sm font-semibold">trees</span></p>
                     </div>
                   </div>
                   <Card title="ESG Narrative" icon={<Leaf className="h-5 w-5" />}>

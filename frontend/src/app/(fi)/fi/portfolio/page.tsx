@@ -1,57 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ConnectWalletButton } from "@/components/ui/ConnectWalletButton";
 import { WorkshopRevenueChart } from "@/components/ui/WorkshopRevenueChart";
 import { CheckCircle2, ExternalLink, Wallet } from "lucide-react";
 import { formatIDRXFull } from "@/lib/yield";
-
-const POSITIONS = [
-  {
-    poolId: "pool-batch-1",
-    poolName: "Jakarta Ride-Hailing Credit Pool",
-    invested: 1_000_000,
-    cashYieldReceived: 12_000,
-    principalRecovered: 27_000,
-    outstandingPrincipal: 973_000,
-    cashYieldPct: 14.4,
-    tenorMonths: 36,
-    maturity: "Mar 2029",
-  },
-  {
-    poolId: "pool-batch-3",
-    poolName: "Bandung Cargo Mobility Pool",
-    invested: 750_000,
-    cashYieldReceived: 9_000,
-    principalRecovered: 20_250,
-    outstandingPrincipal: 729_750,
-    cashYieldPct: 14.4,
-    tenorMonths: 36,
-    maturity: "Jan 2029",
-  },
-];
-
-const CASH_HISTORY = [
-  { name: "Feb", value: 8_400 },
-  { name: "Mar", value: 10_100 },
-  { name: "Apr", value: 11_500 },
-  { name: "May", value: 12_000 },
-];
-
-const PRINCIPAL_HISTORY = [
-  { name: "Feb", value: 18_900 },
-  { name: "Mar", value: 22_700 },
-  { name: "Apr", value: 25_900 },
-  { name: "May", value: 27_000 },
-];
-
-const TXS = [
-  { date: "28 Mei 2026", type: "Cash yield", pool: "Jakarta", amount: 12_000, hash: "4xK9...mR2p" },
-  { date: "28 Mei 2026", type: "Principal recovery", pool: "Jakarta", amount: 27_000, hash: "7yL3...nS4q" },
-  { date: "28 Apr 2026", type: "Cash yield", pool: "Bandung", amount: 9_000, hash: "9zM5...pT6r" },
-  { date: "15 Mar 2026", type: "Investment", pool: "Jakarta", amount: -1_000_000, hash: "5aB8...vW9t" },
-];
+import { selectInvestorPortfolio, useNemesisStore } from "@/store/useNemesisStore";
 
 const CARD_STYLE = {
   background: "#FFFFFF",
@@ -60,6 +15,70 @@ const CARD_STYLE = {
 
 export default function PortfolioPage() {
   const [isConnected] = useState(true);
+  const nemesisState = useNemesisStore();
+  const positions = selectInvestorPortfolio(nemesisState);
+  const investedPoolIds = new Set(positions.map((position) => position.poolId));
+  const publishedReports = nemesisState.poolReports
+    .filter((report) => report.isPublished && investedPoolIds.has(report.poolId))
+    .sort((a, b) => a.period.localeCompare(b.period));
+
+  const poolById = useMemo(
+    () => new Map(nemesisState.pools.map((pool) => [pool.id, pool])),
+    [nemesisState.pools]
+  );
+
+  const ownershipByPool = useMemo(
+    () =>
+      new Map(
+        positions.map((position) => {
+          const pool = poolById.get(position.poolId);
+          return [position.poolId, pool?.totalSupplied ? position.invested / pool.totalSupplied : 0];
+        })
+      ),
+    [positions, poolById]
+  );
+
+  const cashHistory = publishedReports.map((report) => ({
+    name: report.period.slice(5),
+    value: Math.round(report.yieldDistributed * (ownershipByPool.get(report.poolId) ?? 0)),
+  }));
+
+  const principalHistory = publishedReports.map((report) => ({
+    name: report.period.slice(5),
+    value: Math.round(report.principalReturned * (ownershipByPool.get(report.poolId) ?? 0)),
+  }));
+  const cashChartData = cashHistory.length ? cashHistory : [{ name: "-", value: 0 }];
+  const principalChartData = principalHistory.length ? principalHistory : [{ name: "-", value: 0 }];
+
+  const transactions = [
+    ...positions.map((position) => ({
+      date: new Date(position.investedAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
+      type: "Investment",
+      pool: position.poolName,
+      amount: -position.invested,
+      hash: position.id ? `${position.id.slice(0, 10)}...` : "pending...",
+    })),
+    ...publishedReports.flatMap((report) => {
+      const pool = poolById.get(report.poolId);
+      const ownership = ownershipByPool.get(report.poolId) ?? 0;
+      return [
+        {
+          date: `${report.period}-28`,
+          type: "Cash yield",
+          pool: pool?.name ?? report.poolId,
+          amount: Math.round(report.yieldDistributed * ownership),
+          hash: report.id,
+        },
+        {
+          date: `${report.period}-28`,
+          type: "Principal recovery",
+          pool: pool?.name ?? report.poolId,
+          amount: Math.round(report.principalReturned * ownership),
+          hash: report.id,
+        },
+      ];
+    }),
+  ];
 
   if (!isConnected) {
     return (
@@ -76,10 +95,10 @@ export default function PortfolioPage() {
     );
   }
 
-  const totalInvested = POSITIONS.reduce((sum, item) => sum + item.invested, 0);
-  const totalCashYield = POSITIONS.reduce((sum, item) => sum + item.cashYieldReceived, 0);
-  const totalPrincipalRecovered = POSITIONS.reduce((sum, item) => sum + item.principalRecovered, 0);
-  const totalOutstanding = POSITIONS.reduce((sum, item) => sum + item.outstandingPrincipal, 0);
+  const totalInvested = positions.reduce((sum, item) => sum + item.invested, 0);
+  const totalCashYield = positions.reduce((sum, item) => sum + item.cashYieldReceived, 0);
+  const totalPrincipalRecovered = positions.reduce((sum, item) => sum + item.principalRecovered, 0);
+  const totalOutstanding = positions.reduce((sum, item) => sum + item.outstandingPrincipal, 0);
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] p-6 text-zinc-950 md:p-8">
@@ -98,8 +117,13 @@ export default function PortfolioPage() {
 
         <h2 className="mb-4 text-base font-semibold text-zinc-900">Active positions</h2>
         <div className="mb-10 grid grid-cols-1 gap-5 md:grid-cols-2">
-          {POSITIONS.map((position) => (
-            <div key={position.poolId} className="rounded-2xl p-6 shadow-sm" style={CARD_STYLE}>
+          {positions.length === 0 && (
+            <div className="rounded-2xl p-6 text-sm text-zinc-500 shadow-sm" style={CARD_STYLE}>
+              Belum ada posisi aktif. Investasi yang dibuat dari staking pools akan otomatis muncul di sini.
+            </div>
+          )}
+          {positions.map((position) => (
+            <div key={position.id ?? position.poolId} className="rounded-2xl p-6 shadow-sm" style={CARD_STYLE}>
               <h3 className="mb-4 text-lg font-bold text-zinc-950">{position.poolName}</h3>
               <div className="mb-5 grid grid-cols-2 gap-4">
                 <Summary label="Invested" value={formatIDRXFull(position.invested)} />
@@ -107,7 +131,7 @@ export default function PortfolioPage() {
                 <Summary label="Principal recovered" value={formatIDRXFull(position.principalRecovered)} />
                 <Summary label="Outstanding principal" value={formatIDRXFull(position.outstandingPrincipal)} />
                 <Summary label="Tenor" value={`${position.tenorMonths} months`} />
-                <Summary label="Maturity" value={position.maturity} />
+                <Summary label="Maturity" value={new Date(position.maturityDate).toLocaleDateString("id-ID", { month: "short", year: "numeric" })} />
               </div>
               <div className="flex flex-wrap gap-2">
                 <Link href={`/fi/pools/${position.poolId}`} className="rounded-lg bg-teal-500 px-4 py-2 text-xs font-semibold text-white">
@@ -125,12 +149,12 @@ export default function PortfolioPage() {
           <div className="rounded-2xl p-5 shadow-sm" style={CARD_STYLE}>
             <h3 className="mb-1 text-base font-semibold text-zinc-900">Cash yield history</h3>
             <p className="mb-2 text-sm text-zinc-500">Monthly IDRX yield only, excluding returned principal.</p>
-            <WorkshopRevenueChart data={CASH_HISTORY} suffix="IDRX" />
+            <WorkshopRevenueChart data={cashChartData} suffix="IDRX" />
           </div>
           <div className="rounded-2xl p-5 shadow-sm" style={CARD_STYLE}>
             <h3 className="mb-1 text-base font-semibold text-zinc-900">Principal recovery history</h3>
             <p className="mb-2 text-sm text-zinc-500">Principal returned from pool collections.</p>
-            <WorkshopRevenueChart data={PRINCIPAL_HISTORY} suffix="IDRX" />
+            <WorkshopRevenueChart data={principalChartData} suffix="IDRX" />
           </div>
         </div>
 
@@ -150,10 +174,10 @@ export default function PortfolioPage() {
                 </tr>
               </thead>
               <tbody>
-                {TXS.map((tx) => {
+                {transactions.map((tx) => {
                   const isIn = tx.amount >= 0;
                   return (
-                    <tr key={`${tx.date}-${tx.type}`} className="border-t border-zinc-950/5">
+                    <tr key={`${tx.date}-${tx.type}-${tx.pool}`} className="border-t border-zinc-950/5">
                       <td className="px-4 py-3 text-zinc-700">{tx.date}</td>
                       <td className="px-4 py-3 text-zinc-900">{tx.type}</td>
                       <td className="px-4 py-3 text-zinc-700">{tx.pool}</td>

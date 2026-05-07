@@ -15,7 +15,7 @@ import {
 import type { FleetCategory } from '@/types/depin'
 import type { PoolProductType, StakingPool } from '@/types/fi'
 import { MOCK_OPERATOR_PROFILE } from '@/data/operators'
-import { selectUnpooledAssets, useNemesisStore } from '@/store/useNemesisStore'
+import { selectCampaignEligibleAssets, useNemesisStore } from '@/store/useNemesisStore'
 import { AvatarInitials } from '@/components/ui/AvatarInitials'
 import { formatIDRXFull } from '@/lib/yield'
 
@@ -79,7 +79,7 @@ function slugify(value: string) {
 export default function CreateCampaignWizard() {
   const router = useRouter()
   const store = useNemesisStore()
-  const availableAssets = selectUnpooledAssets(store)
+  const availableAssets = selectCampaignEligibleAssets(store)
 
   const [step, setStep] = useState(1)
   const [submitting, setSubmitting] = useState(false)
@@ -112,7 +112,8 @@ export default function CreateCampaignWizard() {
   const [operatorHistory, setOperatorHistory] = useState('Nemesis Protocol native fleet operations with verified route, revenue, and maintenance proof across Jakarta mobility deployments.')
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
     { name: 'Rio Sudrajat', role: 'Fleet Lead', bio: 'Leads EV fleet deployment, driver onboarding, and daily collection operations.' },
-    { name: 'Siti Rahma', role: 'Operations Manager', bio: 'Owns route performance, KYC workflow, and maintenance coordination.' },
+    { name: 'Win Armendal', role: 'Capital Markets Lead', bio: 'Owns investor reporting, pool economics, and capital partner coordination.' },
+    { name: 'Fatih Maulana', role: 'Operations Engineer', bio: 'Coordinates telemetry readiness, maintenance proof, and asset activation.' },
   ])
 
   const [co2AvoidedKg, setCo2AvoidedKg] = useState(0)

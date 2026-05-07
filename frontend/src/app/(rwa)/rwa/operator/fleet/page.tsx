@@ -10,8 +10,7 @@ import type { RegisteredVehicle } from '@/types/rwa'
 import { formatKm } from '@/lib/yield'
 import { getHealthColor } from '@/lib/health'
 
-// Fleet map needs dynamic import because Leaflet depends on browser APIs.
-const FleetLeafletMap = dynamic(() => import('@/components/ui/FleetLeafletMap'), { ssr: false })
+const FleetMapLibreMap = dynamic(() => import('@/components/maps/FleetMapLibreMap'), { ssr: false })
 
 type StatusFilter = 'all' | 'active' | 'maintenance' | 'idle' | 'offline'
 
@@ -35,7 +34,7 @@ function toFleetVehicle(v: RegisteredVehicle) {
     id: v.id,
     vin: v.vin,
     name: `${v.brand} ${v.model} ${v.unitId}`,
-    region: 'Jakarta',
+    region: v.operatorId,
     health: v.healthScore,
     odometer: v.odometer ?? 0,
     lastService: `${v.lastServiceKm} km`,
@@ -169,7 +168,7 @@ export default function FleetMapPage() {
           </div>
         </div>
         <div className="h-[360px] border-b border-white/[0.07] bg-[#030404] sm:h-[460px]">
-          <FleetLeafletMap vehicles={filtered.map(toFleetVehicle)} />
+          <FleetMapLibreMap vehicles={filtered.map(toFleetVehicle)} />
         </div>
       </Panel>
 

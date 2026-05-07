@@ -2,17 +2,31 @@
 
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Building2, Search, CheckCircle2, XCircle, ShieldAlert, MoreHorizontal } from "lucide-react";
+import { Building2, Search, CheckCircle2, XCircle, ShieldAlert } from "lucide-react";
 import { useAdmin } from "@/context/AdminContext";
 import { useToast } from "@/components/ui/Toast";
+import { selectOperatorDirectory, useNemesisStore } from "@/store/useNemesisStore";
 
 export default function AdminOperatorsPage() {
   const admin = useAdmin();
   const { showToast } = useToast();
-  const wallets = admin?.whitelistedWallets || [];
+  const wallets = useMemo(() => admin?.whitelistedWallets ?? [], [admin?.whitelistedWallets]);
+  const nemesisState = useNemesisStore();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const operators = useMemo(() => wallets.filter(w => w.role === "operator"), [wallets]);
+  const operators = useMemo(() => selectOperatorDirectory(nemesisState).map((operator) => {
+    const walletMeta = wallets.find((wallet) => wallet.wallet === operator.walletAddress || wallet.entityName === operator.name || wallet.entityName === operator.businessName);
+    return {
+      wallet: operator.walletAddress,
+      role: "operator" as const,
+      entityName: operator.businessName || operator.name,
+      status: walletMeta?.status ?? (operator.kycStatus === "verified" ? "active" as const : "pending" as const),
+      registeredAt: operator.joinedAt,
+      lastActive: walletMeta?.lastActive ?? operator.joinedAt,
+      totalAssets: operator.totalAssets,
+      activeAssets: operator.activeAssets,
+    };
+  }), [nemesisState, wallets]);
 
   const filtered = useMemo(() => {
     if (!searchQuery) return operators;
@@ -67,7 +81,7 @@ export default function AdminOperatorsPage() {
               <th className="py-4 px-6 font-medium">Name</th>
               <th className="py-4 px-6 font-medium">Wallet</th>
               <th className="py-4 px-6 font-medium">Status</th>
-              <th className="py-4 px-6 font-medium">Plan Tier</th>
+              <th className="py-4 px-6 font-medium">Assets</th>
               <th className="py-4 px-6 font-medium">Registered</th>
               <th className="py-4 px-6 font-medium text-right">Actions</th>
             </tr>
@@ -82,7 +96,7 @@ export default function AdminOperatorsPage() {
                     {e.status}
                   </span>
                 </td>
-                <td className="py-4 px-6 text-gray-300">Operator Tier</td>
+                <td className="py-4 px-6 text-gray-300">{e.activeAssets}/{e.totalAssets} active</td>
                 <td className="py-4 px-6 text-gray-400 text-xs">{e.registeredAt.split("T")[0]}</td>
                 <td className="py-4 px-6 text-right">
                   <div className="flex items-center justify-end gap-1">

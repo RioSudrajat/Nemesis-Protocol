@@ -5,6 +5,13 @@ import Link from "next/link";
 import { WorkshopRevenueChart } from "@/components/ui/WorkshopRevenueChart";
 import { DepinStatsBar } from "@/components/ui/DepinStatsBar";
 import { formatNumber } from "@/lib/yield";
+import { useNemesisStore } from "@/store/useNemesisStore";
+import {
+  deriveDepinActivityRows,
+  deriveFleetCategoryCards,
+  deriveSevenDaySeries,
+  deriveTxSeries,
+} from "@/lib/depinNetworkDerivations";
 import {
   Activity,
   MapPin,
@@ -15,57 +22,29 @@ import {
   Truck,
 } from "lucide-react";
 
-const fleetCategories = [
-  { name: "Ojol", label: "Ride-hailing", units: 412, kmToday: 21847, Icon: Bike },
-  { name: "Kurir", label: "Delivery", units: 289, kmToday: 14203, Icon: Package },
-  { name: "Logistik", label: "Logistics", units: 146, kmToday: 6341, Icon: Truck },
-];
+const CATEGORY_ICONS = { Ojol: Bike, Kurir: Package, Logistik: Truck, Korporat: Truck };
 
-const kmData = [
-  { name: "Mon", value: 38291 },
-  { name: "Tue", value: 41023 },
-  { name: "Wed", value: 39847 },
-  { name: "Thu", value: 42391 },
-  { name: "Fri", value: 44129 },
-  { name: "Sat", value: 36412 },
-  { name: "Sun", value: 31284 },
-];
-
-const txData = [
-  { name: "Mon", value: 847 },
-  { name: "Tue", value: 923 },
-  { name: "Wed", value: 891 },
-  { name: "Thu", value: 952 },
-  { name: "Fri", value: 1012 },
-  { name: "Sat", value: 734 },
-  { name: "Sun", value: 612 },
-];
-
-const activityRows = [
-  { unit: "#NMS-0**", zone: "Jakarta Selatan", time: "14:23", km: 47, hash: "4xK9...mR2p" },
-  { unit: "#NMS-1**", zone: "Jakarta Barat", time: "14:21", km: 23, hash: "7yL3...nS4q" },
-  { unit: "#NMS-2**", zone: "Surabaya", time: "14:19", km: 61, hash: "9zM5...pT6r" },
-  { unit: "#NMS-0**", zone: "Bandung", time: "14:17", km: 34, hash: "2wN7...qU8s" },
-  { unit: "#NMS-3**", zone: "Jakarta Timur", time: "14:15", km: 18, hash: "5aB8...vW9t" },
-  { unit: "#NMS-1**", zone: "Bekasi", time: "14:13", km: 52, hash: "6cD2...xY1u" },
-  { unit: "#NMS-2**", zone: "Tangerang", time: "14:11", km: 29, hash: "3eF4...zA2v" },
-  { unit: "#NMS-0**", zone: "Jakarta Pusat", time: "14:09", km: 41, hash: "8gH6...bC3w" },
-];
-
-const mockVehicles = [
-  { name: "Unit 01", vin: "NMS-001", health: 95, region: "Jakarta", odometer: 12000, owner: "4xK9...mR2p" },
-  { name: "Unit 02", vin: "NMS-002", health: 88, region: "Bandung", odometer: 14000, owner: "7yL3...nS4q" },
-  { name: "Unit 03", vin: "NMS-003", health: 92, region: "Surabaya", odometer: 8000, owner: "9zM5...pT6r" },
-  { name: "Unit 04", vin: "NMS-004", health: 65, region: "Tangerang", odometer: 25000, owner: "2wN7...qU8s" },
-  { name: "Unit 05", vin: "NMS-005", health: 78, region: "Jakarta", odometer: 18000, owner: "5aB8...vW9t" },
-  { name: "Unit 06", vin: "NMS-006", health: 90, region: "Medan", odometer: 9500, owner: "6cD2...xY1u" },
-  { name: "Unit 07", vin: "NMS-007", health: 82, region: "Semarang", odometer: 16000, owner: "3eF4...zA2v" },
-  { name: "Unit 08", vin: "NMS-008", health: 45, region: "Jakarta", odometer: 32000, owner: "8gH6...bC3w" },
-];
-
-const FleetLeafletMap = dynamic(() => import("@/components/ui/FleetLeafletMap"), { ssr: false });
+const FleetMapLibreMap = dynamic(() => import("@/components/maps/FleetMapLibreMap"), { ssr: false });
 
 export default function NetworkDashboardPage() {
+  const { assets, poolReports } = useNemesisStore();
+  const fleetCategories = deriveFleetCategoryCards(assets).map((category) => ({
+    ...category,
+    Icon: CATEGORY_ICONS[category.name as keyof typeof CATEGORY_ICONS] ?? Bike,
+  }));
+  const kmData = deriveSevenDaySeries(assets, poolReports);
+  const txData = deriveTxSeries(assets);
+  const activityRows = deriveDepinActivityRows(assets, 8);
+  const mapVehicles = assets.map((asset) => ({
+    id: asset.id,
+    name: `${asset.brand} ${asset.model} ${asset.unitId}`,
+    vin: asset.vin ?? asset.unitId,
+    health: asset.healthScore,
+    odometer: asset.odometer ?? 0,
+    owner: asset.operatorId,
+    status: asset.status,
+  }));
+
   return (
     <div className="text-zinc-900 pb-8 w-full max-w-7xl mx-auto">
       {/* Sticky Stats Bar */}
@@ -132,7 +111,7 @@ export default function NetworkDashboardPage() {
             </div>
           </div>
           <div className="flex-1 rounded-xl overflow-hidden border border-zinc-200 relative z-0">
-            <FleetLeafletMap vehicles={mockVehicles} />
+            <FleetMapLibreMap vehicles={mapVehicles} />
           </div>
         </div>
 

@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   Activity,
@@ -83,8 +84,19 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
 }
 
 export default function OperatorOverviewPage() {
-  const { assets } = useNemesisStore()
-  const fleetStats = selectFleetStats(useNemesisStore.getState())
+  const [mounted, setMounted] = useState(false)
+  const nemesisState = useNemesisStore()
+  const { assets } = nemesisState
+  const fleetStats = selectFleetStats(nemesisState)
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => setMounted(true), 0)
+    return () => window.clearTimeout(timeoutId)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
 
   const previewVehicles = assets.slice(0, 8)
   const averageHealth = assets.length > 0

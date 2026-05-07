@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useRef } from "react";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { 
   Navigation, 
   Clock, 
@@ -14,20 +15,7 @@ import {
   X 
 } from "lucide-react";
 import { createPortal } from "react-dom";
-import 'leaflet/dist/leaflet.css';
-
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-const Polyline = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Polyline),
-  { ssr: false }
-);
+import { MAPLIBRE_DARK_STYLE } from "@/components/maps/mapStyles";
 
 interface ActivityTripMapProps {
   onClose?: () => void;
@@ -35,21 +23,6 @@ interface ActivityTripMapProps {
 }
 
 export function ActivityTripMap({ onClose, isModal = false }: ActivityTripMapProps) {
-  const [mounted] = useState(() => typeof window !== "undefined");
-
-  // Mock daily route segment in Jakarta
-  const routePath: [number, number][] = [
-    [-6.225, 106.81],
-    [-6.230, 106.812],
-    [-6.235, 106.815],
-    [-6.242, 106.812],
-    [-6.250, 106.814],
-    [-6.255, 106.818],
-    [-6.262, 106.816]
-  ];
-
-  if (!mounted) return <div className="min-h-[500px] w-full bg-zinc-900 animate-pulse sm:rounded-3xl" />;
-
   const Wrapper = isModal ? "div" : "div";
   const wrapperClass = isModal 
     ? "fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm sm:p-6"
@@ -73,18 +46,7 @@ export function ActivityTripMap({ onClose, isModal = false }: ActivityTripMapPro
 
         {/* Map Area */}
         <div className="relative h-[45%] w-full shrink-0">
-          <MapContainer
-            center={[-6.242, 106.814]}
-            zoom={14}
-            zoomControl={false}
-            style={{ width: "100%", height: "100%", background: "#18181b" }}
-          >
-            <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-              attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-            />
-            <Polyline positions={routePath} color="#5EEAD4" weight={5} opacity={0.86} />
-          </MapContainer>
+          <TripMapPreview />
           
           {/* Fading overlay to blend map into the dark route sheet */}
           <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#050606] to-transparent z-[500]" />
@@ -159,4 +121,94 @@ export function ActivityTripMap({ onClose, isModal = false }: ActivityTripMapPro
   }
 
   return content;
+}
+
+function TripMapPreview() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const routePath: [number, number][] = [
+      [106.81, -6.225],
+      [106.812, -6.23],
+      [106.815, -6.235],
+      [106.812, -6.242],
+      [106.814, -6.25],
+      [106.818, -6.255],
+      [106.816, -6.262],
+    ];
+
+    const map = new maplibregl.Map({
+      container: containerRef.current,
+      style: MAPLIBRE_DARK_STYLE,
+      center: [106.814, -6.242],
+      zoom: 13.8,
+      attributionControl: false,
+      interactive: false,
+      pitchWithRotate: false,
+    });
+
+    map.on("load", () => {
+      map.addSource("activity-route", {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          properties: {},
+          geometry: { type: "LineString", coordinates: routePath },
+        },
+      });
+
+      map.addLayer({
+        id: "activity-route-glow",
+        type: "line",
+        source: "activity-route",
+        paint: {
+          "line-color": "#14B8A6",
+          "line-width": 10,
+          "line-opacity": 0.24,
+          "line-blur": 8,
+        },
+      });
+
+      map.addLayer({
+        id: "activity-route-line",
+        type: "line",
+        source: "activity-route",
+        layout: { "line-cap": "round", "line-join": "round" },
+        paint: {
+          "line-color": "#5EEAD4",
+          "line-width": 4,
+          "line-opacity": 0.9,
+        },
+      });
+
+      routePath.forEach((point, index) => {
+        if (index !== 0 && index !== routePath.length - 1) return;
+        const marker = document.createElement("div");
+        marker.style.cssText = `
+          width: ${index === 0 ? 12 : 15}px;
+          height: ${index === 0 ? 12 : 15}px;
+          border-radius: 999px;
+          background: ${index === 0 ? "#5EEAD4" : "#FCD34D"};
+          border: 2px solid rgba(255,255,255,0.9);
+          box-shadow: 0 0 18px rgba(94,234,212,0.5);
+        `;
+        new maplibregl.Marker({ element: marker }).setLngLat(point).addTo(map);
+      });
+    });
+
+    return () => map.remove();
+  }, []);
+
+  return (
+    <>
+      <div ref={containerRef} className="h-full w-full bg-zinc-900" />
+      <style jsx global>{`
+        .maplibregl-ctrl-logo {
+          display: none !important;
+        }
+      `}</style>
+    </>
+  );
 }

@@ -3,72 +3,55 @@
 import { useState } from "react";
 import { DepinStatsBar } from "@/components/ui/DepinStatsBar";
 import dynamic from "next/dynamic";
-import { formatNumber } from "@/lib/yield";
+import { formatIDRXFull } from "@/lib/yield";
+import { selectDepinNetworkStats, useNemesisStore } from "@/store/useNemesisStore";
 
-const FleetLeafletMap = dynamic(() => import("@/components/ui/FleetLeafletMap"), { ssr: false });
+const FleetMapLibreMap = dynamic(() => import("@/components/maps/FleetMapLibreMap"), { ssr: false });
 import { Lock, Zap, TrendingUp } from "lucide-react";
 import Image from "next/image";
 
-const upcomingPool = {
-  id: "up1",
-  title: "Nemesis Fleet Pool Batch #1 - Jakarta",
-  units: 18,
-  yield: "14.4% cash yield",
-  target: 200000,
-  supplied: 0,
-  image: "/ev_fleet_jakarta_1777118073477.png",
-  tags: ["3 years", "Nemesis Managed"]
-};
-
-const activePools = [
-  {
-    id: "p1",
-    title: "Ekspansi Armada Ojol - Surabaya",
-    units: 19,
-    yield: "14.4% cash yield",
-    supplied: 150000,
-    target: 150000,
-    image: "/ev_ridehailing_surabaya_1777118125456.png",
-    tags: ["Fulfilled", "3 Years", "Partner Hub"]
-  },
-  {
-    id: "p2",
-    title: "Logistik EV Delivery - Bandung",
-    units: 12,
-    yield: "14.4% cash yield",
-    supplied: 150000,
-    target: 150000,
-    image: "/ev_logistics_bandung_1777118107682.png",
-    tags: ["Fulfilled", "3 Years", "Nemesis Managed"]
-  },
-  {
-    id: "p3",
-    title: "Ride-hailing Fleet - Tangerang",
-    units: 6,
-    yield: "14.4% cash yield",
-    supplied: 99999,
-    target: 100000,
-    image: "/ev_fleet_tangerang_1777118150818.png",
-    tags: ["Development", "3 Years", "Nemesis Managed"]
-  }
+const POOL_IMAGES = [
+  "/ev_fleet_jakarta_1777118073477.png",
+  "/ev_ridehailing_surabaya_1777118125456.png",
+  "/ev_logistics_bandung_1777118107682.png",
+  "/ev_fleet_tangerang_1777118150818.png",
 ];
+
+function getPoolRegion(locationLabel?: string) {
+  return locationLabel?.split(",")[0]?.trim() || "Jakarta";
+}
+
+function getFillPct(supplied = 0, target = 0) {
+  if (target <= 0) return 0;
+  return Math.min(100, (supplied / target) * 100);
+}
 
 export default function EarnPage() {
   const [waitlistJoined, setWaitlistJoined] = useState(false);
   const [viewedPools, setViewedPools] = useState<string[]>([]);
+  const nemesisState = useNemesisStore();
+  const networkStats = selectDepinNetworkStats(nemesisState);
+  const activePools = nemesisState.pools
+    .filter((pool) => pool.status === "active" || pool.status === "filled")
+    .map((pool, index) => ({ ...pool, image: POOL_IMAGES[index % POOL_IMAGES.length] }));
+  const upcomingPools = nemesisState.pools
+    .filter((pool) => pool.status === "upcoming" || pool.status === "pending_approval")
+    .map((pool, index) => ({ ...pool, image: POOL_IMAGES[(index + activePools.length) % POOL_IMAGES.length] }));
+  const upcomingPool = upcomingPools[0];
+  const poolsForMap = nemesisState.pools.map((pool) => ({
+    name: pool.name || "Untitled Pool",
+    id: pool.id,
+    region: getPoolRegion(pool.locationLabel),
+    cashYield: `${pool.cashYieldPct ?? 0}%`,
+    units: pool.unitCount ?? 0,
+    status: pool.status === "active" || pool.status === "filled" ? "Active" : "Upcoming",
+  }));
 
   const handlePoolDetails = (id: string) => {
     if (!viewedPools.includes(id)) {
       setViewedPools([...viewedPools, id]);
     }
   };
-  const mockPoolsForMap = [
-    { name: "Ekspansi Ojol SBY", id: "POOL-SBY", region: "Surabaya", cashYield: "14.4%", units: 19, status: "Active" },
-    { name: "Logistik EV Delivery", id: "POOL-BDO", region: "Bandung", cashYield: "14.4%", units: 12, status: "Active" },
-    { name: "Fleet Pool Batch #1", id: "POOL-CGK", region: "Jakarta", cashYield: "14.4%", units: 18, status: "Upcoming" },
-    { name: "Ride-hailing Fleet", id: "POOL-TNG", region: "Tangerang", cashYield: "14.4%", units: 6, status: "Upcoming" },
-  ];
-
   return (
     <div className="text-zinc-900 pb-8 w-full max-w-7xl mx-auto px-4 md:px-0">
       <DepinStatsBar />
@@ -79,7 +62,7 @@ export default function EarnPage() {
           <div className="flex-1 w-full flex justify-center">
             {/* Map Container replacing Globe */}
             <div className="w-full h-[300px] md:h-[400px] rounded-3xl overflow-hidden border border-zinc-100 shadow-sm relative z-0">
-              <FleetLeafletMap pools={mockPoolsForMap} />
+              <FleetMapLibreMap pools={poolsForMap} />
             </div>
           </div>
           
@@ -95,7 +78,7 @@ export default function EarnPage() {
             
             <div className="grid grid-cols-2 gap-8">
               <div>
-                <p className="font-bold text-zinc-900 text-xl">${formatNumber(500000)}</p>
+                <p className="font-bold text-zinc-900 text-xl">{formatIDRXFull(networkStats.tokenizedValue)}</p>
                 <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mt-1">Tokenized Value</p>
               </div>
               <div>
@@ -103,11 +86,11 @@ export default function EarnPage() {
                 <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mt-1">Cash Yield Layer</p>
               </div>
               <div>
-                <p className="font-bold text-zinc-900 text-xl">${formatNumber(399999)}</p>
+                <p className="font-bold text-zinc-900 text-xl">{formatIDRXFull(networkStats.totalSupplied)}</p>
                 <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mt-1">Total Supplied</p>
               </div>
               <div>
-                <p className="font-bold text-zinc-900 text-xl">{activePools.length}</p>
+                <p className="font-bold text-zinc-900 text-xl">{networkStats.totalPools}</p>
                 <p className="text-xs text-zinc-500 uppercase tracking-wider font-semibold mt-1">Total Pools</p>
               </div>
             </div>
@@ -120,6 +103,7 @@ export default function EarnPage() {
         </div>
 
         {/* Upcoming Section */}
+        {upcomingPool && (
         <div>
           <h2 className="text-xl font-bold text-zinc-900 mb-6">Upcoming</h2>
           <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-zinc-100 flex flex-col md:flex-row relative">
@@ -149,12 +133,12 @@ export default function EarnPage() {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-zinc-900">{upcomingPool.title}</h3>
-                    <p className="text-sm text-zinc-500">{upcomingPool.units} EV Units</p>
+                    <h3 className="text-lg font-bold text-zinc-900">{upcomingPool.name}</h3>
+                    <p className="text-sm text-zinc-500">{upcomingPool.unitCount} EV Units</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-zinc-900">{upcomingPool.yield}</p>
+                  <p className="font-bold text-zinc-900">{upcomingPool.cashYieldPct}% cash yield</p>
                   <p className="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded mt-1 inline-flex items-center gap-1">
                     <Zap size={12} /> Nemesis Points Eligible
                   </p>
@@ -163,19 +147,19 @@ export default function EarnPage() {
               
               <div className="mb-6">
                 <p className="text-xs text-zinc-500 font-medium mb-1">Total Supplied</p>
-                <p className="text-2xl font-bold text-zinc-900">${formatNumber(upcomingPool.supplied)}</p>
+                <p className="text-2xl font-bold text-zinc-900">{formatIDRXFull(upcomingPool.totalSupplied)}</p>
               </div>
               
               <div className="mb-6">
                 <div className="w-full h-2 rounded-full bg-zinc-100 overflow-hidden mb-2">
                   <div 
                     className="h-full bg-teal-600" 
-                    style={{ width: `${(upcomingPool.supplied / upcomingPool.target) * 100}%` }}
+                    style={{ width: `${getFillPct(upcomingPool.totalSupplied, upcomingPool.targetSupply)}%` }}
                   />
                 </div>
                 <div className="flex justify-between text-xs font-medium text-zinc-500">
-                  <span>{((upcomingPool.supplied / upcomingPool.target) * 100).toFixed(0)}% filled</span>
-                  <span>Target ${formatNumber(upcomingPool.target)}</span>
+                  <span>{getFillPct(upcomingPool.totalSupplied, upcomingPool.targetSupply).toFixed(0)}% filled</span>
+                  <span>Target {formatIDRXFull(upcomingPool.targetSupply ?? 0)}</span>
                 </div>
               </div>
               
@@ -187,13 +171,14 @@ export default function EarnPage() {
               </button>
               
               <div className="flex gap-2">
-                {upcomingPool.tags.map(tag => (
+                {(upcomingPool.tags ?? []).map(tag => (
                   <span key={tag} className="px-3 py-1.5 rounded-md bg-zinc-100 text-zinc-600 text-xs font-semibold">{tag}</span>
                 ))}
               </div>
             </div>
           </div>
         </div>
+        )}
 
         {/* Fast Charging Stations (Active Pools) */}
         <div>
@@ -218,7 +203,7 @@ export default function EarnPage() {
                 <div className="h-40 relative overflow-hidden bg-zinc-100">
                   <Image 
                     src={pool.image} 
-                    alt={pool.title} 
+                    alt={pool.name} 
                     fill 
                     className="object-cover"
                   />
@@ -238,12 +223,12 @@ export default function EarnPage() {
                         )}
                       </div>
                       <div>
-                        <h3 className="font-bold text-zinc-900 text-sm">{pool.title}</h3>
-                        <p className="text-xs text-zinc-500">{pool.units} EV Units</p>
+                    <h3 className="font-bold text-zinc-900 text-sm">{pool.name}</h3>
+                        <p className="text-xs text-zinc-500">{pool.unitCount} EV Units</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-green-600 text-sm">{pool.yield}</p>
+                      <p className="font-bold text-green-600 text-sm">{pool.cashYieldPct}% cash yield</p>
                       <p className="text-[10px] font-bold text-teal-600 bg-teal-50 px-1.5 py-0.5 rounded mt-1 inline-flex items-center gap-1">
                         <Zap size={10} /> Points Eligible
                       </p>
@@ -251,18 +236,18 @@ export default function EarnPage() {
                   </div>
                   <div className="mb-6">
                     <p className="text-xs text-zinc-500 font-medium mb-1">Total Supplied</p>
-                    <p className="text-xl font-bold text-zinc-900">${formatNumber(pool.supplied)}</p>
+                    <p className="text-xl font-bold text-zinc-900">{formatIDRXFull(pool.totalSupplied)}</p>
                   </div>
                   <div className="mb-6 mt-auto">
                     <div className="w-full h-2 rounded-full bg-zinc-100 overflow-hidden mb-2">
                       <div 
                         className="h-full bg-teal-600" 
-                        style={{ width: `${(pool.supplied / pool.target) * 100}%` }}
+                        style={{ width: `${getFillPct(pool.totalSupplied, pool.targetSupply)}%` }}
                       />
                     </div>
                     <div className="flex justify-between text-xs font-medium text-zinc-500">
-                      <span>{((pool.supplied / pool.target) * 100).toFixed(0)}% filled</span>
-                      <span>Target ${formatNumber(pool.target)}</span>
+                      <span>{getFillPct(pool.totalSupplied, pool.targetSupply).toFixed(0)}% filled</span>
+                      <span>Target {formatIDRXFull(pool.targetSupply ?? 0)}</span>
                     </div>
                   </div>
                   <button 
@@ -272,7 +257,7 @@ export default function EarnPage() {
                     {viewedPools.includes(pool.id) ? 'Viewing Details...' : 'Pool Details'}
                   </button>
                   <div className="flex flex-wrap gap-2">
-                    {pool.tags.map(tag => (
+                    {(pool.tags ?? []).map(tag => (
                       <span key={tag} className="px-2 py-1 rounded bg-zinc-100 text-zinc-600 text-[10px] font-semibold uppercase tracking-wider">{tag}</span>
                     ))}
                   </div>

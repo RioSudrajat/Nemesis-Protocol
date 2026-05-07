@@ -2,22 +2,20 @@
 
 import { useNemesisStore } from '@/store/useNemesisStore'
 import { motion } from 'framer-motion'
-import { AlertCircle, CheckCircle2, ChevronRight, FileText, Leaf, DollarSign, Activity } from 'lucide-react'
+import { CheckCircle2, ChevronRight, FileText, Leaf, DollarSign } from 'lucide-react'
 
 export default function AdminPoolsPage() {
-  const { pools, updatePoolStatus } = useNemesisStore()
+  const { pools, approvePool, rejectPool } = useNemesisStore()
   
   const pendingPools = pools.filter(p => p.status === 'pending_approval')
   const activePools = pools.filter(p => p.status === 'active')
 
   const handleApprove = (poolId: string) => {
-    updatePoolStatus(poolId, 'active')
+    approvePool(poolId)
   }
 
   const handleReject = (poolId: string) => {
-    // For demo purposes, we just mark it inactive or remove it.
-    // Let's set it to some "REJECTED" status or back to "DRAFT"
-    updatePoolStatus(poolId, 'closed')
+    rejectPool(poolId)
   }
 
   return (

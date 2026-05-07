@@ -96,9 +96,11 @@ export interface YieldDistribution {
 }
 
 export interface InvestorPosition {
+  id?: string
   poolId: string
   poolName: string
   invested: number
+  currency?: 'IDRX' | 'USDC'
   cashYieldReceived: number
   principalRecovered: number
   outstandingPrincipal: number

@@ -70,6 +70,8 @@ const BLANK_ASSET: RWAAssetEntry = {
 const fieldClass =
   'w-full rounded-2xl border border-white/[0.08] bg-[#050606] px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/24 focus:border-teal-200/40 focus:bg-[#080A0A] focus:ring-4 focus:ring-teal-200/[0.06]'
 
+const NETWORK_FEE_PER_ASSET_IDRX = 3_500
+
 function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <section
@@ -111,6 +113,7 @@ export default function AssetOnboardingPage() {
   const [csvFile, setCsvFile] = useState<string | null>(null)
 
   const totalCapex = assets.reduce((sum, v) => sum + (Number(v.financedCost) || 0), 0)
+  const networkFee = assets.length * NETWORK_FEE_PER_ASSET_IDRX
   const selectedProduct = CONTRACT_TYPES.find((item) => item.value === assets[0]?.contractType)?.label ?? CONTRACT_TYPES[0].label
   const filledTelemetry = assets.filter((asset) => asset.telemetryId.trim().length > 0).length
 
@@ -208,6 +211,10 @@ export default function AssetOnboardingPage() {
             <p className="break-all font-mono text-xs leading-6 text-teal-100/80">
               3xR7mNkP2vWqJzLfDhUiCbEtYsXaGpOnV5wM9jKcHrT1eAdNFBSQZul6oIvmyW4
             </p>
+            <div className="mt-4 flex justify-between gap-4 border-t border-white/[0.06] pt-4">
+              <span className="text-xs text-white/40">Network fee</span>
+              <span className="text-sm font-semibold text-white/76">{formatIDR(networkFee)}</span>
+            </div>
           </div>
           <button
             onClick={() => { setSubmitDone(false); setAssets([{ ...BLANK_ASSET }]); setCsvFile(null); setTab('single'); setCurrentOnboardStep(2) }}
@@ -476,6 +483,7 @@ export default function AssetOnboardingPage() {
               {[
                 ['Total assets', `${assets.length}`],
                 ['Total capex', formatIDR(totalCapex)],
+                ['Network fee', `${formatIDR(networkFee)} (${formatIDR(NETWORK_FEE_PER_ASSET_IDRX)}/asset)`],
                 ['Revenue model', selectedProduct],
                 ['IoT telemetry', `${filledTelemetry}/${assets.length} linked`],
                 ['Hardware readlines', 'Pending proof fetch'],
