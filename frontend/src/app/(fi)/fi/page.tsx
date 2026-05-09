@@ -2,9 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Banknote, Bike, CheckCircle2, Clock, Layers3, Shield, Users } from "lucide-react";
+import { Banknote, Bike, CheckCircle2, Shield, Users } from "lucide-react";
 import { useNemesisStore } from "@/store/useNemesisStore";
-import { MOCK_POOLS } from "@/data/pools";
 import { formatIDRXFull, formatNumber } from "@/lib/yield";
 
 type FilterKey = "all" | "mobility_credit" | "fleet_remittance" | "future" | "native";
@@ -24,23 +23,12 @@ const HEADER_STATS = [
   { label: "Verified Investors", value: formatNumber(342), Icon: Users },
 ];
 
-const UPCOMING_PRODUCTS = [
-  {
-    title: "Charging Yield Pools",
-    copy: "Metered charger sessions, uptime, and kWh delivery for future infrastructure yield pools.",
-  },
-  {
-    title: "Energy Yield Pools",
-    copy: "Solar, storage, and exportable depot energy assets after phase-1 mobility underwriting is proven.",
-  },
-];
-
 export default function FiPoolsPage() {
   const [activeFilter, setActiveFilter] = useState<FilterKey>("all");
   const { pools } = useNemesisStore();
 
   const visiblePools = useMemo(() => {
-    let filtered = pools.filter(p => p.status === 'active' || p.status === 'upcoming');
+    let filtered = pools.filter(p => p.status === 'active' || p.status === 'upcoming' || p.status === 'filled');
     
     if (activeFilter === "native") filtered = filtered.filter((p) => p.operatorType === "nemesis_native");
     else if (activeFilter === "future") filtered = [];
@@ -60,7 +48,7 @@ export default function FiPoolsPage() {
             </h1>
           </div>
           <p className="text-base leading-7 text-zinc-600 md:text-lg">
-            Phase 1 focuses on 36-month mobility credit pools: investors fund productive EV assets and receive cash yield plus principal recovery from verified collections.
+            Nemesis structures financing pools for revenue-generating EV infrastructure: mobility fleets, charging networks, depot energy, and contracted operator remittance.
           </p>
         </div>
 
@@ -100,14 +88,19 @@ export default function FiPoolsPage() {
           <div className="mb-5 flex flex-col justify-between gap-3 md:flex-row md:items-end">
             <div>
               <h2 className="text-xl font-bold text-zinc-950">Active financing pools</h2>
-              <p className="mt-1 text-sm text-zinc-500">Cash yield and principal recovery are shown separately.</p>
+              <p className="mt-1 text-sm text-zinc-500">Each pool shows its asset class, yield source, principal recovery, and verification model separately.</p>
             </div>
             <p className="rounded-full bg-teal-50 px-4 py-2 text-xs font-bold text-teal-800">
-              14.4% cash yield + 32.4% principal recovery/year
+              Productive EV infrastructure, not a single-asset financing product
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {visiblePools.length === 0 && (
+              <div className="rounded-[1.75rem] border border-dashed border-zinc-950/15 bg-white p-8 text-sm leading-6 text-zinc-500">
+                No admin-published financing pools match this filter yet.
+              </div>
+            )}
             {visiblePools.map((pool) => {
               const pct = Math.min(100, Math.round((pool.totalSupplied / pool.targetSupply) * 100));
               return (
@@ -158,22 +151,6 @@ export default function FiPoolsPage() {
               );
             })}
           </div>
-        </section>
-
-        <section className="grid gap-5 md:grid-cols-2">
-          {UPCOMING_PRODUCTS.map((product) => (
-            <article key={product.title} className="rounded-[1.75rem] border border-dashed border-zinc-950/15 bg-white p-6">
-              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl bg-zinc-950 text-white">
-                <Layers3 className="h-5 w-5" />
-              </div>
-              <h3 className="text-xl font-bold text-zinc-950">{product.title}</h3>
-              <p className="mt-3 text-sm leading-6 text-zinc-600">{product.copy}</p>
-              <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-zinc-100 px-3 py-1 text-xs font-bold text-zinc-600">
-                <Clock className="h-3.5 w-3.5" />
-                Future asset class
-              </div>
-            </article>
-          ))}
         </section>
       </div>
     </div>

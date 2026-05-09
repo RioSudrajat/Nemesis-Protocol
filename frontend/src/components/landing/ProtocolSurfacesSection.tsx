@@ -1,5 +1,5 @@
 // src/components/landing/ProtocolSurfacesSection.tsx
-import { BatteryCharging, CircleDollarSign, Network, Route } from "lucide-react";
+import { BatteryCharging, CircleDollarSign, Network } from "lucide-react";
 import Link from "next/link";
 
 const surfaces = [
@@ -30,15 +30,6 @@ const surfaces = [
     accent: "from-[#F0FDFA] to-white",
     Icon: Network,
   },
-  {
-    href: "/rwa/operator",
-    label: "Operators",
-    eyebrow: "Fleet control",
-    title: "Manage proof, settlement, and maintenance readiness.",
-    body: "Run registered fleets through the operator workspace for asset proof and funding eligibility.",
-    accent: "from-[#F8FAFC] to-white",
-    Icon: Route,
-  },
 ];
 
 export default function ProtocolSurfacesSection() {
@@ -63,7 +54,7 @@ export default function ProtocolSurfacesSection() {
           </p>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-5 md:grid-cols-3">
           {surfaces.map((surface) => (
             <Link
               key={surface.href}

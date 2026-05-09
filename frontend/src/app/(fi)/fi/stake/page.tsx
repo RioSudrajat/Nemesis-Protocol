@@ -18,27 +18,26 @@ export default function StakePage() {
         </h1>
 
         <p className="text-gray-300 leading-relaxed mb-8">
-          $NMS staking bukan bagian dari demo phase 1. Fokus sekarang adalah mobility credit pools, proof readiness, cash yield, dan principal recovery.
+          $NMS staking belum dibuka. Fokus produk saat ini adalah pembiayaan productive EV infrastructure dengan proof readiness, verified utilization, cash yield, dan principal recovery.
         </p>
 
-        {/* Phase timeline */}
         <div className="mt-8 flex items-center justify-between">
           <div className="flex flex-col items-center gap-1">
             <CheckCircle2 size={28} className="text-teal-300" />
-            <p className="text-sm font-semibold">Phase 1</p>
-            <p className="text-xs text-gray-400">Sekarang</p>
+            <p className="text-sm font-semibold">Financing</p>
+            <p className="text-xs text-gray-400">Live rails</p>
           </div>
           <div className="h-px flex-1 bg-teal-500/30 mx-3" />
           <div className="flex flex-col items-center gap-1">
             <Clock size={28} className="text-amber-400" />
-            <p className="text-sm font-semibold">Phase 2</p>
-            <p className="text-xs text-gray-400">Akhir 2026</p>
+            <p className="text-sm font-semibold">Network</p>
+            <p className="text-xs text-gray-400">Expansion</p>
           </div>
           <div className="h-px flex-1 bg-teal-500/30 mx-3" />
           <div className="flex flex-col items-center gap-1">
             <Zap size={28} className="text-teal-300" />
-            <p className="text-sm font-semibold">Phase 3</p>
-            <p className="text-xs text-gray-400">IDO 2027</p>
+            <p className="text-sm font-semibold">$NMS</p>
+            <p className="text-xs text-gray-400">Future layer</p>
           </div>
         </div>
 

@@ -36,7 +36,7 @@ export function RwaHeroSection() {
 
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <Link
-              href="/rwa/operator"
+              href="/rwa/onboard"
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-zinc-950 px-6 py-4 text-sm font-bold text-white shadow-[0_18px_40px_rgba(15,23,42,0.18)] transition-transform hover:-translate-y-0.5"
             >
               Apply as Operator

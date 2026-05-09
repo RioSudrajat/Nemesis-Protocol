@@ -29,8 +29,8 @@ export function RwaOperatorFitSection() {
               Built for fleet businesses, open for productive owners.
             </h2>
           </div>
-          <Link href="/rwa/operator" className="inline-flex w-fit items-center gap-2 rounded-full bg-zinc-950 px-5 py-3 text-sm font-bold text-white">
-            Open portal
+          <Link href="/rwa/onboard" className="inline-flex w-fit items-center gap-2 rounded-full bg-zinc-950 px-5 py-3 text-sm font-bold text-white">
+            Start onboarding
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

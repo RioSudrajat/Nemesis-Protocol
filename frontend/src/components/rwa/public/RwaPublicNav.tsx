@@ -5,7 +5,7 @@ const NAV_LINKS = [
   { href: '/', label: 'Protocol' },
   { href: '/rwa/assets', label: 'Assets' },
   { href: '/fi', label: 'FI Pools' },
-  { href: '/rwa/operator', label: 'Operators' },
+  { href: '/rwa/onboard', label: 'Onboard' },
 ]
 
 export function RwaPublicNav() {
@@ -35,7 +35,7 @@ export function RwaPublicNav() {
         </div>
 
         <Link
-          href="/rwa/operator"
+          href="/rwa/onboard"
           className="rounded-full bg-zinc-950 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(15,23,42,0.18)] transition-transform hover:-translate-y-0.5 md:px-5"
         >
           Onboard Assets

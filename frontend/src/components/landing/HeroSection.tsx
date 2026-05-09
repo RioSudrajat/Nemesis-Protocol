@@ -6,7 +6,6 @@ const quickLinks = [
   { href: "/rwa", label: "RWA" },
   { href: "/fi", label: "FI" },
   { href: "/depin", label: "DePIN" },
-  { href: "/rwa/operator", label: "Operators" },
 ];
 
 export default function HeroSection() {

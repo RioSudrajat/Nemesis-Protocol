@@ -15,8 +15,8 @@ export function RwaPublicFooter() {
           <Link href="/fi" className="hover:text-zinc-950">
             FI
           </Link>
-          <Link href="/rwa/operator" className="hover:text-zinc-950">
-            Operator Portal
+          <Link href="/rwa/onboard" className="hover:text-zinc-950">
+            Onboard Assets
           </Link>
         </div>
       </div>

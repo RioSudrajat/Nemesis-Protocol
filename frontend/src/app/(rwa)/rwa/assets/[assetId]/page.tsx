@@ -55,14 +55,14 @@ export default function AssetDetailPage({ params }: { params: { assetId: string 
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Link
-                  href="/rwa/operator/mint"
+                  href="/rwa/onboard"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-zinc-950 px-6 py-4 text-sm font-bold text-white shadow-[0_18px_40px_rgba(15,23,42,0.18)]"
                 >
                   Start eligibility flow
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  href="/rwa/operator"
+                  href="/rwa/onboard"
                   className="inline-flex items-center justify-center rounded-2xl border border-zinc-950/10 bg-white px-6 py-4 text-sm font-bold text-zinc-950"
                 >
                   Enter Operator Portal
@@ -128,7 +128,7 @@ export default function AssetDetailPage({ params }: { params: { assetId: string 
               </p>
             </div>
             <Link
-              href="/rwa/operator/mint"
+              href="/rwa/onboard"
               className="inline-flex items-center justify-center gap-2 rounded-2xl bg-teal-300 px-6 py-4 text-sm font-bold text-zinc-950"
             >
               Start onboarding flow

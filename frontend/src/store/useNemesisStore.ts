@@ -121,6 +121,7 @@ interface NemesisActions {
   updatePoolStatus: (poolId: string, status: StakingPool['status']) => void
   approvePool: (poolId: string) => void
   rejectPool: (poolId: string) => void
+  deletePool: (poolId: string) => void
 
   // Driver Management
   registerDriver: (driver: Omit<RegisteredDriver, 'id' | 'registeredAt'>) => void
@@ -306,6 +307,16 @@ export const useNemesisStore = create<NemesisState & NemesisActions>()(
             ),
           }
         }),
+
+      deletePool: (poolId) =>
+        set((state) => ({
+          pools: state.pools.filter((pool) => pool.id !== poolId),
+          assets: state.assets.map((asset) =>
+            asset.poolId === poolId ? { ...asset, poolId: undefined } : asset
+          ),
+          investments: state.investments.filter((position) => position.poolId !== poolId),
+          poolReports: state.poolReports.filter((report) => report.poolId !== poolId),
+        })),
 
       // ─── Driver ───
       registerDriver: (driverData) =>

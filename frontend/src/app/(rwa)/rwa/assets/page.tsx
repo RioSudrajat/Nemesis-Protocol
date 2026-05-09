@@ -5,7 +5,7 @@ import { RWA_ASSET_CATALOG } from '@/components/rwa/public/assetCatalog'
 import { RwaPublicFooter } from '@/components/rwa/public/RwaPublicFooter'
 import { RwaPublicNav } from '@/components/rwa/public/RwaPublicNav'
 
-const CATEGORIES = ['All assets', 'Phase 1 eligible', 'Mobility', 'Charging', 'Energy']
+const CATEGORIES = ['All assets', 'Financing-ready', 'Mobility', 'Charging', 'Energy']
 
 export default function AssetsPage() {
   return (
@@ -26,7 +26,7 @@ export default function AssetsPage() {
               </h1>
             </div>
             <p className="max-w-xl text-lg leading-8 text-zinc-600">
-              Phase 1 focuses on mobility credit pools. Charging and energy are shown as future infrastructure classes so Nemesis stays larger than fleet financing alone.
+              Nemesis supports productive EV infrastructure that can generate verified utilization: mobility fleets, charging networks, depot energy, storage, and contracted operator revenue.
             </p>
           </div>
 
