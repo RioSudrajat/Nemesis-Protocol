@@ -63,7 +63,7 @@ export const MOCK_QUESTS: QuestItem[] = [
   { id: 'join-discord', title: 'Join Discord', description: 'Bergabung ke server Discord Nemesis Protocol', reward: 100, actionUrl: 'https://discord.gg/nemesis', actionLabel: 'Join Discord', completed: false, icon: 'Headphones' },
   { id: 'connect-wallet', title: 'Connect Wallet', description: 'Hubungkan Solana wallet lo ke Nemesis DePIN', reward: 100, actionUrl: '#', actionLabel: 'Connect Wallet', completed: true, icon: 'Wallet' },
   { id: 'refer-operator', title: 'Refer 1 Operator', description: 'Ajak 1 operator armada EV bergabung ke Nemesis', reward: 500, actionUrl: '/depin/referrals', actionLabel: 'Lihat Referral Link', completed: false, icon: 'Users' },
-  { id: 'join-pool-1', title: 'Early Pool Investor', description: 'Invest di Fleet Pool Batch #1 sebelum penuh', reward: 1000, actionUrl: '/fi', actionLabel: 'Lihat Pool', completed: false, icon: 'TrendingUp' },
+  { id: 'join-pool-1', title: 'Early Pool Investor', description: 'Invest di Fleet Pool Batch #1 sebelum penuh', reward: 1000, actionUrl: '/fi/pools', actionLabel: 'Lihat Pool', completed: false, icon: 'TrendingUp' },
   { id: 'hold-points', title: 'Hold 1.000+ Poin 30 Hari', description: 'Pertahankan minimal 1.000 poin selama 30 hari berturut-turut', reward: 200, actionUrl: '#', actionLabel: 'Cek Progres', completed: false, icon: 'Star' },
 ]
 

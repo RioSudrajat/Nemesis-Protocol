@@ -32,6 +32,11 @@ export const metadata: Metadata = {
   description:
     "Nemesis Protocol turns productive EV infrastructure into telemetry-verified, cashflow-generating on-chain financing products.",
   keywords: ["Nemesis Protocol", "DePIN", "EV infrastructure", "Solana", "IDRX", "mobility credit pools", "RWA"],
+  icons: {
+    icon: "/noc_logo.png",
+    shortcut: "/noc_logo.png",
+    apple: "/noc_logo.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

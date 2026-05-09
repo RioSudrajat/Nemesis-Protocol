@@ -5,7 +5,7 @@ export const NEMESIS_PROTOCOL = {
     "Nemesis turns productive EV infrastructure into investable, telemetry-verified, cashflow-generating on-chain products.",
   phaseOne:
     "36-month rent-to-own mobility credit pools for ride-hailing, delivery, and cargo EV bikes.",
-  primaryCta: { label: "Explore FI Pools", href: "/fi" },
+  primaryCta: { label: "Explore FI Pools", href: "/fi/pools" },
   operatorCta: { label: "Onboard Infrastructure", href: "/rwa/operator" },
 } as const;
 

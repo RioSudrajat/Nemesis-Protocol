@@ -29,7 +29,7 @@ export default function Footer() {
               <span className="text-[#111827] font-semibold text-[15px]">Portals</span>
               <Link href="/driver" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors font-medium">🏍️ Driver Login</Link>
               <Link href="/depin" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors">DePIN Network</Link>
-              <Link href="/fi" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors">FI Pools</Link>
+              <Link href="/fi/pools" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors">FI Pools</Link>
               <Link href="/rwa" className="text-[#4B5563] hover:text-[#050505] text-[14px] transition-colors">RWA / Operators</Link>
             </div>
 

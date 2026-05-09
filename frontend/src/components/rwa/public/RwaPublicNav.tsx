@@ -4,7 +4,7 @@ import Link from 'next/link'
 const NAV_LINKS = [
   { href: '/', label: 'Protocol' },
   { href: '/rwa/assets', label: 'Assets' },
-  { href: '/fi', label: 'FI Pools' },
+  { href: '/fi/pools', label: 'FI Pools' },
   { href: '/rwa/onboard', label: 'Onboard' },
 ]
 

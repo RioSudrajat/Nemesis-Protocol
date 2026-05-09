@@ -59,7 +59,7 @@ export default function PoolFleetMapPage({
             This page is restricted to verified pool participants. Invest in Nemesis FI first to unlock route-level access.
           </p>
           <Link
-            href="/fi"
+            href="/fi/pools"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-white transition-colors"
             style={{ background: "#14B8A6" }}
           >

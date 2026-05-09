@@ -1,20 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { ConnectWalletButton } from "@/components/ui/ConnectWalletButton";
-import { WorkshopRevenueChart } from "@/components/ui/WorkshopRevenueChart";
-import { CheckCircle2, ExternalLink, Wallet } from "lucide-react";
+import { PortfolioActivityTable, type PortfolioActivity } from "@/components/fi/PortfolioActivityTable";
+import { PortfolioClaimPanel } from "@/components/fi/PortfolioClaimPanel";
+import { PortfolioLiveProjects } from "@/components/fi/PortfolioLiveProjects";
+import { PortfolioYieldAreaChart, type PortfolioYieldPoint } from "@/components/fi/PortfolioYieldAreaChart";
+import { useSolanaWallet } from "@/context/SolanaWalletContext";
+import { ArrowRight, Wallet } from "lucide-react";
 import { formatIDRXFull } from "@/lib/yield";
 import { selectInvestorPortfolio, useNemesisStore } from "@/store/useNemesisStore";
 
-const CARD_STYLE = {
-  background: "#FFFFFF",
-  border: "1px solid rgba(15,23,42,0.08)",
-};
-
 export default function PortfolioPage() {
-  const [isConnected] = useState(true);
+  const { isConnected } = useSolanaWallet();
   const nemesisState = useNemesisStore();
   const positions = selectInvestorPortfolio(nemesisState);
   const investedPoolIds = new Set(positions.map((position) => position.poolId));
@@ -38,19 +37,15 @@ export default function PortfolioPage() {
     [positions, poolById]
   );
 
-  const cashHistory = publishedReports.map((report) => ({
-    name: report.period.slice(5),
-    value: Math.round(report.yieldDistributed * (ownershipByPool.get(report.poolId) ?? 0)),
-  }));
+  const cashChartData = useMemo<PortfolioYieldPoint[]>(() => {
+    return publishedReports.reduce<PortfolioYieldPoint[]>((acc, report) => {
+      const previous = acc.at(-1)?.value ?? 0;
+      const nextValue = previous + Math.round(report.yieldDistributed * (ownershipByPool.get(report.poolId) ?? 0));
+      return [...acc, { label: report.period.slice(5), value: nextValue }];
+    }, []);
+  }, [ownershipByPool, publishedReports]);
 
-  const principalHistory = publishedReports.map((report) => ({
-    name: report.period.slice(5),
-    value: Math.round(report.principalReturned * (ownershipByPool.get(report.poolId) ?? 0)),
-  }));
-  const cashChartData = cashHistory.length ? cashHistory : [{ name: "-", value: 0 }];
-  const principalChartData = principalHistory.length ? principalHistory : [{ name: "-", value: 0 }];
-
-  const transactions = [
+  const transactions: PortfolioActivity[] = [
     ...positions.map((position) => ({
       date: new Date(position.investedAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
       type: "Investment",
@@ -82,8 +77,8 @@ export default function PortfolioPage() {
 
   if (!isConnected) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#FAFAFA] p-8 text-zinc-950">
-        <div className="w-full max-w-md rounded-xl p-8 text-center" style={CARD_STYLE}>
+      <div className="flex min-h-[70vh] flex-col items-center justify-center p-8 text-zinc-950">
+        <div className="w-full max-w-md rounded-[1.5rem] border border-zinc-950/10 bg-white p-8 text-center shadow-sm">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50">
             <Wallet size={22} className="text-teal-700" />
           </div>
@@ -95,107 +90,49 @@ export default function PortfolioPage() {
     );
   }
 
-  const totalInvested = positions.reduce((sum, item) => sum + item.invested, 0);
   const totalCashYield = positions.reduce((sum, item) => sum + item.cashYieldReceived, 0);
-  const totalPrincipalRecovered = positions.reduce((sum, item) => sum + item.principalRecovered, 0);
-  const totalOutstanding = positions.reduce((sum, item) => sum + item.outstandingPrincipal, 0);
+  const avgYield = positions.length ? positions.reduce((sum, item) => sum + item.cashYieldPct, 0) / positions.length : 0;
+  const nextPayout = positions.map((item) => item.nextDistribution).sort()[0];
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] p-6 text-zinc-950 md:p-8">
-      <div className="mx-auto max-w-7xl">
-        <h1 className="mb-1 text-3xl font-bold text-zinc-950">Investor Portfolio</h1>
-        <p className="mb-8 text-sm text-zinc-500">Position size, cash yield received, and remaining principal exposure.</p>
+    <div className="min-h-screen px-4 py-8 text-zinc-950 md:px-8">
+      <div className="mx-auto max-w-7xl space-y-8">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-teal-700">Portfolio</p>
+          <h1 className="mt-4 text-4xl font-black tracking-tight text-zinc-950 md:text-5xl">Yield and positions</h1>
+          <p className="mt-2 text-sm text-zinc-500">Cash yield, active financing exposure, and distribution activity from your FI positions.</p>
+        </div>
 
-        <section className="mb-10 rounded-2xl p-6 shadow-sm md:p-8" style={CARD_STYLE}>
-          <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
-            <Summary label="Position size" value={formatIDRXFull(totalInvested)} />
-            <Summary label="Cash yield received" value={formatIDRXFull(totalCashYield)} accent />
-            <Summary label="Principal recovered" value={formatIDRXFull(totalPrincipalRecovered)} />
-            <Summary label="Remaining exposure" value={formatIDRXFull(totalOutstanding)} />
+        <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <Summary label="Avg annualized yield" value={`${avgYield.toFixed(1)}%`} />
+          <Summary label="Total yield earned" value={formatIDRXFull(totalCashYield)} accent />
+          <Summary label="Next payout" value={nextPayout ? new Date(nextPayout).toLocaleDateString("id-ID", { day: "2-digit", month: "short" }) : "N/A"} />
+          <Summary label="Active positions" value={`${positions.length}`} />
+        </section>
+
+        <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
+          <section className="rounded-[1.5rem] border border-zinc-950/10 bg-white p-5 shadow-sm md:p-6">
+            <PortfolioYieldAreaChart data={cashChartData} />
+          </section>
+          <div className="space-y-5">
+            <PortfolioLiveProjects positions={positions} />
+            <PortfolioClaimPanel amount={totalCashYield} />
+          </div>
+        </div>
+
+        <section className="rounded-[1.5rem] bg-gradient-to-br from-zinc-950 to-teal-900 p-6 text-white md:p-8">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
+            <div>
+              <h2 className="text-2xl font-black tracking-tight">Deploy capital into operating EV infrastructure</h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-white/65">Evaluate campaign terms, operator records, and distribution mechanics in one place.</p>
+            </div>
+            <Link href="/fi/pools" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-zinc-950">
+              View pools <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </section>
 
-        <h2 className="mb-4 text-base font-semibold text-zinc-900">Active positions</h2>
-        <div className="mb-10 grid grid-cols-1 gap-5 md:grid-cols-2">
-          {positions.length === 0 && (
-            <div className="rounded-2xl p-6 text-sm text-zinc-500 shadow-sm" style={CARD_STYLE}>
-              Belum ada posisi aktif. Investasi yang dibuat dari staking pools akan otomatis muncul di sini.
-            </div>
-          )}
-          {positions.map((position) => (
-            <div key={position.id ?? position.poolId} className="rounded-2xl p-6 shadow-sm" style={CARD_STYLE}>
-              <h3 className="mb-4 text-lg font-bold text-zinc-950">{position.poolName}</h3>
-              <div className="mb-5 grid grid-cols-2 gap-4">
-                <Summary label="Invested" value={formatIDRXFull(position.invested)} />
-                <Summary label="Cash yield" value={`${position.cashYieldPct}%`} />
-                <Summary label="Principal recovered" value={formatIDRXFull(position.principalRecovered)} />
-                <Summary label="Outstanding principal" value={formatIDRXFull(position.outstandingPrincipal)} />
-                <Summary label="Tenor" value={`${position.tenorMonths} months`} />
-                <Summary label="Maturity" value={new Date(position.maturityDate).toLocaleDateString("id-ID", { month: "short", year: "numeric" })} />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Link href={`/fi/pools/${position.poolId}`} className="rounded-lg bg-teal-500 px-4 py-2 text-xs font-semibold text-white">
-                  Pool detail
-                </Link>
-                <Link href={`/depin/pool/${position.poolId}`} className="rounded-lg border border-teal-500/40 bg-white px-4 py-2 text-xs font-semibold text-teal-700">
-                  View route proofs
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mb-10 grid gap-5 lg:grid-cols-2">
-          <div className="rounded-2xl p-5 shadow-sm" style={CARD_STYLE}>
-            <h3 className="mb-1 text-base font-semibold text-zinc-900">Cash yield history</h3>
-            <p className="mb-2 text-sm text-zinc-500">Monthly IDRX yield only, excluding returned principal.</p>
-            <WorkshopRevenueChart data={cashChartData} suffix="IDRX" />
-          </div>
-          <div className="rounded-2xl p-5 shadow-sm" style={CARD_STYLE}>
-            <h3 className="mb-1 text-base font-semibold text-zinc-900">Principal recovery history</h3>
-            <p className="mb-2 text-sm text-zinc-500">Principal returned from pool collections.</p>
-            <WorkshopRevenueChart data={principalChartData} suffix="IDRX" />
-          </div>
-        </div>
-
-        <div className="overflow-hidden rounded-2xl shadow-sm" style={CARD_STYLE}>
-          <div className="p-5 pb-3">
-            <h3 className="text-base font-semibold text-zinc-900">Transaction history</h3>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-zinc-100 text-zinc-600">
-                  <th className="px-4 py-3 text-left font-medium">Date</th>
-                  <th className="px-4 py-3 text-left font-medium">Type</th>
-                  <th className="px-4 py-3 text-left font-medium">Pool</th>
-                  <th className="px-4 py-3 text-right font-medium">Amount</th>
-                  <th className="px-4 py-3 text-left font-medium">Hash</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map((tx) => {
-                  const isIn = tx.amount >= 0;
-                  return (
-                    <tr key={`${tx.date}-${tx.type}-${tx.pool}`} className="border-t border-zinc-950/5">
-                      <td className="px-4 py-3 text-zinc-700">{tx.date}</td>
-                      <td className="px-4 py-3 text-zinc-900">{tx.type}</td>
-                      <td className="px-4 py-3 text-zinc-700">{tx.pool}</td>
-                      <td className="whitespace-nowrap px-4 py-3 text-right font-semibold" style={{ color: isIn ? "#0F766E" : "#B91C1C" }}>
-                        {isIn ? "+" : "-"}{formatIDRXFull(Math.abs(tx.amount))}
-                      </td>
-                      <td className="px-4 py-3">
-                        <a href="#" className="inline-flex items-center gap-1 text-teal-700 hover:underline">
-                          {tx.hash} <ExternalLink size={12} />
-                        </a>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <PortfolioActivityTable transactions={transactions} />
       </div>
     </div>
   );
@@ -203,16 +140,11 @@ export default function PortfolioPage() {
 
 function Summary({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div>
-      <p className="mb-1 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-500">{label}</p>
-      <p className="break-all text-xl font-bold" style={{ color: accent ? "#0F766E" : "#18181B" }}>
+    <div className="rounded-[1.25rem] border border-zinc-950/10 bg-white p-5 shadow-sm">
+      <p className="mb-2 text-[11px] font-black uppercase tracking-[0.14em] text-zinc-400">{label}</p>
+      <p className={`break-words text-2xl font-black ${accent ? "text-teal-700" : "text-zinc-950"}`}>
         {value}
       </p>
-      {accent && (
-        <p className="mt-1 flex items-center gap-1 text-xs text-teal-700">
-          <CheckCircle2 size={12} /> separated from principal recovery
-        </p>
-      )}
     </div>
   );
 }

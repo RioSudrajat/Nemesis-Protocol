@@ -229,7 +229,7 @@ export default function NetworkDashboardPage() {
                 </p>
               </div>
               <Link
-                href="/fi"
+                href="/fi/pools"
                 className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-white bg-teal-500 hover:bg-teal-400 transition-colors shadow-sm"
               >
                 Go to Nemesis FI
